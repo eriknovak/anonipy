@@ -1,0 +1,18 @@
+# notebook
+jupyterlab
+ipywidgets>=7.5
+notebook
+# analysis
+numpy
+pandas
+spacy
+scipy==1.10.1
+torch
+gliner
+lightning
+transformers
+pypdf
+# utility
+python-dotenv
+tqdm
+black
