@@ -139,3 +139,8 @@ data/**/
 
 models/**/
 !models/README.md
+
+notebooks
+!docs/documentation/notebooks
+
+scripts

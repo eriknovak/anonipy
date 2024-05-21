@@ -1,18 +1,17 @@
-# notebook
-jupyterlab
-ipywidgets>=7.5
-notebook
-# analysis
+# Data structures
 numpy
 pandas
-spacy
-scipy==1.10.1
 torch
+# NLP and LLMs
+spacy
 gliner
-lightning
+gliner-spacy
 transformers
-pypdf
-# utility
-python-dotenv
+bitsandbytes
+lingua-language-detector
+guidance==0.1.14
+sentencepiece
+# File readers
+textract
+# Monitoring
 tqdm
-black

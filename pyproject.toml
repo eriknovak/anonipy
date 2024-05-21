@@ -1,0 +1,49 @@
+[build-system]
+requires = ['setuptools>=42']
+build-backend = 'setuptools.build_meta'
+
+[project]
+version = "0.0.1"
+name = "anonipy"
+description = "The data anonymization package"
+authors=[{ name = "Erik Novak", email = "erik.novak@ijs.si" }]
+readme = "README.md"
+license = { file = "LICENSE" }
+dynamic = ["dependencies"]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.8"
+
+[project.urls]
+Source = "https://github.com/eriknovak/anonipy"
+Docs = "https://github.com/eriknovak/anonipy"
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "flake8",
+    "python-githooks",
+    "mkdocs-material",
+    "mkdocs-jupyter",
+]
+test = [
+    "coverage",
+    "nbmake",
+]
+all = ["anonipy[dev,test]"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["anonipy*"]
+
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
