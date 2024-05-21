@@ -9,13 +9,13 @@
 
 <p align="center">
   <a href="https://github.com/eriknovak/anonipy/actions/workflows/unittests.yaml" target="_blank">
-    <img src="https://github.com/eriknovak/anonipy/actions/workflows/unittests.yaml/badge.svg" alt="Test">
+    <img src="https://github.com/eriknovak/anonipy/actions/workflows/unittests.yaml/badge.svg" alt="Test" />
   </a>
   <a href="https://pypi.org/project/anonipy" target="_blank">
-    <img src="https://img.shields.io/pypi/v/anonipy?color=%2334D058&amp;label=pypi%20package" alt="Package version">
+    <img src="https://img.shields.io/pypi/v/anonipy?color=%2334D058&amp;label=pypi%20package" alt="Package version" />
   </a>
   <a href="https://pypi.org/project/anonipy" target="_blank">
-    <img src="https://img.shields.io/pypi/pyversions/anonipy.svg?color=%2334D058" alt="Supported Python versions">
+    <img src="https://img.shields.io/pypi/pyversions/anonipy.svg?color=%2334D058" alt="Supported Python versions" />
   </a>
 </p>
 
