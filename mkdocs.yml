@@ -1,5 +1,5 @@
 # Project information
-site_name: ""
+site_name: anonipy
 site_author: Erik Novak
 site_description: >-
   Data anonymization package, supporting different anonymization strategies
@@ -22,7 +22,6 @@ theme:
     - search.share
     - search.suggest
     - toc.follow
-    # - toc.integrate
   palette:
     # Palette toggle for light
     - media: "(prefers-color-scheme: light)"
