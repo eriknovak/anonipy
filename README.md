@@ -1,6 +1,3 @@
----
-title: Home
----
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/eriknovak/anonipy/main/docs/assets/imgs/logo.png" alt="logo" height="100" style="height: 100px;">
@@ -10,7 +7,7 @@ title: Home
   <i>Data anonymization package, supporting different anonymization strategies</i>
 </p>
 
-<p style="text-align: center">
+<p align="center">
   <a href="https://github.com/eriknovak/anonipy/actions/workflows/unittests.yaml" target="_blank">
     <img src="https://github.com/eriknovak/anonipy/actions/workflows/unittests.yaml/badge.svg" alt="Test">
   </a>
