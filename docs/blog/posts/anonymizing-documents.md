@@ -2,7 +2,7 @@
 date: 2024-05-22
 authors: [eriknovak]
 description: >
-  Our package can be used to anonymize multiple documents.
+  Our package can be used to anonymize a document such as PDF and word documents.
 categories:
   - Tutorial
 ---
@@ -17,6 +17,8 @@ provides utility functions that extracts the text from the documents.
 
 In this blog post, we explain how `anonipy` can be used to anonymize texts in
 document form.
+
+<!-- more -->
 
 !!! info "Prerequisites"
     To use the `anonipy` package, we must have Python version 3.8 or higher
@@ -39,7 +41,8 @@ This will install the `anonipy` package, which contains all of the required modu
 
 Next, we will use the `anonipy` package to anonymize the text in the document.
 First, we must extract the text. This can be done using the package's utility
-function `open_file`. It uses the [textract](https://textract.readthedocs.io/en/stable/) package to extract the text from different types of documents.
+function `open_file`. It uses the [textract](https://textract.readthedocs.io/en/stable/)
+package to extract the text from different types of documents.
 
 
 To extract the text, using the following code:
@@ -58,7 +61,8 @@ Once this is done, we can start anonymizing the text, in a regular way.
 ### Extracting personal information from the text
 
 Now we can identify and extract personal information from the text. We do this
-by using `EntityExtractor`, an extractor that leverages the [GLiNER](https://github.com/urchade/GLiNER) span-based NER models.
+by using `EntityExtractor`, an extractor that leverages the
+[GLiNER](https://github.com/urchade/GLiNER) span-based NER models.
 
 It returns the text and the extracted entities.
 
@@ -99,13 +103,20 @@ For example, we can use `MaskLabelGenerator` to generate substitutes using the
 language models to solve a `mask-filling` problem, i.e. finding the words that
 would be probabilistically suitable to replace the entity in the text.
 
-The full list of available generators can be found [here](/documentation/notebooks/02-generators).
+The full list of available generators can be found [here][generators].
 
 Furthermore, we use the `PseudonymizationStrategy` to anonymize the text. More
-on anonymization strategies can be found [here](/documentation/notebooks/03-strategies).
+on anonymization strategies can be found [here][strategies].
 
 
 ```python
+from anonipy.anonymize.generators import (
+    MaskLabelGenerator,
+    DateGenerator,
+    NumberGenerator,
+)
+from anonipy.anonymize.strategies import PseudonymizationStrategy
+
 # initialize the generators
 mask_generator = MaskLabelGenerator()
 date_generator = DateGenerator()
@@ -152,7 +163,7 @@ Where `output_file` is the path to the file where the anonymized text will be sa
 
 ## Conclusion
 
-In this blog post, we show can one can anonymize documents using the `anonipy` package.
+In this blog post, we show how one can anonymize a document using the `anonipy` package.
 We first used the `open_file` utility function to extract the content of the document
 and store it as a string. We then used the `EntityExtractor` to identify and extract
 personal information form the text, and the `PseudonymizationStrategy` in combination
@@ -162,3 +173,6 @@ to save the anonymized text to a file.
 This process is very straightforward and can be applied to almost any document type.
 Furthermore, it can be expanded to process multiple documents written in the same
 language at once. Stay tuned to see how this can be done in the future!
+
+[generators]: ../../documentation/notebooks/02-generators.ipynb
+[strategies]: ../../documentation/notebooks/03-strategies.ipynb
