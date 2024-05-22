@@ -1,7 +1,3 @@
-# Data structures
-numpy
-pandas
-torch
 # NLP and LLMs
 spacy
 gliner
