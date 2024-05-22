@@ -1,3 +1,12 @@
+anonipy-0.0.3 (2024-05-22)
+
+- Add read_json function
+- Add write_json function
+- Add blog post on anonymizing collections of documents
+- Fix the entity regex checking in EntityExtractor
+- Reduce the number of viable suggestions used to create a substitute in MaskLabelGenerator
+- Add the entity label to the replacements in strategies
+
 anonipy-0.0.2 (2024-05-22)
 
 - Add write_file function
