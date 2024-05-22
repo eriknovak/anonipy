@@ -33,6 +33,7 @@ class MaskingStrategy(StrategyInterface):
         mask = self._create_mask(entity)
         return {
             "original_text": entity.text,
+            "label": entity.label,
             "start_index": entity.start_index,
             "end_index": entity.end_index,
             "anonymized_text": mask,

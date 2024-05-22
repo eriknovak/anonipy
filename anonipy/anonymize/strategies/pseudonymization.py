@@ -37,6 +37,7 @@ class PseudonymizationStrategy(StrategyInterface):
         )
         return {
             "original_text": entity.text,
+            "label": entity.label,
             "start_index": entity.start_index,
             "end_index": entity.end_index,
             "anonymized_text": anonymized_text,

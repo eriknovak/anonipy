@@ -31,6 +31,7 @@ class RedactionStrategy(StrategyInterface):
     def _create_replacement(self, entity: Entity):
         return {
             "original_text": entity.text,
+            "label": entity.label,
             "start_index": entity.start_index,
             "end_index": entity.end_index,
             "anonymized_text": self.substitute_label,
