@@ -2,6 +2,7 @@
 The file system utilities
 """
 
+import json
 from typing import Union, Any
 
 import textract
@@ -38,6 +39,11 @@ def open_file(file_path: str, encode: Union[str, bool] = True) -> str:
     return text
 
 
+def open_json(file_path: str) -> dict:
+    with open(file_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
 def write_file(text: str, file_path: str, encode: Union[str, bool] = True) -> None:
     if not isinstance(encode, str) and not isinstance(encode, bool):
         raise TypeError("encode must be a string or a boolean")
@@ -50,3 +56,8 @@ def write_file(text: str, file_path: str, encode: Union[str, bool] = True) -> No
 
     with open(file_path, "w", encoding=encoding) as f:
         f.write(text)
+
+
+def write_json(data: dict, file_path: str) -> None:
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
