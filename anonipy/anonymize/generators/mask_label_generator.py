@@ -101,7 +101,7 @@ class MaskLabelGenerator(GeneratorInterface):
                     suggestion,
                 )
             )
-            substitute_chunks.append([s["token_str"] for s in viable_suggestions[:5]])
+            substitute_chunks.append([s["token_str"] for s in viable_suggestions[:3]])
         combinations = list(itertools.product(*substitute_chunks))
         combinations = list(map(lambda x: " ".join(set(x)), combinations))
         return random.choice(combinations) if len(combinations) > 0 else "None"
