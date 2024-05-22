@@ -45,6 +45,7 @@ edit_uri: ""
 
 # Plugins
 plugins:
+  - blog
   - search
   - mkdocs-jupyter:
       include: ["*.ipynb"]
@@ -78,5 +79,7 @@ nav:
     - Generators: documentation/notebooks/02-generators.ipynb
     - Strategies: documentation/notebooks/03-strategies.ipynb
     - Utility: documentation/notebooks/04-utility.ipynb
+  - Blog:
+    - blog/index.md
 
   - Development: development.md
