@@ -32,7 +32,21 @@ def get_variable_name(var: Any) -> str:
 # =====================================
 
 
-def open_file(file_path: str, decode: Union[str, bool] = True) -> str:
+def open_file(file_path: str, encode: Union[str, bool] = True) -> str:
     text = textract.process(file_path)
-    text = text_decode(text, decode)
+    text = text_decode(text, encode)
     return text
+
+
+def write_file(text: str, file_path: str, encode: Union[str, bool] = True) -> None:
+    if not isinstance(encode, str) and not isinstance(encode, bool):
+        raise TypeError("encode must be a string or a boolean")
+
+    encoding = None
+    if isinstance(encode, str):
+        encoding = encode
+    elif isinstance(encode, bool):
+        encoding = "utf-8" if encode else None
+
+    with open(file_path, "w", encoding=encoding) as f:
+        f.write(text)
