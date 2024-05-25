@@ -16,6 +16,19 @@ class LANGUAGES:
     GERMAN = ("de", "German")
     GREEK = ("el", "Greek")
     ITALIAN = ("it", "Italian")
-    SLOVENE = ("sl", "Slovenian")
+    SLOVENE = ("sl", "Slovene")
     SPANISH = ("es", "Spanish")
-    UKRAINIAN = ("uk", "Ukranian")
+    UKRAINIAN = ("uk", "Ukrainian")
+
+
+class ENTITIY_TYPES:
+    """Types of entities"""
+
+    CUSTOM = "custom"
+    STRING = "string"
+    INTEGER = "integer"
+    FLOAT = "float"
+    DATE = "date"
+    EMAIL = "email"
+    WEBSITE_URL = "website_url"
+    PHONE_NUMBER = "phone_number"
