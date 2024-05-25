@@ -3,6 +3,10 @@ import unittest
 from anonipy.utils.language_detector import LanguageDetector
 from anonipy.constants import LANGUAGES
 
+# =====================================
+# Test Language Detector
+# =====================================
+
 
 class TestLanguageDetector(unittest.TestCase):
 

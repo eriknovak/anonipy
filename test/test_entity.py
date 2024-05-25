@@ -3,6 +3,11 @@ import unittest
 from anonipy.definitions import Entity
 
 
+# =====================================
+# Test Entity
+# =====================================
+
+
 class TestEntity(unittest.TestCase):
 
     def test_init(self):
