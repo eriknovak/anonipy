@@ -2,8 +2,11 @@
 The definitions used within the package
 """
 
+import re
+from typing import Union
 from dataclasses import dataclass
 
+from .constants import ENTITIY_TYPES
 
 # ================================================
 # Entity Definitions
@@ -14,7 +17,7 @@ from dataclasses import dataclass
 class Entity:
     text: str
     label: str
-    start_index: str
-    end_index: str
-    type: str = None
-    regex: str = ".*"
+    start_index: int
+    end_index: int
+    type: ENTITIY_TYPES = None
+    regex: Union[str, re.Pattern] = ".*"
