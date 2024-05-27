@@ -1,3 +1,10 @@
+anonipy-0.0.4 (2024-05-27)
+
+- Add unit tests
+- Fix the LANGUAGES constant
+- Refine the Entity implementation
+- Update documentation
+
 anonipy-0.0.3 (2024-05-22)
 
 - Add read_json function
