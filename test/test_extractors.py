@@ -58,7 +58,7 @@ original_entities = [
         start_index=121,
         end_index=132,
         type="custom",
-        regex="\\d{3}-\\d{2}-\\d{4}",
+        regex="[0-9]{3}-[0-9]{2}-[0-9]{4}",
     ),
     Entity(
         text="John Doe",
@@ -81,7 +81,11 @@ original_entities = [
 # define the labels to be extracted and anonymized
 labels = [
     {"label": "name", "type": "string"},
-    {"label": "social security number", "type": "custom"},
+    {
+        "label": "social security number",
+        "type": "custom",
+        "regex": "[0-9]{3}-[0-9]{2}-[0-9]{4}",
+    },
     {"label": "date of birth", "type": "date"},
     {"label": "date", "type": "date"},
 ]
