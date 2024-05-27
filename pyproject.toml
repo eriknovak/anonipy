@@ -37,6 +37,7 @@ dev = [
 test = [
     "coverage",
     "nbmake",
+    "six",
 ]
 all = ["anonipy[dev,test]"]
 
