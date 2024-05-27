@@ -5,12 +5,7 @@ from ..definitions import Entity
 # =====================================
 
 
-def convert_spacy_to_entity(entity, label):
+def convert_spacy_to_entity(entity, type, regex=".*", *args, **kwargs):
     return Entity(
-        entity.text,
-        entity.label_,
-        entity.start_char,
-        entity.end_char,
-        label["type"],
-        label["regex"] if "regex" in label else ".*",
+        entity.text, entity.label_, entity.start_char, entity.end_char, type, regex
     )

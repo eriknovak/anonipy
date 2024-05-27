@@ -80,6 +80,6 @@ class EntityExtractor(ExtractorInterface):
         for e in doc.ents:
             label = list(filter(lambda x: x["label"] == e.label_, self.labels))[0]
             if re.match(label["regex"], e.text):
-                anoni_entities.append(convert_spacy_to_entity(e, label))
+                anoni_entities.append(convert_spacy_to_entity(e, **label))
                 spacy_entities.append(e)
         return anoni_entities, spacy_entities
