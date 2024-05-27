@@ -7,6 +7,10 @@ from anonipy.anonymize.strategies import (
     PseudonymizationStrategy,
 )
 
+# =====================================
+# Helper functions
+# =====================================
+
 test_text = "Test this string, and this test too!"
 test_entities = [
     Entity(text="Test", label="test", start_index=0, end_index=4),
