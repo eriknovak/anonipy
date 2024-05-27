@@ -21,7 +21,7 @@ class LANGUAGES:
     UKRAINIAN = ("uk", "Ukrainian")
 
 
-class ENTITIY_TYPES:
+class ENTITY_TYPES:
     """Types of entities"""
 
     CUSTOM = "custom"

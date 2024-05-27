@@ -6,7 +6,7 @@ import re
 from typing import Union
 from dataclasses import dataclass
 
-from .constants import ENTITIY_TYPES
+from .constants import ENTITY_TYPES
 
 # ================================================
 # Entity Definitions
@@ -19,5 +19,5 @@ class Entity:
     label: str
     start_index: int
     end_index: int
-    type: ENTITIY_TYPES = None
+    type: ENTITY_TYPES = None
     regex: Union[str, re.Pattern] = ".*"
