@@ -74,7 +74,7 @@ test_entities = {
         start_index=121,
         end_index=132,
         type="custom",
-        regex=".*",
+        regex="\\d{3}-\\d{2}-\\d{4}",
     ),
 }
 
