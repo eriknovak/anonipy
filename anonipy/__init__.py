@@ -19,3 +19,4 @@ from . import anonymize
 from . import utils
 from . import definitions
 from . import constants
+from .version import __version__
