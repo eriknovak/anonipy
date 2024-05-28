@@ -9,7 +9,7 @@ This section is for developers only. It describes the requirements, the setup pr
 ## ✅ Requirements
 Before starting the project make sure these requirements are available:
 
-- [python][python]. The python programming language (v3.8 or higher).
+- [python][python]. The python programming language (v3.8, v3.9, v3.10, v3.11).
 
 - [git][git]. For versioning your code.
 
