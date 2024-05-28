@@ -73,6 +73,16 @@ When suggesting changes, please refer to the [Material for MkDocs] documentation
 Once the changes are accepted into the project, the GitHub Actions automatically
 deploy the documentation to the `gh-pages` branch.
 
+## Update version
+
+The version needs to be updated in the following files:
+
+- `pyproject.toml`
+- `anonipy/version.py`
+
+The versions need to reflect the release version on GitHub.
+
+
 ## 📦️ Build package
 
 To build the package, run:
