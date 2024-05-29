@@ -1,0 +1,67 @@
+WORD_TEXT = """\
+Medical Record
+
+Patient Name: John Doe
+Date of Birth: 15-01-1985
+Date of Examination: 20-05-2024
+Social Security Number: 123-45-6789
+Examination Procedure:
+John Doe underwent a routine physical examination. The procedure included measuring vital signs (blood pressure, heart rate, temperature), a comprehensive blood panel, and a cardiovascular stress test. The patient also reported occasional headaches and dizziness, prompting a neurological assessment and an MRI scan to rule out any underlying issues.
+
+Medication Prescribed:
+Ibuprofen 200 mg Take one tablet every 6-8 hours as needed for headache and pain relief.
+Lisinopril 10 mg Take one tablet daily to manage high blood pressure.
+
+Next Examination Date:
+15-11-2024
+""".strip()
+
+PDF_TEXT = """\
+Medical Record
+
+Patient Name: John Doe
+Date of Birth: 15-01-1985
+Date of Examination: 20-05-2024
+Social Security Number: 123-45-6789
+
+Examination Procedure:
+
+John Doe underwent a routine physical examination. The procedure included measuring vital signs
+(blood pressure, heart rate, temperature), a comprehensive blood panel, and a cardiovascular stress
+test. The patient also reported occasional headaches and dizziness, prompting a neurological
+assessment and an MRI scan to rule out any underlying issues.
+
+Medication Prescribed:
+
+Ibuprofen 200 mg Take one tablet every 6-8 hours as needed for headache and pain relief.
+Lisinopril 10 mg Take one tablet daily to manage high blood pressure.
+
+Next Examination Date:
+
+15-11-2024
+""".strip()
+
+TXT_TEXT = """\
+Medical Record
+
+Patient Name: John Doe
+Date of Birth: 15-01-1985
+Date of Examination: 20-05-2024
+Social Security Number: 123-45-6789
+
+Examination Procedure:
+
+John Doe underwent a routine physical examination. The procedure included measuring vital signs
+(blood pressure, heart rate, temperature), a comprehensive blood panel, and a cardiovascular stress
+test. The patient also reported occasional headaches and dizziness, prompting a neurological
+assessment and an MRI scan to rule out any underlying issues.
+
+Medication Prescribed:
+
+Ibuprofen 200 mg Take one tablet every 6-8 hours as needed for headache and pain relief.
+Lisinopril 10 mg Take one tablet daily to manage high blood pressure.
+
+Next Examination Date:
+
+15-11-2024
+""".strip()
