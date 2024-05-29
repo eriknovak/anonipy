@@ -8,6 +8,7 @@ lingua-language-detector
 guidance==0.1.14
 sentencepiece
 # File readers
-textract
+pypdf
+python-docx
 # Monitoring
 tqdm
