@@ -1,4 +1,5 @@
 import unittest
+import warnings
 
 from anonipy.utils.language_detector import LanguageDetector
 from anonipy.constants import LANGUAGES
@@ -9,6 +10,11 @@ from anonipy.constants import LANGUAGES
 
 
 class TestLanguageDetector(unittest.TestCase):
+
+    def setUp(self):
+        warnings.filterwarnings("ignore", category=ImportWarning)
+        warnings.filterwarnings("ignore", category=UserWarning)
+        warnings.filterwarnings("ignore", category=FutureWarning)
 
     def test_init(self):
         language_detector = LanguageDetector()

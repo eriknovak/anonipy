@@ -1,4 +1,5 @@
 import unittest
+import warnings
 
 from anonipy.definitions import Entity
 from anonipy.anonymize.extractors import EntityExtractor
@@ -97,6 +98,12 @@ labels = [
 
 
 class TestEntityExtractor(unittest.TestCase):
+
+    def setUp(self):
+        warnings.filterwarnings("ignore", category=ImportWarning)
+        warnings.filterwarnings("ignore", category=UserWarning)
+        warnings.filterwarnings("ignore", category=FutureWarning)
+
     def test_init(self):
         try:
             EntityExtractor()
