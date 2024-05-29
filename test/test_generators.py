@@ -1,5 +1,6 @@
 import re
 import unittest
+import warnings
 
 import torch
 
@@ -123,6 +124,11 @@ class TestMaskLabelGenerator(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         self.generator = MaskLabelGenerator()
+
+    def setUp(self):
+        warnings.filterwarnings("ignore", category=ImportWarning)
+        warnings.filterwarnings("ignore", category=UserWarning)
+        warnings.filterwarnings("ignore", category=FutureWarning)
 
     def test_has_methods(self):
         self.assertEqual(hasattr(self.generator, "generate"), True)
