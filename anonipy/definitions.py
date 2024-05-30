@@ -19,5 +19,6 @@ class Entity:
     label: str
     start_index: int
     end_index: int
+    score: float = 1.0
     type: ENTITY_TYPES = None
     regex: Union[str, re.Pattern] = ".*"

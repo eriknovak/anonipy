@@ -5,7 +5,13 @@ from ..definitions import Entity
 # =====================================
 
 
-def convert_spacy_to_entity(entity, type, regex=".*", *args, **kwargs):
+def convert_spacy_to_entity(entity, type=None, regex=".*", *args, **kwargs):
     return Entity(
-        entity.text, entity.label_, entity.start_char, entity.end_char, type, regex
+        entity.text,
+        entity.label_,
+        entity.start_char,
+        entity.end_char,
+        entity._.score,
+        type,
+        regex,
     )
