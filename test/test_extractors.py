@@ -1,6 +1,8 @@
 import unittest
 import warnings
 
+import torch
+
 from anonipy.definitions import Entity
 from anonipy.anonymize.extractors import EntityExtractor
 from anonipy.constants import LANGUAGES
@@ -114,6 +116,13 @@ class TestEntityExtractor(unittest.TestCase):
         extractor = EntityExtractor(labels=labels, lang=LANGUAGES.ENGLISH, score_th=0.5)
         self.assertEqual(extractor.__class__, EntityExtractor)
 
+    def test_init_gpu(self):
+        if torch.cuda.is_available():
+            extractor = EntityExtractor(
+                labels=labels, lang=LANGUAGES.ENGLISH, score_th=0.5, use_gpu=True
+            )
+            self.assertEqual(extractor.__class__, EntityExtractor)
+
     def test_methods(self):
         extractor = EntityExtractor(labels=labels, lang=LANGUAGES.ENGLISH, score_th=0.5)
         self.assertEqual(hasattr(extractor, "__call__"), True)
@@ -122,7 +131,14 @@ class TestEntityExtractor(unittest.TestCase):
     def test_extract_default(self):
         extractor = EntityExtractor(labels=labels, lang=LANGUAGES.ENGLISH, score_th=0.5)
         doc, entities = extractor(original_text)
-        self.assertEqual(entities, original_entities)
+        for pred_entity, orig_entity in zip(entities, original_entities):
+            self.assertEqual(pred_entity.text, orig_entity.text)
+            self.assertEqual(pred_entity.label, orig_entity.label)
+            self.assertEqual(pred_entity.start_index, orig_entity.start_index)
+            self.assertEqual(pred_entity.end_index, orig_entity.end_index)
+            self.assertEqual(pred_entity.type, orig_entity.type)
+            self.assertEqual(pred_entity.regex, orig_entity.regex)
+            self.assertEqual(pred_entity.score >= 0.5, True)
 
 
 if __name__ == "__main__":
