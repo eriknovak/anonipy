@@ -1,7 +1,7 @@
 # NLP and LLMs
 spacy
 gliner==0.2.2
-gliner-spacy>=0.0.8
+gliner-spacy>=0.0.7
 transformers
 bitsandbytes
 lingua-language-detector
