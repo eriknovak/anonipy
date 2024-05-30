@@ -13,9 +13,9 @@ from anonipy.anonymize.strategies import (
 
 test_text = "Test this string, and this test too!"
 test_entities = [
-    Entity(text="Test", label="test", start_index=0, end_index=4),
-    Entity(text="string", label="type", start_index=10, end_index=16),
-    Entity(text="test", label="test", start_index=27, end_index=31),
+    Entity(text="Test", label="test", start_index=0, end_index=4, score=1.0),
+    Entity(text="string", label="type", start_index=10, end_index=16, score=1.0),
+    Entity(text="test", label="test", start_index=27, end_index=31, score=1.0),
 ]
 
 

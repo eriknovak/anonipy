@@ -1,7 +1,9 @@
 import re
 import importlib
 from typing import List, Tuple
+import warnings
 
+import torch
 from spacy import displacy
 from spacy.tokens import Doc
 from gliner_spacy.pipeline import GlinerSpacy
@@ -21,9 +23,11 @@ class EntityExtractor(ExtractorInterface):
         labels: List[dict],
         lang: LANGUAGES = LANGUAGES.ENGLISH,
         score_th=0.5,
+        use_gpu=False,
     ):
         self.lang = lang
         self.score_th = score_th
+        self.use_gpu = use_gpu
         self.labels = self._prepare_labels(labels)
         self.pipeline = self._prepare_pipeline()
 
@@ -50,6 +54,14 @@ class EntityExtractor(ExtractorInterface):
         return labels
 
     def _create_gliner_config(self):
+        map_location = "cpu"
+        if self.use_gpu and not torch.cuda.is_available():
+            return warnings.warn(
+                "The user requested GPU use, but not available GPU was found. Reverting back to CPU use."
+            )
+        if self.use_gpu and torch.cuda.is_available():
+            map_location = "cuda"
+
         return {
             # the model is specialized for extracting PII data
             "gliner_model": "urchade/gliner_multi_pii-v1",
@@ -57,6 +69,7 @@ class EntityExtractor(ExtractorInterface):
             "threshold": self.score_th,
             "chunk_size": 384,
             "style": "ent",
+            "map_location": map_location,
         }
 
     def _prepare_pipeline(self):

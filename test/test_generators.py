@@ -42,6 +42,7 @@ test_entities = {
         label="name",
         start_index=30,
         end_index=38,
+        score=1.0,
         type="string",
         regex=".*",
     ),
@@ -50,6 +51,7 @@ test_entities = {
         label="date",
         start_index=86,
         end_index=96,
+        score=1.0,
         type="date",
         regex="(\\d{1,2}[\\/\\-\\.]\\d{1,2}[\\/\\-\\.]\\d{2,4})|(\\d{2,4}[\\/\\-\\.]\\d{1,2}[\\/\\-\\.]\\d{1,2})",
     ),
@@ -58,6 +60,7 @@ test_entities = {
         label="integer",
         start_index=121,
         end_index=132,
+        score=1.0,
         type="integer",
         regex="\d+",
     ),
@@ -66,6 +69,7 @@ test_entities = {
         label="float",
         start_index=121,
         end_index=132,
+        score=1.0,
         type="float",
         regex="[\d\.,]+",
     ),
@@ -74,6 +78,7 @@ test_entities = {
         label="custom",
         start_index=121,
         end_index=132,
+        score=1.0,
         type="custom",
         regex="\\d{3}-\\d{2}-\\d{4}",
     ),
@@ -85,8 +90,7 @@ test_entities = {
 # =====================================
 
 if torch.cuda.is_available():
-    # ! THESE TESTS REQUIRE GPU/CUDA !
-    # ! THIS WILL FAIL IF YOU DON'T HAVE GPU/CUDA !
+    # ! THESE TESTS REQUIRE GPU/CUDA! THIS WILL FAIL IF YOU DON'T HAVE GPU/CUDA!
 
     class TestLLMLabelGenerator(unittest.TestCase):
 

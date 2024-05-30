@@ -1,14 +1,14 @@
 # NLP and LLMs
 spacy
-gliner
-gliner-spacy
+gliner==0.2.2
+gliner-spacy>=0.0.7
 transformers
 bitsandbytes
 lingua-language-detector
 guidance==0.1.14
 sentencepiece
 # File readers
-pypdf
-python-docx
+pypdf>=4.2.0
+python-docx>=1.1.2
 # Monitoring
 tqdm
