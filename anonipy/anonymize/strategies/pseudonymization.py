@@ -21,14 +21,14 @@ class PseudonymizationStrategy(StrategyInterface):
     def anonymize(self, text: str, entities: List[Entity], *args, **kwargs):
         replacements = []
         for ent in entities[::-1]:
-            r = self._create_replacement(text, ent, replacements)
+            r = self._create_replacement(ent, text, replacements)
             text = (
                 text[: r["start_index"]] + r["anonymized_text"] + text[r["end_index"] :]
             )
             replacements.append(r)
         return text, replacements[::-1]
 
-    def _create_replacement(self, text: str, entity: Entity, replacements: List[dict]):
+    def _create_replacement(self, entity: Entity, text: str, replacements: List[dict]):
         # check if the replacement already exists
         anonymized_text = self._check_replacement(entity, replacements)
         # create a new replacement if it doesn't exist
