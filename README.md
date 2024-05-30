@@ -41,6 +41,12 @@ Before starting the project make sure these requirements are available:
 pip install anonipy
 ```
 
+## ⬆️ Upgrade
+
+```bash
+pip install anonipy --upgrade
+```
+
 ## 🔎 Example
 
 The details of the example can be found in the [Overview](https://eriknovak.github.io/anonipy/documentation/notebooks/00-overview.ipynb).

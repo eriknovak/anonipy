@@ -35,6 +35,12 @@ pip install anonipy
 
 This will install the `anonipy` package, which contains all of the required modules.
 
+If you already installed it and would like to update it, run the following command:
+
+```bash
+pip install anonipy --upgrade
+```
+
 ## Document anonymization
 
 ### Extracting the text from the document

@@ -39,6 +39,12 @@ The anonipy package is a python package for data anonymization. It is designed t
 pip install anonipy
 ```
 
+## Upgrade
+
+```bash
+pip install anonipy --upgrade
+```
+
 ## Example of usage
 
 The details of the example can be found in the [Overview](documentation/notebooks/00-overview.ipynb).

@@ -34,6 +34,12 @@ pip install anonipy
 
 This will install the `anonipy` package, which contains all of the required modules.
 
+If you already installed it and would like to update it, run the following command:
+
+```bash
+pip install anonipy --upgrade
+```
+
 ## Preparing the components
 
 First, let us prepare all of the components for the anonymization process. It
