@@ -6,7 +6,6 @@ import warnings
 import torch
 from spacy import displacy
 from spacy.tokens import Doc
-from gliner_spacy.pipeline import GlinerSpacy
 
 from ..helpers import convert_spacy_to_entity
 from ..regex import regex_map
