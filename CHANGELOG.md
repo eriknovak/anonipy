@@ -1,3 +1,13 @@
+anonipy-0.0.6 (2024-05-31)
+
+- Add GPU support and entity scores to EntityExtractor
+- Standardize the function naming in strategies
+
+anonipy-0.0.5 (2024-05-29)
+
+- Re-implement file reading methods + add unit tests
+- Expland the test environment on all OS
+
 anonipy-0.0.4 (2024-05-27)
 
 - Add unit tests
