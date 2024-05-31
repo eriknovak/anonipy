@@ -15,8 +15,9 @@ from `the anonipy homepage <https://eriknovak.github.io/anonipy>`.
 
 """
 
+__version__ = "0.0.6"
+
 from . import anonymize
 from . import utils
 from . import definitions
 from . import constants
-from .version import __version__

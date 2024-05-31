@@ -3,13 +3,12 @@ requires = ['setuptools>=42']
 build-backend = 'setuptools.build_meta'
 
 [project]
-version = "0.0.5"
 name = "anonipy"
 description = "The data anonymization package"
 authors=[{ name = "Erik Novak", email = "erik.novak@ijs.si" }]
 readme = "README.md"
 license = { file = "LICENSE" }
-dynamic = ["dependencies"]
+dynamic = ["dependencies", "version"]
 keywords = ["python", "machine learning", "natural language processing", "anonymization"]
 classifiers = [
     "Intended Audience :: Science/Research",
@@ -48,3 +47,4 @@ include = ["anonipy*"]
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
+version = { attr = "anonipy.__version__" }
