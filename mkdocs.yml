@@ -40,6 +40,7 @@ theme:
         icon: material/weather-night
         name: Switch to light mode
   logo: assets/imgs/logo.png
+  favicon: assets/imgs/favicon.png
 
 edit_uri: ""
 
