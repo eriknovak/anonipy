@@ -49,7 +49,6 @@ pip install -e .[all]
 githooks
 ```
 
-
 ## 🧪 Tests
 
 To run existing tests, simply run:
@@ -73,68 +72,6 @@ When suggesting changes, please refer to the [Material for MkDocs] documentation
 Once the changes are accepted into the project, the GitHub Actions automatically
 deploy the documentation to the `gh-pages` branch.
 
-## Update version
-
-The version needs to be updated in the following files:
-
-- `pyproject.toml`
-- `anonipy/version.py`
-
-The versions need to reflect the release version on GitHub.
-
-
-## 📦️ Build package
-
-To build the package, run:
-
-```bash
-# upgrade the build package
-python -m pip install --upgrade build
-
-# build the datachart package
-python -m build
-```
-
-## 🚀 Deploy package
-
-### Test PyPI
-
-To deploy the package, run:
-
-```bash
-# upgrade the twine package
-python -m pip install --upgrade twine
-
-# deploy the datachart package to testpypi
-python -m twine upload --repository testpypi dist/*
-```
-
-Next, to test the package published on testpypi, run:
-
-```bash
-# install a virtual environment
-python -m venv venv
-
-# activate the environment
-. ./venv/bin/activate
-
-# install the datachart package
-pip install \
-    --index-url https://test.pypi.org/simple/ \
-    --extra-index-url https://pypi.org/simple/ \
-    datachart
-```
-This way you can test the package without publishing it.
-
-### Production PyPI
-
-```bash
-# upgrade the twine package
-python -m pip install --upgrade twine
-
-# deploy the datachart package to pypi
-python -m twine upload dist/*
-```
 
 [python]: https://www.python.org/
 [git]: https://git-scm.com/
