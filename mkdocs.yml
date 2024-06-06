@@ -18,6 +18,7 @@ theme:
     - navigation.indexes
     - navigation.tabs
     - navigation.top
+    - navigation.footer
     - search.highlight
     - search.share
     - search.suggest
