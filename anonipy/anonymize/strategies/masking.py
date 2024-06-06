@@ -3,11 +3,11 @@ Contains the masking strategy
 """
 
 import re
-from typing import List
+from typing import List, Tuple
 
 from .interface import StrategyInterface
-from ...definitions import Entity
-
+from ...definitions import Entity, Replacement
+from ..helpers import anonymize
 
 # =====================================
 # Main class
@@ -19,17 +19,14 @@ class MaskingStrategy(StrategyInterface):
     def __init__(self, substitute_label: str = "*", *args, **kwargs):
         self.substitute_label = substitute_label
 
-    def anonymize(self, text: str, entities: List[Entity], *args, **kwargs):
-        replacements = []
-        for ent in entities[::-1]:
-            r = self._create_replacement(ent)
-            text = (
-                text[: r["start_index"]] + r["anonymized_text"] + text[r["end_index"] :]
-            )
-            replacements.append(r)
-        return text, replacements[::-1]
+    def anonymize(
+        self, text: str, entities: List[Entity], *args, **kwargs
+    ) -> Tuple[str, List[Replacement]]:
+        replacements = [self._create_replacement(ent) for ent in entities]
+        anonymized_text, replacements = anonymize(text, replacements)
+        return anonymized_text, replacements
 
-    def _create_replacement(self, entity: Entity):
+    def _create_replacement(self, entity: Entity) -> Replacement:
         mask = self._create_mask(entity)
         return {
             "original_text": entity.text,
@@ -39,7 +36,7 @@ class MaskingStrategy(StrategyInterface):
             "anonymized_text": mask,
         }
 
-    def _create_mask(self, entity: Entity):
+    def _create_mask(self, entity: Entity) -> str:
         return " ".join(
             [
                 self.substitute_label * len(chunk)
