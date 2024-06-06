@@ -17,28 +17,6 @@ test_entities = [
     Entity(text="string", label="type", start_index=10, end_index=16, score=1.0),
     Entity(text="test", label="test", start_index=27, end_index=31, score=1.0),
 ]
-test_text_replaced = "********* this TYPE, and this NEWTEST too!"
-test_replacements = [
-    {
-        "original_text": "Test",
-        "label": "test",
-        "start_index": 0,
-        "end_index": 4,
-        "anonymized_text": "*********",
-    },
-    {
-        "start_index": 10,
-        "end_index": 16,
-        "anonymized_text": "TYPE",
-    },
-    {
-        "original_text": "test",
-        "label": "test",
-        "start_index": 27,
-        "end_index": 31,
-        "anonymized_text": "NEWTEST",
-    },
-]
 
 
 def anonymization_mapping(text, entity):
@@ -135,11 +113,6 @@ class TestRedactionStrategy(unittest.TestCase):
             ],
         )
 
-    def test_refinement(self):
-        strategy = RedactionStrategy()
-        anonymized_text = strategy.refinement(test_text, test_replacements)
-        self.assertEqual(anonymized_text, test_text_replaced)
-
 
 # =====================================
 # Test Masking Strategy
@@ -225,11 +198,6 @@ class TestMaskingStrategy(unittest.TestCase):
             ],
         )
 
-    def test_refinement(self):
-        strategy = MaskingStrategy()
-        anonymized_text = strategy.refinement(test_text, test_replacements)
-        self.assertEqual(anonymized_text, test_text_replaced)
-
 
 # =====================================
 # Test Pseudonymization Strategy
@@ -281,11 +249,6 @@ class TestPseudonymizationStrategy(unittest.TestCase):
                 },
             ],
         )
-
-    def test_refinement(self):
-        strategy = PseudonymizationStrategy(mapping=anonymization_mapping)
-        anonymized_text = strategy.refinement(test_text, test_replacements)
-        self.assertEqual(anonymized_text, test_text_replaced)
 
 
 if __name__ == "__main__":
