@@ -6,7 +6,7 @@ from typing import List, Tuple
 
 from .interface import StrategyInterface
 from ...definitions import Entity, Replacement
-
+from ..helpers import anonymize
 
 # =====================================
 # Main class
@@ -21,16 +21,12 @@ class PseudonymizationStrategy(StrategyInterface):
     def anonymize(
         self, text: str, entities: List[Entity], *args, **kwargs
     ) -> Tuple[str, List[Replacement]]:
-        s_entities = sorted(entities, key=lambda x: x.start_index, reverse=True)
-
         replacements = []
-        for ent in s_entities:
-            r = self._create_replacement(ent, text, replacements)
-            text = (
-                text[: r["start_index"]] + r["anonymized_text"] + text[r["end_index"] :]
-            )
-            replacements.append(r)
-        return text, replacements[::-1]
+        for ent in entities:
+            replacement = self._create_replacement(ent, text, replacements)
+            replacements.append(replacement)
+        anonymized_text, replacements = anonymize(text, replacements)
+        return anonymized_text, replacements
 
     def _create_replacement(
         self, entity: Entity, text: str, replacements: List[dict]
