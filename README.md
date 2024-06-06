@@ -143,5 +143,15 @@ pseudo_strategy = PseudonymizationStrategy(mapping=anonymization_mapping)
 anonymized_text, replacements = pseudo_strategy.anonymize(original_text, entities)
 ```
 
+## 📖 Acknowledgements
+
+[Anonipy](https://eriknovak.github.io/anonipy/) is developed by the
+[Department for Artificial Intelligence](http://ailab.ijs.si/) at the
+[Jozef Stefan Institute](http://www.ijs.si/), and other contributors.
+
+The project has received funding from the European Union's Horizon Europe research
+and innovation programme under Grant Agreement No 101080288 ([PREPARE](https://prepare-rehab.eu/)).
+
+![European Union flag](https://github.com/eriknovak/anonipy/tree/main/docs/assets/imgs/EU.png)
 
 [python]: https://www.python.org/
