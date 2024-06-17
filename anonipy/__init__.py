@@ -15,7 +15,7 @@ from `the anonipy homepage <https://eriknovak.github.io/anonipy>`.
 
 """
 
-__version__ = "0.0.7"
+__version__ = "0.0.8"
 
 from . import anonymize
 from . import utils

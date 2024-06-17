@@ -1,3 +1,12 @@
+anonipy-0.0.8 (2024-06-17)
+
+- Add automatic date format detection support to DateGenerator
+
+anonipy-0.0.7 (2024-06-06)
+
+- Upgrade gliner-spacy to have cleaner code
+- Add function to help manual post-anonymization replacement fixing
+
 anonipy-0.0.6 (2024-05-31)
 
 - Add GPU support and entity scores to EntityExtractor
