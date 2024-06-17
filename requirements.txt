@@ -6,6 +6,7 @@ transformers
 bitsandbytes
 lingua-language-detector
 guidance==0.1.14
+python-dateutil>=2.9.0
 sentencepiece
 # File readers
 pypdf>=4.2.0

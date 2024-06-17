@@ -1,11 +1,13 @@
 import random
 import warnings
 import datetime
+
+from ...utils.datetime import detect_datetime_format
 from .interface import GeneratorInterface
 from ...definitions import Entity
 
 # =====================================
-# Helper functions
+# Operation functions
 # =====================================
 
 
@@ -47,9 +49,7 @@ operations = {
 
 class DateGenerator(GeneratorInterface):
 
-    def __init__(
-        self, date_format: str = "%d-%m-%Y", day_sigma: int = 30, *args, **kwargs
-    ):
+    def __init__(self, date_format="auto", day_sigma: int = 30, *args, **kwargs):
         self.date_format = date_format
         self.day_sigma = day_sigma
 
@@ -66,6 +66,14 @@ class DateGenerator(GeneratorInterface):
                 f"The output_gen must be one of {', '.join(list(operations.keys()))} to generate dates."
             )
 
-        entity_date = datetime.datetime.strptime(entity.text, self.date_format)
+        if self.date_format == "auto":
+            entity_date, date_format = detect_datetime_format(entity.text)
+        else:
+            entity_date = datetime.datetime.strptime(entity.text, self.date_format)
+            date_format = self.date_format
+        if entity_date is None:
+            raise ValueError(f"Entity `{entity.text}` is not a valid date.")
+        if date_format is None or date_format == ValueError("Unknown Format"):
+            raise ValueError(f"Entity `{entity.text}` is not a valid date.")
         generate_date = operations[output_gen](entity_date, self.day_sigma)
-        return generate_date.strftime(self.date_format)
+        return generate_date.strftime(date_format)

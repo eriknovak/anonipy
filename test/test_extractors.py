@@ -5,7 +5,9 @@ import torch
 
 from anonipy.definitions import Entity
 from anonipy.anonymize.extractors import EntityExtractor
+from anonipy.anonymize.regex import regex_map
 from anonipy.constants import LANGUAGES
+
 
 # =====================================
 # Helper functions
@@ -37,7 +39,7 @@ original_entities = [
         start_index=30,
         end_index=38,
         type="string",
-        regex=".*",
+        regex=regex_map("string"),
     ),
     Entity(
         text="15-01-1985",
@@ -45,7 +47,7 @@ original_entities = [
         start_index=54,
         end_index=64,
         type="date",
-        regex="(\\d{1,2}[\\/\\-\\.]\\d{1,2}[\\/\\-\\.]\\d{2,4})|(\\d{2,4}[\\/\\-\\.]\\d{1,2}[\\/\\-\\.]\\d{1,2})",
+        regex=regex_map("date"),
     ),
     Entity(
         text="20-05-2024",
@@ -53,7 +55,7 @@ original_entities = [
         start_index=86,
         end_index=96,
         type="date",
-        regex="(\\d{1,2}[\\/\\-\\.]\\d{1,2}[\\/\\-\\.]\\d{2,4})|(\\d{2,4}[\\/\\-\\.]\\d{1,2}[\\/\\-\\.]\\d{1,2})",
+        regex=regex_map("date"),
     ),
     Entity(
         text="123-45-6789",
@@ -69,7 +71,7 @@ original_entities = [
         start_index=157,
         end_index=165,
         type="string",
-        regex=".*",
+        regex=regex_map("string"),
     ),
     Entity(
         text="15-11-2024",
@@ -77,7 +79,7 @@ original_entities = [
         start_index=717,
         end_index=727,
         type="date",
-        regex="(\\d{1,2}[\\/\\-\\.]\\d{1,2}[\\/\\-\\.]\\d{2,4})|(\\d{2,4}[\\/\\-\\.]\\d{1,2}[\\/\\-\\.]\\d{1,2})",
+        regex=regex_map("date"),
     ),
 ]
 
