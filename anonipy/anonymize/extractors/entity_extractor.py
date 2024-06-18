@@ -107,7 +107,20 @@ class EntityExtractor(ExtractorInterface):
     # Private methods
     # ===========================================
 
-    def _prepare_labels(self, labels):
+    def _prepare_labels(self, labels: List[dict]) -> List[dict]:
+        """Prepare the labels for the extractor
+
+        Parameters
+        ----------
+        labels : List[dict]
+            The list of labels to prepare
+
+        Returns
+        -------
+        List[dict]
+            The prepared labels
+
+        """
         for l in labels:
             if "regex" in l:
                 continue
@@ -117,6 +130,15 @@ class EntityExtractor(ExtractorInterface):
         return labels
 
     def _create_gliner_config(self):
+        """Create the config for the GLINER model
+
+        Returns
+        -------
+        dict
+            The config for the GLINER model
+
+        """
+
         map_location = "cpu"
         if self.use_gpu and not torch.cuda.is_available():
             return warnings.warn(
@@ -136,6 +158,15 @@ class EntityExtractor(ExtractorInterface):
         }
 
     def _prepare_pipeline(self):
+        """Prepare the spacy pipeline
+
+        Returns
+        -------
+        spacy pipeline
+            The spacy pipeline
+
+        """
+
         # load the appropriate parser for the language
         module_lang, class_lang = self.lang[0].lower(), self.lang[1].lower().title()
         language_module = importlib.import_module(f"spacy.lang.{module_lang}")
@@ -147,8 +178,21 @@ class EntityExtractor(ExtractorInterface):
         nlp.add_pipe("gliner_spacy", config=gliner_config)
         return nlp
 
-    def _prepare_entities(self, doc):
-        # prepares the anonymized and spacy entities
+    def _prepare_entities(self, doc: Doc):
+        """Prepares the anonipy and spacy entities
+
+        Parameters
+        ----------
+        doc : Doc
+            The spacy doc to prepare
+
+        Returns
+        -------
+        Tuple[List[Entity], List[Entity]]
+            The anonipy entities and the spacy entities
+
+
+        """
 
         # TODO: make this part more generic
         anoni_entities = []

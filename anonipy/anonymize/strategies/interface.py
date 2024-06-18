@@ -1,7 +1,3 @@
-"""
-Contains the interface for the strategy
-"""
-
 from typing import List
 from ...definitions import Entity
 

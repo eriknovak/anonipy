@@ -1,7 +1,3 @@
-"""
-Contains the masking strategy
-"""
-
 import re
 from typing import List, Tuple
 
@@ -65,6 +61,19 @@ class MaskingStrategy(StrategyInterface):
         return anonymized_text, replacements
 
     def _create_replacement(self, entity: Entity) -> Replacement:
+        """Creates a replacement for the entity
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to create the replacement for
+
+        Returns
+        -------
+        Replacement
+            The created replacement
+
+        """
         mask = self._create_mask(entity)
         return {
             "original_text": entity.text,
@@ -75,6 +84,19 @@ class MaskingStrategy(StrategyInterface):
         }
 
     def _create_mask(self, entity: Entity) -> str:
+        """Creates a mask for the entity
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to create the mask for
+
+        Returns
+        -------
+        str
+            The created mask
+
+        """
         return " ".join(
             [
                 self.substitute_label * len(chunk)

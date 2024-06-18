@@ -185,6 +185,19 @@ class LLMLabelGenerator(GeneratorInterface):
     # =================================
 
     def _prepare_model_and_tokenizer(self, model_name: str):
+        """Prepares the model and tokenizer
+
+        Parameters
+        ----------
+        model_name : str
+            The name of the model to use
+
+        Returns
+        -------
+        model, tokenizer
+            The model and the tokenizer
+
+        """
         # prepare the model
         bnb_config = BitsAndBytesConfig(
             load_in_4bit=True,
@@ -204,10 +217,37 @@ class LLMLabelGenerator(GeneratorInterface):
         return model, tokenizer
 
     def _system_prompt(self):
+        """Returns the system prompt"""
         return "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a helpful AI assistant for generating replacements for text entities.<|eot_id|>"
 
     def _user_prompt(self, prompt):
+        """Returns the user prompt
+
+        Parameters
+        ----------
+        prompt : str
+            The prompt to use
+
+        Returns
+        -------
+        str
+            The user prompt
+
+        """
         return f"<|start_header_id|>user<|end_header_id|>\n\n{prompt}<|eot_id|>"
 
     def _assistant_prompt(self, prompt):
+        """Returns the assistant prompt
+
+        Parameters
+        ----------
+        prompt : str
+            The prompt to use
+
+        Returns
+        -------
+        str
+            The assistant prompt
+
+        """
         return f"<|start_header_id|>assistant<|end_header_id|>\n\n{prompt}"

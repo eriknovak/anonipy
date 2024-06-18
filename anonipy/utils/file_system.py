@@ -103,10 +103,38 @@ def extract_text_from_pdf(pdf_path: str) -> str:
 
 
 def _word_process_paragraph(p) -> str:
+    """Get the text from a paragraph
+
+    Parameters
+    ----------
+    p : etree._Element
+        The paragraph element
+
+    Returns
+    -------
+    str
+        The text from the paragraph
+
+    """
+
     return p.text
 
 
 def _word_process_table(t) -> str:
+    """Get the text from a table
+
+    Parameters
+    ----------
+    t : etree._Element
+        The table element
+
+    Returns
+    -------
+    str
+        The text from the table
+
+    """
+
     table_text = []
     for row in t.findall(".//w:tr", WORD_NAMESPACES):
         row_text = []

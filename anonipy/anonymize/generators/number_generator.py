@@ -29,8 +29,7 @@ class NumberGenerator(GeneratorInterface):
         pass
 
     def generate(self, entity: Entity, *args, **kwargs):
-        """
-        Generates a number replacement
+        """Generates a number replacement
 
         Parameters
         ----------

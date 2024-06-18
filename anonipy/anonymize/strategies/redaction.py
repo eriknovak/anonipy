@@ -1,7 +1,3 @@
-"""
-Contains the redaction strategy
-"""
-
 from typing import List, Tuple
 
 from .interface import StrategyInterface
@@ -64,6 +60,20 @@ class RedactionStrategy(StrategyInterface):
         return anonymized_text, replacements
 
     def _create_replacement(self, entity: Entity) -> Replacement:
+        """Creates a replacement for the entity
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to create the replacement for
+
+        Returns
+        -------
+        Replacement
+            The replacement for the entity
+
+        """
+
         return {
             "original_text": entity.text,
             "label": entity.label,

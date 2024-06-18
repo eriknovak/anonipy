@@ -59,6 +59,13 @@ class RegexMap:
     """
 
     def __init__(self):
+        """
+        Parameters
+        ----------
+        None
+
+        """
+
         self.regex_mapping = defaultdict(lambda: ".*")
         # Define the regex mappings
         self.regex_mapping[ENTITY_TYPES.STRING] = REGEX_STRING
@@ -70,6 +77,20 @@ class RegexMap:
         self.regex_mapping[ENTITY_TYPES.WEBSITE_URL] = REGEX_WEBSITE_URL
 
     def __call__(self, type: str) -> str:
+        """Gets the regex for the given type
+
+        Parameters
+        ----------
+        type : str
+            The type of the entity
+
+        Returns
+        -------
+        str
+            The regex for the given type
+
+        """
+
         return self.regex_mapping[type]
 
 

@@ -1,7 +1,3 @@
-"""
-Contains the pseudonymization strategy
-"""
-
 from typing import List, Tuple
 
 from .interface import StrategyInterface
@@ -69,6 +65,23 @@ class PseudonymizationStrategy(StrategyInterface):
     def _create_replacement(
         self, entity: Entity, text: str, replacements: List[dict]
     ) -> Replacement:
+        """Creates a replacement for the entity
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to create the replacement for
+        text : str
+            The text to anonymize
+        replacements : List[dict]
+            The list of replacements
+
+        Returns
+        -------
+        Replacement
+            The created replacement
+
+        """
         # check if the replacement already exists
         anonymized_text = self._check_replacement(entity, replacements)
         # create a new replacement if it doesn't exist
@@ -84,6 +97,21 @@ class PseudonymizationStrategy(StrategyInterface):
         }
 
     def _check_replacement(self, entity: Entity, replacements: List[dict]) -> str:
+        """Checks if a suitable replacement already exists
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to check
+        replacements : List[dict]
+            The list of replacements
+
+        Returns
+        -------
+        str
+            The anonymized text if the replacement already exists, None otherwise
+
+        """
         existing_replacement = list(
             filter(lambda x: x["original_text"] == entity.text, replacements)
         )

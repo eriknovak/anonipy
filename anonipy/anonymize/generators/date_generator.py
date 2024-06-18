@@ -119,8 +119,7 @@ operations = {
 
 
 class DateGenerator(GeneratorInterface):
-    """
-    The class representing the date generator
+    """The class representing the date generator
 
     Attributes
     ----------
@@ -152,8 +151,7 @@ class DateGenerator(GeneratorInterface):
         self.day_sigma = day_sigma
 
     def generate(self, entity: Entity, output_gen: str = "random", *args, **kwargs):
-        """
-        Generate the date based on the entity and output_gen
+        """Generate the date based on the entity and output_gen
 
         Parameters
         ----------
