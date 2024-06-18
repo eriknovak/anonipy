@@ -75,8 +75,32 @@ def prepare_llama3_byte_decoder():
 
 
 class LLMLabelGenerator(GeneratorInterface):
+    """The class representing the LLM label generator
+
+    Attributes
+    ----------
+    model : models.Transformers
+        The model used to generate the label
+
+    Methods
+    -------
+    generate(entity: Entity, entity_prefix: str = "", temperature: float = 0.0)
+        Generate the label based on the entity
+
+    validate(entity: Entity)
+        Validate the entity
+
+    """
 
     def __init__(self, *args, **kwargs):
+        """
+        Parameters
+        ----------
+        None
+
+        """
+
+        super().__init__(*args, **kwargs)
         # TODO: make this configurable
         model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
 
@@ -96,6 +120,24 @@ class LLMLabelGenerator(GeneratorInterface):
         *args,
         **kwargs,
     ):
+        """Generate the label based on the entity
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to generate the label from
+        entity_prefix : str
+            The prefix to use for the entity
+        temperature : float
+            The temperature to use for the generation. Default: 0.0
+
+        Returns
+        -------
+        str
+            The generated label
+
+        """
+
         user_prompt = f"What is a random {entity_prefix} {entity.label} replacement for {entity.text}? Respond only with the replacement."
         assistant_prompt = gen(
             name="replacement",
@@ -113,7 +155,20 @@ class LLMLabelGenerator(GeneratorInterface):
         return lm["replacement"]
 
     def validate(self, entity: Entity):
-        regex = regex if regex else ".*"
+        """Validate the entity
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to validate
+
+        Returns
+        -------
+        bool
+            The validation result
+
+        """
+
         user_prompt = f"Is {entity.text} a {entity.label}?"
         assistant_prompt = select(["True", "False"], name="validation")
         # validate the entity with the validation prompt
@@ -130,6 +185,19 @@ class LLMLabelGenerator(GeneratorInterface):
     # =================================
 
     def _prepare_model_and_tokenizer(self, model_name: str):
+        """Prepares the model and tokenizer
+
+        Parameters
+        ----------
+        model_name : str
+            The name of the model to use
+
+        Returns
+        -------
+        model, tokenizer
+            The model and the tokenizer
+
+        """
         # prepare the model
         bnb_config = BitsAndBytesConfig(
             load_in_4bit=True,
@@ -149,10 +217,37 @@ class LLMLabelGenerator(GeneratorInterface):
         return model, tokenizer
 
     def _system_prompt(self):
+        """Returns the system prompt"""
         return "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a helpful AI assistant for generating replacements for text entities.<|eot_id|>"
 
     def _user_prompt(self, prompt):
+        """Returns the user prompt
+
+        Parameters
+        ----------
+        prompt : str
+            The prompt to use
+
+        Returns
+        -------
+        str
+            The user prompt
+
+        """
         return f"<|start_header_id|>user<|end_header_id|>\n\n{prompt}<|eot_id|>"
 
     def _assistant_prompt(self, prompt):
+        """Returns the assistant prompt
+
+        Parameters
+        ----------
+        prompt : str
+            The prompt to use
+
+        Returns
+        -------
+        str
+            The assistant prompt
+
+        """
         return f"<|start_header_id|>assistant<|end_header_id|>\n\n{prompt}"

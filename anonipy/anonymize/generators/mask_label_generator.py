@@ -2,6 +2,7 @@ import re
 import random
 import warnings
 import itertools
+from typing import List
 
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer, pipeline
@@ -18,6 +19,23 @@ STOPWORDS = [".", ",", ":", ";", "-", "<s>", "</s>"]
 
 
 class MaskLabelGenerator(GeneratorInterface):
+    """The class representing the mask label generator
+
+    Attributes
+    ----------
+    context_window : int
+        The context window size
+    pipeline : transformers pipeline
+        The transformers pipeline
+    mask_token : str
+        The mask token
+
+    Methods
+    -------
+    generate(self, entity: Entity, text: str)
+        Anonymize the text based on the entities
+
+    """
 
     def __init__(
         self,
@@ -27,6 +45,18 @@ class MaskLabelGenerator(GeneratorInterface):
         *args,
         **kwargs,
     ):
+        """
+        Parameters
+        ----------
+        model_name : str, optional
+            The name of the model to use. Default: "FacebookAI/xlm-roberta-large"
+        use_gpu : bool, optional
+            Whether to use GPU/CUDA. Default: False
+        context_window : int, optional
+            The context window size. Default: 100
+
+        """
+        super().__init__(*args, **kwargs)
         self.context_window = context_window
         if use_gpu and not torch.cuda.is_available():
             warnings.warn(
@@ -42,6 +72,22 @@ class MaskLabelGenerator(GeneratorInterface):
         )
 
     def generate(self, entity: Entity, text: str, *args, **kwargs):
+        """Generate the substituted text based on the entity
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to generate the label from
+        text : str
+            The text to generate the label from
+
+        Returns
+        -------
+        str
+            The generated text
+
+        """
+
         masks = self._create_masks(entity)
         input_texts = self._prepare_generate_inputs(masks, text)
         suggestions = self.pipeline(input_texts)
@@ -52,6 +98,21 @@ class MaskLabelGenerator(GeneratorInterface):
     # =================================
 
     def _prepare_model_and_tokenizer(self, model_name: str, use_gpu: bool):
+        """Prepares the model and tokenizer
+
+        Parameters
+        ----------
+        model_name : str
+            The name of the model to use
+        use_gpu : bool
+            Whether to use GPU/CUDA
+
+        Returns
+        -------
+        model, tokenizer
+            The model and the tokenizer
+
+        """
         # prepare the model
         device = torch.device(
             "cuda" if use_gpu and torch.cuda.is_available() else "cpu"
@@ -62,6 +123,19 @@ class MaskLabelGenerator(GeneratorInterface):
         return model, tokenizer
 
     def _create_masks(self, entity: Entity):
+        """Creates the masks for the entity
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to create the masks for
+
+        Returns
+        -------
+        list
+            The list of masks
+
+        """
         masks = []
         chunks = re.split(r"\s+", entity.text)
         for idx in range(len(chunks)):
@@ -77,12 +151,44 @@ class MaskLabelGenerator(GeneratorInterface):
             )
         return masks
 
-    def _get_context_text(self, text, start_index, end_index):
+    def _get_context_text(self, text: str, start_index: int, end_index: int) -> str:
+        """Get the context text
+
+        Parameters
+        ----------
+        text : str
+            The text to get the context text from
+        start_index : int
+            The start index
+        end_index : int
+            The end index
+
+        Returns
+        -------
+        str
+            The context text
+
+        """
         min_index = max(0, start_index - self.context_window)
         max_index = min(end_index + self.context_window, len(text))
         return text[min_index:max_index]
 
-    def _prepare_generate_inputs(self, masks, text):
+    def _prepare_generate_inputs(self, masks: List[dict], text: str) -> List[str]:
+        """Prepares the generate inputs
+
+        Parameters
+        ----------
+        masks : List[dict]
+            The list of masks
+        text : str
+            The text to prepare the generate inputs for
+
+        Returns
+        -------
+        list
+            The list of generate inputs
+
+        """
         return [
             self._get_context_text(
                 text[: m["start_index"]] + m["mask_text"] + text[m["end_index"] :],
@@ -92,7 +198,26 @@ class MaskLabelGenerator(GeneratorInterface):
             for m in masks
         ]
 
-    def _create_substitute(self, entity: Entity, masks, suggestions):
+    def _create_substitute(
+        self, entity: Entity, masks: List[dict], suggestions: List[dict]
+    ) -> str:
+        """Create a substitute for the entity
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to create the substitute for
+        masks : List[dict]
+            The list of masks
+        suggestions : List[dict]
+            The list of suggestions
+
+        Returns
+        -------
+        str
+            The created substitute
+
+        """
         substitute_chunks = []
         for mask, suggestion in zip(masks, suggestions):
             suggestion = suggestion if type(suggestion) == list else [suggestion]

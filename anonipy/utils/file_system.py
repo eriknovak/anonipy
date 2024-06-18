@@ -20,6 +20,19 @@ WORD_NAMESPACES = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006
 
 
 def remove_extra_spaces(text: str) -> str:
+    """Remove extra spaces from text
+
+    Parameters
+    ----------
+    text : str
+        The text to remove extra spaces from
+
+    Returns
+    -------
+    str
+        The text with extra spaces removed
+
+    """
     text = text.strip()
     # remove extra spaces
     text = re.sub(" +", " ", text)
@@ -28,6 +41,20 @@ def remove_extra_spaces(text: str) -> str:
 
 
 def remove_page_numbers(text: str) -> str:
+    """Removes page numbers from text
+
+    Parameters
+    ----------
+    text : str
+        The text to remove page numbers from
+
+    Returns
+    -------
+    str
+        The text with page numbers removed
+
+    """
+
     page_number_pattern = re.compile(r"^\s*\d+\s*$|\s*\d+\s*$")
     filtered_lines = [
         line.strip()
@@ -43,6 +70,20 @@ def remove_page_numbers(text: str) -> str:
 
 
 def extract_text_from_pdf(pdf_path: str) -> str:
+    """Extracts text from a PDF file
+
+    Parameters
+    ----------
+    pdf_path : str
+        The path to the PDF file
+
+    Returns
+    -------
+    str
+        The text from the PDF file
+
+    """
+
     pdf_reader = PdfReader(pdf_path)
 
     pages_text = []
@@ -62,10 +103,38 @@ def extract_text_from_pdf(pdf_path: str) -> str:
 
 
 def _word_process_paragraph(p) -> str:
+    """Get the text from a paragraph
+
+    Parameters
+    ----------
+    p : etree._Element
+        The paragraph element
+
+    Returns
+    -------
+    str
+        The text from the paragraph
+
+    """
+
     return p.text
 
 
 def _word_process_table(t) -> str:
+    """Get the text from a table
+
+    Parameters
+    ----------
+    t : etree._Element
+        The table element
+
+    Returns
+    -------
+    str
+        The text from the table
+
+    """
+
     table_text = []
     for row in t.findall(".//w:tr", WORD_NAMESPACES):
         row_text = []
@@ -79,6 +148,20 @@ def _word_process_table(t) -> str:
 
 
 def extract_text_from_word(doc_path: str) -> str:
+    """Extracts text from a Word file
+
+    Parameters
+    ----------
+    doc_path : str
+        The path to the Word file
+
+    Returns
+    -------
+    str
+        The text from the Word file
+
+    """
+
     doc = Document(doc_path)
     content = []
     for element in doc.element.body:
@@ -100,6 +183,24 @@ def extract_text_from_word(doc_path: str) -> str:
 
 
 def open_file(file_path: str) -> str:
+    """
+    Opens a file and returns its content as a string
+
+    Parameters
+    ----------
+    file_path : str
+        The path to the file
+
+    Returns
+    -------
+    str
+        The content of the file as a string
+
+    """
+
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f"The file does not exist: {file_path}")
+
     _, file_extension = os.path.splitext(file_path)
     if file_extension.lower() == ".pdf":
         return extract_text_from_pdf(file_path)
@@ -113,11 +214,60 @@ def open_file(file_path: str) -> str:
 
 
 def open_json(file_path: str) -> dict:
+    """
+    Opens a JSON file and returns its content as a dictionary
+
+    Parameters
+    ----------
+    file_path : str
+        The path to the JSON file
+
+    Returns
+    -------
+    dict
+        The content of the JSON file as a dictionary
+
+    """
+
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f"The file does not exist: {file_path}")
+
     with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
 def write_file(text: str, file_path: str, encode: Union[str, bool] = True) -> None:
+    """Writes text to a file
+
+    Parameters
+    ----------
+    text : str
+        The text to write to the file
+    file_path : str
+        The path to the file
+    encode : Union[str, bool], optional
+        The encoding to use. Default: True
+
+    Raises
+    ------
+    TypeError
+        If text, file_path is not a string; encode is not a string or a boolean
+    FileNotFoundError
+        If the directory does not exist
+
+    """
+
+    if not isinstance(text, str):
+        raise TypeError("text must be a string")
+
+    if not isinstance(file_path, str):
+        raise TypeError("file_path must be a string")
+
+    if not os.path.exists(os.path.dirname(file_path)):
+        raise FileNotFoundError(
+            f"The directory does not exist: {os.path.dirname(file_path)}"
+        )
+
     if not isinstance(encode, str) and not isinstance(encode, bool):
         raise TypeError("encode must be a string or a boolean")
 
@@ -132,5 +282,19 @@ def write_file(text: str, file_path: str, encode: Union[str, bool] = True) -> No
 
 
 def write_json(data: dict, file_path: str) -> None:
+    """Writes data to a JSON file
+
+    Parameters
+    ----------
+    data : dict
+        The data to write to the JSON file
+    file_path : str
+        The path to the JSON file
+
+    """
+
+    if not os.path.exists(os.path.dirname(file_path)):
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)

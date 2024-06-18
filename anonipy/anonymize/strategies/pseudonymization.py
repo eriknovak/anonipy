@@ -1,7 +1,3 @@
-"""
-Contains the pseudonymization strategy
-"""
-
 from typing import List, Tuple
 
 from .interface import StrategyInterface
@@ -14,13 +10,51 @@ from ..helpers import anonymize
 
 
 class PseudonymizationStrategy(StrategyInterface):
+    """The class representing the pseudonymization strategy
+
+    Attributes
+    ----------
+    mapping : dict
+        The mapping of entities to pseudonyms
+
+    Methods
+    -------
+    anonymize(text: str, entities: List[Entity])
+        Anonymize the text based on the entities
+
+    """
 
     def __init__(self, mapping, *args, **kwargs):
+        """
+        Parameters
+        ----------
+        mapping : func
+            The mapping of entities to pseudonyms
+
+        """
+
+        super().__init__(*args, **kwargs)
         self.mapping = mapping
 
     def anonymize(
         self, text: str, entities: List[Entity], *args, **kwargs
     ) -> Tuple[str, List[Replacement]]:
+        """Anonymize the text based on the entities
+
+        Parameters
+        ----------
+        text : str
+            The text to anonymize
+        entities : List[Entity]
+            The list of entities to anonymize
+
+        Returns
+        -------
+        Tuple[str, List[Replacement]]
+            The anonymized text and the list of replacements applied
+
+        """
+
         replacements = []
         for ent in entities:
             replacement = self._create_replacement(ent, text, replacements)
@@ -31,6 +65,23 @@ class PseudonymizationStrategy(StrategyInterface):
     def _create_replacement(
         self, entity: Entity, text: str, replacements: List[dict]
     ) -> Replacement:
+        """Creates a replacement for the entity
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to create the replacement for
+        text : str
+            The text to anonymize
+        replacements : List[dict]
+            The list of replacements
+
+        Returns
+        -------
+        Replacement
+            The created replacement
+
+        """
         # check if the replacement already exists
         anonymized_text = self._check_replacement(entity, replacements)
         # create a new replacement if it doesn't exist
@@ -46,6 +97,21 @@ class PseudonymizationStrategy(StrategyInterface):
         }
 
     def _check_replacement(self, entity: Entity, replacements: List[dict]) -> str:
+        """Checks if a suitable replacement already exists
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to check
+        replacements : List[dict]
+            The list of replacements
+
+        Returns
+        -------
+        str
+            The anonymized text if the replacement already exists, None otherwise
+
+        """
         existing_replacement = list(
             filter(lambda x: x["original_text"] == entity.text, replacements)
         )

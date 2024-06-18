@@ -16,6 +16,30 @@ from .interface import ExtractorInterface
 
 
 class EntityExtractor(ExtractorInterface):
+    """The class representing the entity extractor
+
+    Attributes
+    ----------
+    labels : List[dict]
+        The list of labels to extract
+    lang : str
+        The language of the text to extract
+    score_th : float
+        The score threshold
+    use_gpu : bool
+        Whether to use GPU
+    pipeline : spacy pipeline
+        The spacy pipeline
+
+
+    Methods
+    -------
+    __call__(self, text: str)
+        Extract the entities from the text
+    display(self, doc: Doc)
+        Display the entities in the text
+
+    """
 
     def __init__(
         self,
@@ -23,19 +47,59 @@ class EntityExtractor(ExtractorInterface):
         lang: LANGUAGES = LANGUAGES.ENGLISH,
         score_th=0.5,
         use_gpu=False,
+        *args,
+        **kwargs,
     ):
+        """
+        Parameters
+        ----------
+        labels : List[dict]
+            The list of labels to extract
+        lang : str
+            The language of the text to extract
+        score_th : float
+            The score threshold. Entities with a score below this threshold will be ignored. Default: 0.5
+        use_gpu : bool
+            Whether to use GPU. Default: False
+
+        """
+
+        super().__init__(labels, *args, **kwargs)
         self.lang = lang
         self.score_th = score_th
         self.use_gpu = use_gpu
         self.labels = self._prepare_labels(labels)
         self.pipeline = self._prepare_pipeline()
 
-    def __call__(self, text: str) -> Tuple[Doc, List[Entity]]:
+    def __call__(self, text: str, *args, **kwargs) -> Tuple[Doc, List[Entity]]:
+        """Extract the entities from the text
+
+        Parameters
+        ----------
+        text : str
+            The text to extract entities from
+
+        Returns
+        -------
+        Tuple[Doc, List[Entity]]
+            The spacy doc and the list of entities extracted
+
+        """
+
         doc = self.pipeline(text)
         entities, doc.ents = self._prepare_entities(doc)
         return doc, entities
 
     def display(self, doc: Doc):
+        """Display the entities in the text
+
+        Parameters
+        ----------
+        doc : Doc
+            The spacy doc to display
+
+        """
+
         options = {"colors": {l["label"]: "#5C7AEA" for l in self.labels}}
         displacy.render(doc, style="ent", options=options)
 
@@ -43,7 +107,20 @@ class EntityExtractor(ExtractorInterface):
     # Private methods
     # ===========================================
 
-    def _prepare_labels(self, labels):
+    def _prepare_labels(self, labels: List[dict]) -> List[dict]:
+        """Prepare the labels for the extractor
+
+        Parameters
+        ----------
+        labels : List[dict]
+            The list of labels to prepare
+
+        Returns
+        -------
+        List[dict]
+            The prepared labels
+
+        """
         for l in labels:
             if "regex" in l:
                 continue
@@ -53,6 +130,15 @@ class EntityExtractor(ExtractorInterface):
         return labels
 
     def _create_gliner_config(self):
+        """Create the config for the GLINER model
+
+        Returns
+        -------
+        dict
+            The config for the GLINER model
+
+        """
+
         map_location = "cpu"
         if self.use_gpu and not torch.cuda.is_available():
             return warnings.warn(
@@ -72,6 +158,15 @@ class EntityExtractor(ExtractorInterface):
         }
 
     def _prepare_pipeline(self):
+        """Prepare the spacy pipeline
+
+        Returns
+        -------
+        spacy pipeline
+            The spacy pipeline
+
+        """
+
         # load the appropriate parser for the language
         module_lang, class_lang = self.lang[0].lower(), self.lang[1].lower().title()
         language_module = importlib.import_module(f"spacy.lang.{module_lang}")
@@ -83,8 +178,21 @@ class EntityExtractor(ExtractorInterface):
         nlp.add_pipe("gliner_spacy", config=gliner_config)
         return nlp
 
-    def _prepare_entities(self, doc):
-        # prepares the anonymized and spacy entities
+    def _prepare_entities(self, doc: Doc):
+        """Prepares the anonipy and spacy entities
+
+        Parameters
+        ----------
+        doc : Doc
+            The spacy doc to prepare
+
+        Returns
+        -------
+        Tuple[List[Entity], List[Entity]]
+            The anonipy entities and the spacy entities
+
+
+        """
 
         # TODO: make this part more generic
         anoni_entities = []

@@ -9,11 +9,44 @@ from ...definitions import Entity
 
 
 class NumberGenerator(GeneratorInterface):
+    """The class representing the number generator
+
+    Methods
+    -------
+    generate(self, entity: Entity)
+        Generates a number replacement
+
+    """
 
     def __init__(self, *args, **kwargs):
+        """
+        Parameters
+        ----------
+        None
+
+        """
+        super().__init__(*args, **kwargs)
         pass
 
     def generate(self, entity: Entity, *args, **kwargs):
+        """Generates a number replacement
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to generate the number from
+
+        Returns
+        -------
+        str
+            The generated number
+
+        Raises
+        ------
+        ValueError
+            If the entity type is not `integer`, `float`, `phone_number` or `custom`
+
+        """
         if entity.type in ["custom"]:
             warnings.warn(
                 "The entity type is `custom`. Make sure the generator is returning appropriate values."

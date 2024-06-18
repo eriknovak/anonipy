@@ -1,10 +1,16 @@
 """
-The constants used to make it easier to use the library
-"""
+constants
 
-# ================================================
-# Constants
-# ================================================
+The module provides a set of constants used in the library.
+
+Classes
+-------
+LANGUAGES :
+    Predefined supported languages
+ENTITY_TYPES :
+    Predefined types of entities
+
+"""
 
 
 class LANGUAGES:

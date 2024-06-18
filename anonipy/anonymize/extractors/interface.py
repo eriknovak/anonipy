@@ -5,6 +5,7 @@ from ...definitions import Entity
 
 
 class ExtractorInterface:
+    """The class representing the extractor interface"""
 
     def __init__(self, labels: List[dict], *args, **kwargs):
         pass

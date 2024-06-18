@@ -1,11 +1,19 @@
 """
 anonipy
-=========
 
-Provides
-  1. Label extractors
-  2. Label generators
-  3. Anonymization strategies
+The anonipy package provides utilities for data anonymization.
+
+Submodules
+----------
+anonymize :
+    The package containing anonymization classes and functions.
+utils :
+    The package containing utility classes and functions.
+definitions :
+    The object definitions used within the package.
+constants :
+    The constant values used to help with data anonymization.
+
 
 How to use the documentation
 ----------------------------

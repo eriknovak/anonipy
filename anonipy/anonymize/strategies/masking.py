@@ -1,7 +1,3 @@
-"""
-Contains the masking strategy
-"""
-
 import re
 from typing import List, Tuple
 
@@ -15,18 +11,69 @@ from ..helpers import anonymize
 
 
 class MaskingStrategy(StrategyInterface):
+    """The class representing the masking strategy
+
+    Attributes
+    ----------
+    substitute_label : str
+        The label to substitute in the anonymized text
+
+    Methods
+    -------
+    anonymize(text: str, entities: List[Entity])
+        Anonymize the text based on the entities
+
+    """
 
     def __init__(self, substitute_label: str = "*", *args, **kwargs):
+        """
+        Parameters
+        ----------
+        substitute_label : str, optional
+            The label to substitute in the anonymized text. Default: "*"
+
+        """
+
+        super().__init__(*args, **kwargs)
         self.substitute_label = substitute_label
 
     def anonymize(
         self, text: str, entities: List[Entity], *args, **kwargs
     ) -> Tuple[str, List[Replacement]]:
+        """Anonymize the text based on the entities
+
+        Parameters
+        ----------
+        text : str
+            The text to anonymize
+        entities : List[Entity]
+            The list of entities to anonymize
+
+        Returns
+        -------
+        Tuple[str, List[Replacement]]
+            The anonymized text and the list of replacements applied
+
+        """
+
         replacements = [self._create_replacement(ent) for ent in entities]
         anonymized_text, replacements = anonymize(text, replacements)
         return anonymized_text, replacements
 
     def _create_replacement(self, entity: Entity) -> Replacement:
+        """Creates a replacement for the entity
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to create the replacement for
+
+        Returns
+        -------
+        Replacement
+            The created replacement
+
+        """
         mask = self._create_mask(entity)
         return {
             "original_text": entity.text,
@@ -37,6 +84,19 @@ class MaskingStrategy(StrategyInterface):
         }
 
     def _create_mask(self, entity: Entity) -> str:
+        """Creates a mask for the entity
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to create the mask for
+
+        Returns
+        -------
+        str
+            The created mask
+
+        """
         return " ".join(
             [
                 self.substitute_label * len(chunk)
