@@ -7,6 +7,7 @@ from ...definitions import Entity
 
 
 class GeneratorInterface:
+    """The class representing the generator interface"""
 
     def __init__(self, *args, **kwargs):
         pass

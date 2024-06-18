@@ -1,7 +1,3 @@
-"""
-The regex definitions for various use cases
-"""
-
 from collections import defaultdict
 
 from ..constants import ENTITY_TYPES
@@ -51,6 +47,16 @@ REGEX_WEBSITE_URL = "((https?|ftp|smtp):\/\/)?(www.)?([a-zA-Z0-9]+\.)+[a-z]{2,}(
 
 
 class RegexMap:
+    """RegexMap
+
+    The class representing the regex map
+
+    Attributes
+    ----------
+    regex_mapping : defaultdict
+        The regex mapping
+
+    """
 
     def __init__(self):
         self.regex_mapping = defaultdict(lambda: ".*")

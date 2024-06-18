@@ -81,6 +81,20 @@ POSSIBLE_FORMATS = [
 
 
 def detect_datetime_format(datetime):
+    """Detects the datetime format
+
+    Parameters
+    ----------
+    datetime: str
+        The datetime string
+
+    Returns
+    -------
+    Tuple[datetime.datetime, str]
+        The detected datetime and the format
+
+    """
+
     try:
         parsed_datetime = parser.parse(datetime, fuzzy=True)
 

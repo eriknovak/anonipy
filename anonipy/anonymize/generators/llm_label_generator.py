@@ -75,8 +75,32 @@ def prepare_llama3_byte_decoder():
 
 
 class LLMLabelGenerator(GeneratorInterface):
+    """The class representing the LLM label generator
+
+    Attributes
+    ----------
+    model : models.Transformers
+        The model used to generate the label
+
+    Methods
+    -------
+    generate(entity: Entity, entity_prefix: str = "", temperature: float = 0.0)
+        Generate the label based on the entity
+
+    validate(entity: Entity)
+        Validate the entity
+
+    """
 
     def __init__(self, *args, **kwargs):
+        """
+        Parameters
+        ----------
+        None
+
+        """
+
+        super().__init__(*args, **kwargs)
         # TODO: make this configurable
         model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
 
@@ -96,6 +120,24 @@ class LLMLabelGenerator(GeneratorInterface):
         *args,
         **kwargs,
     ):
+        """Generate the label based on the entity
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to generate the label from
+        entity_prefix : str
+            The prefix to use for the entity
+        temperature : float
+            The temperature to use for the generation. Default: 0.0
+
+        Returns
+        -------
+        str
+            The generated label
+
+        """
+
         user_prompt = f"What is a random {entity_prefix} {entity.label} replacement for {entity.text}? Respond only with the replacement."
         assistant_prompt = gen(
             name="replacement",
@@ -113,7 +155,20 @@ class LLMLabelGenerator(GeneratorInterface):
         return lm["replacement"]
 
     def validate(self, entity: Entity):
-        regex = regex if regex else ".*"
+        """Validate the entity
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to validate
+
+        Returns
+        -------
+        bool
+            The validation result
+
+        """
+
         user_prompt = f"Is {entity.text} a {entity.label}?"
         assistant_prompt = select(["True", "False"], name="validation")
         # validate the entity with the validation prompt

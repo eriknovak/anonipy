@@ -16,6 +16,30 @@ from .interface import ExtractorInterface
 
 
 class EntityExtractor(ExtractorInterface):
+    """The class representing the entity extractor
+
+    Attributes
+    ----------
+    labels : List[dict]
+        The list of labels to extract
+    lang : str
+        The language of the text to extract
+    score_th : float
+        The score threshold
+    use_gpu : bool
+        Whether to use GPU
+    pipeline : spacy pipeline
+        The spacy pipeline
+
+
+    Methods
+    -------
+    __call__(self, text: str)
+        Extract the entities from the text
+    display(self, doc: Doc)
+        Display the entities in the text
+
+    """
 
     def __init__(
         self,
@@ -23,19 +47,59 @@ class EntityExtractor(ExtractorInterface):
         lang: LANGUAGES = LANGUAGES.ENGLISH,
         score_th=0.5,
         use_gpu=False,
+        *args,
+        **kwargs,
     ):
+        """
+        Parameters
+        ----------
+        labels : List[dict]
+            The list of labels to extract
+        lang : str
+            The language of the text to extract
+        score_th : float
+            The score threshold. Entities with a score below this threshold will be ignored. Default: 0.5
+        use_gpu : bool
+            Whether to use GPU. Default: False
+
+        """
+
+        super().__init__(labels, *args, **kwargs)
         self.lang = lang
         self.score_th = score_th
         self.use_gpu = use_gpu
         self.labels = self._prepare_labels(labels)
         self.pipeline = self._prepare_pipeline()
 
-    def __call__(self, text: str) -> Tuple[Doc, List[Entity]]:
+    def __call__(self, text: str, *args, **kwargs) -> Tuple[Doc, List[Entity]]:
+        """Extract the entities from the text
+
+        Parameters
+        ----------
+        text : str
+            The text to extract entities from
+
+        Returns
+        -------
+        Tuple[Doc, List[Entity]]
+            The spacy doc and the list of entities extracted
+
+        """
+
         doc = self.pipeline(text)
         entities, doc.ents = self._prepare_entities(doc)
         return doc, entities
 
     def display(self, doc: Doc):
+        """Display the entities in the text
+
+        Parameters
+        ----------
+        doc : Doc
+            The spacy doc to display
+
+        """
+
         options = {"colors": {l["label"]: "#5C7AEA" for l in self.labels}}
         displacy.render(doc, style="ent", options=options)
 

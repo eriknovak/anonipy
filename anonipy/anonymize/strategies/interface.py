@@ -11,6 +11,14 @@ from ...definitions import Entity
 
 
 class StrategyInterface:
+    """The class representing the strategy interface
+
+    Methods
+    -------
+    anonymize(text: str, entities: List[Entity], *args, **kwargs)
+        Anonymize the text based on the entities
+
+    """
 
     def __init__(self, *args, **kwargs):
         pass

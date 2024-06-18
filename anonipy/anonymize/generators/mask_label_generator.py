@@ -18,6 +18,23 @@ STOPWORDS = [".", ",", ":", ";", "-", "<s>", "</s>"]
 
 
 class MaskLabelGenerator(GeneratorInterface):
+    """The class representing the mask label generator
+
+    Attributes
+    ----------
+    context_window : int
+        The context window size
+    pipeline : transformers pipeline
+        The transformers pipeline
+    mask_token : str
+        The mask token
+
+    Methods
+    -------
+    generate(self, entity: Entity, text: str)
+        Anonymize the text based on the entities
+
+    """
 
     def __init__(
         self,
@@ -27,6 +44,18 @@ class MaskLabelGenerator(GeneratorInterface):
         *args,
         **kwargs,
     ):
+        """
+        Parameters
+        ----------
+        model_name : str, optional
+            The name of the model to use. Default: "FacebookAI/xlm-roberta-large"
+        use_gpu : bool, optional
+            Whether to use GPU/CUDA. Default: False
+        context_window : int, optional
+            The context window size. Default: 100
+
+        """
+        super().__init__(*args, **kwargs)
         self.context_window = context_window
         if use_gpu and not torch.cuda.is_available():
             warnings.warn(
@@ -42,6 +71,23 @@ class MaskLabelGenerator(GeneratorInterface):
         )
 
     def generate(self, entity: Entity, text: str, *args, **kwargs):
+        """
+        Generate the substituted text based on the entity
+
+        Parameters
+        ----------
+        entity : Entity
+            The entity to generate the label from
+        text : str
+            The text to generate the label from
+
+        Returns
+        -------
+        str
+            The generated text
+
+        """
+
         masks = self._create_masks(entity)
         input_texts = self._prepare_generate_inputs(masks, text)
         suggestions = self.pipeline(input_texts)
