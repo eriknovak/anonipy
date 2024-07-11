@@ -4,7 +4,7 @@ import warnings
 import torch
 
 from anonipy.definitions import Entity
-from anonipy.anonymize.extractors import EntityExtractor
+from anonipy.anonymize.extractors import NERExtractor
 from anonipy.anonymize.regex import regex_map
 from anonipy.constants import LANGUAGES
 
@@ -101,7 +101,7 @@ labels = [
 # =====================================
 
 
-class TestEntityExtractor(unittest.TestCase):
+class TestNERExtractor(unittest.TestCase):
 
     def setUp(self):
         warnings.filterwarnings("ignore", category=ImportWarning)
@@ -110,28 +110,28 @@ class TestEntityExtractor(unittest.TestCase):
 
     def test_init(self):
         try:
-            EntityExtractor()
+            NERExtractor()
         except Exception as e:
             self.assertRaises(TypeError, e)
 
     def test_init_inputs(self):
-        extractor = EntityExtractor(labels=labels, lang=LANGUAGES.ENGLISH, score_th=0.5)
-        self.assertEqual(extractor.__class__, EntityExtractor)
+        extractor = NERExtractor(labels=labels, lang=LANGUAGES.ENGLISH, score_th=0.5)
+        self.assertEqual(extractor.__class__, NERExtractor)
 
     def test_init_gpu(self):
         if torch.cuda.is_available():
-            extractor = EntityExtractor(
+            extractor = NERExtractor(
                 labels=labels, lang=LANGUAGES.ENGLISH, score_th=0.5, use_gpu=True
             )
-            self.assertEqual(extractor.__class__, EntityExtractor)
+            self.assertEqual(extractor.__class__, NERExtractor)
 
     def test_methods(self):
-        extractor = EntityExtractor(labels=labels, lang=LANGUAGES.ENGLISH, score_th=0.5)
+        extractor = NERExtractor(labels=labels, lang=LANGUAGES.ENGLISH, score_th=0.5)
         self.assertEqual(hasattr(extractor, "__call__"), True)
         self.assertEqual(hasattr(extractor, "display"), True)
 
     def test_extract_default(self):
-        extractor = EntityExtractor(labels=labels, lang=LANGUAGES.ENGLISH, score_th=0.5)
+        extractor = NERExtractor(labels=labels, lang=LANGUAGES.ENGLISH, score_th=0.5)
         doc, entities = extractor(original_text)
         for pred_entity, orig_entity in zip(entities, original_entities):
             self.assertEqual(pred_entity.text, orig_entity.text)

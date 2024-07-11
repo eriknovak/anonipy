@@ -13,6 +13,6 @@ EntityExtractor :
 """
 
 from .interface import ExtractorInterface
-from .entity_extractor import EntityExtractor
+from .ner_extractor import NERExtractor
 
-__all__ = ["ExtractorInterface", "EntityExtractor"]
+__all__ = ["ExtractorInterface", "NERExtractor"]

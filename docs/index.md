@@ -82,7 +82,7 @@ language = lang_detector(original_text)
 Prepare the entity extractor and extract the personal infomation from the original text:
 
 ```python
-from anonipy.anonymize.extractors import EntityExtractor
+from anonipy.anonymize.extractors import NERExtractor
 
 # define the labels to be extracted and anonymized
 labels = [
@@ -93,13 +93,13 @@ labels = [
 ]
 
 # language taken from the language detector
-entity_extractor = EntityExtractor(labels, lang=language, score_th=0.5)
+ner_extractor = NERExtractor(labels, lang=language, score_th=0.5)
 
 # extract the entities from the original text
-doc, entities = entity_extractor(original_text)
+doc, entities = ner_extractor(original_text)
 
 # display the entities in the original text
-entity_extractor.display(doc)
+ner_extractor.display(doc)
 ```
 
 Use generators to create substitutes for the entities:

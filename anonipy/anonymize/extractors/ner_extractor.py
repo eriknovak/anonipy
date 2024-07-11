@@ -15,7 +15,7 @@ from ...definitions import Entity
 from .interface import ExtractorInterface
 
 
-class EntityExtractor(ExtractorInterface):
+class NERExtractor(ExtractorInterface):
     """The class representing the entity extractor
 
     Attributes
