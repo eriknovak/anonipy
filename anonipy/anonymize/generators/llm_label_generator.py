@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import torch
 from tokenizers import pre_tokenizers
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
@@ -75,28 +77,32 @@ def prepare_llama3_byte_decoder():
 
 
 class LLMLabelGenerator(GeneratorInterface):
-    """The class representing the LLM label generator
+    """The class representing the LLM label generator.
 
-    Attributes
-    ----------
-    model : models.Transformers
-        The model used to generate the label
+    Examples:
+        >>> from anonipy.anonymize.generators import LLMLabelGenerator
+        >>> generator = LLMLabelGenerator()
+        >>> generator.generate(entity)
 
-    Methods
-    -------
-    generate(entity: Entity, entity_prefix: str = "", temperature: float = 0.0)
-        Generate the label based on the entity
+    Attributes:
+        model (models.Transformers): The model used to generate the label substitutes.
 
-    validate(entity: Entity)
-        Validate the entity
+    Methods:
+        generate(entity, entity_prefix, temperature):
+            Generate the label based on the entity.
+
+        validate(entity):
+            [EXPERIMENTAL] Validate if the entity text corresponds to the entity label.
 
     """
 
     def __init__(self, *args, **kwargs):
-        """
-        Parameters
-        ----------
-        None
+        """Initializes the LLM label generator.
+
+        Examples:
+            >>> from anonipy.anonymize.generators import LLMLabelGenerator
+            >>> generator = LLMLabelGenerator()
+            LLMLabelGenerator()
 
         """
 
@@ -115,30 +121,30 @@ class LLMLabelGenerator(GeneratorInterface):
     def generate(
         self,
         entity: Entity,
-        entity_prefix: str = "",
+        add_entity_attrs: str = "",
         temperature: float = 0.0,
         *args,
         **kwargs,
-    ):
-        """Generate the label based on the entity
+    ) -> str:
+        """Generate the substitute for the entity based on it's attributes.
 
-        Parameters
-        ----------
-        entity : Entity
-            The entity to generate the label from
-        entity_prefix : str
-            The prefix to use for the entity
-        temperature : float
-            The temperature to use for the generation. Default: 0.0
+        Examples:
+            >>> from anonipy.anonymize.generators import LLMLabelGenerator
+            >>> generator = LLMLabelGenerator()
+            >>> generator.generate(entity)
+            label
 
-        Returns
-        -------
-        str
-            The generated label
+        Args:
+            entity: The entity to generate the label from.
+            add_entity_attrs: Additional entity attribute description to add to the generation.
+            temperature: The temperature to use for the generation.
+
+        Returns:
+            The generated entity label substitute.
 
         """
 
-        user_prompt = f"What is a random {entity_prefix} {entity.label} replacement for {entity.text}? Respond only with the replacement."
+        user_prompt = f"What is a random {add_entity_attrs} {entity.label} replacement for {entity.text}? Respond only with the replacement."
         assistant_prompt = gen(
             name="replacement",
             stop="<|eot_id|>",
@@ -154,18 +160,20 @@ class LLMLabelGenerator(GeneratorInterface):
         )
         return lm["replacement"]
 
-    def validate(self, entity: Entity):
-        """Validate the entity
+    def validate(self, entity: Entity) -> bool:
+        """[EXPERIMENTAL] Validate the appropriateness of the entity.
 
-        Parameters
-        ----------
-        entity : Entity
-            The entity to validate
+        Examples:
+            >>> from anonipy.anonymize.generators import LLMLabelGenerator
+            >>> generator = LLMLabelGenerator()
+            >>> generator.validate(entity)
+            True
 
-        Returns
-        -------
-        bool
-            The validation result
+        Args:
+            entity: The entity to be validated.
+
+        Returns:
+            The validation result.
 
         """
 
@@ -184,20 +192,20 @@ class LLMLabelGenerator(GeneratorInterface):
     # Private methods
     # =================================
 
-    def _prepare_model_and_tokenizer(self, model_name: str):
-        """Prepares the model and tokenizer
+    def _prepare_model_and_tokenizer(
+        self, model_name: str
+    ) -> Tuple[AutoModelForCausalLM, AutoTokenizer]:
+        """Prepares the model and tokenizer.
 
-        Parameters
-        ----------
-        model_name : str
-            The name of the model to use
+        Args:
+            model_name: The name of the model to use.
 
-        Returns
-        -------
-        model, tokenizer
-            The model and the tokenizer
+        Returns:
+            The huggingface model.
+            The huggingface tokenizer.
 
         """
+
         # prepare the model
         bnb_config = BitsAndBytesConfig(
             load_in_4bit=True,
@@ -216,38 +224,32 @@ class LLMLabelGenerator(GeneratorInterface):
         tokenizer.byte_decoder = prepare_llama3_byte_decoder()
         return model, tokenizer
 
-    def _system_prompt(self):
-        """Returns the system prompt"""
+    def _system_prompt(self) -> str:
+        """Returns the system prompt."""
         return "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a helpful AI assistant for generating replacements for text entities.<|eot_id|>"
 
-    def _user_prompt(self, prompt):
-        """Returns the user prompt
+    def _user_prompt(self, prompt: str) -> str:
+        """Returns the user prompt.
 
-        Parameters
-        ----------
-        prompt : str
-            The prompt to use
+        Args:
+            prompt: The prompt to use.
 
-        Returns
-        -------
-        str
-            The user prompt
+        Returns:
+            The user part of the prompt.
 
         """
+
         return f"<|start_header_id|>user<|end_header_id|>\n\n{prompt}<|eot_id|>"
 
-    def _assistant_prompt(self, prompt):
-        """Returns the assistant prompt
+    def _assistant_prompt(self, prompt: str) -> str:
+        """Returns the assistant prompt.
 
-        Parameters
-        ----------
-        prompt : str
-            The prompt to use
+        Args:
+            prompt: The prompt to use.
 
-        Returns
-        -------
-        str
-            The assistant prompt
+        Returns:
+            The assistant part of the prompt.
 
         """
+
         return f"<|start_header_id|>assistant<|end_header_id|>\n\n{prompt}"

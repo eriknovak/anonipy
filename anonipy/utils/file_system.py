@@ -1,5 +1,17 @@
-"""
-The file system utilities
+"""The module containing the `file_system` utilities.
+
+The `file_system` module provides a set of utilities for reading and writing files.
+
+Methods:
+    open_file(file_path):
+        Opens a file and returns its content as a string.
+    write_file(text, file_path, encode):
+        Writes the text to a file.
+    open_json(file_path):
+        Opens a JSON file and returns its content as a dictionary.
+    write_json(data, file_path):
+        Writes the data to a JSON file.
+
 """
 
 import os
@@ -19,20 +31,17 @@ WORD_NAMESPACES = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006
 # =====================================
 
 
-def remove_extra_spaces(text: str) -> str:
-    """Remove extra spaces from text
+def _remove_extra_spaces(text: str) -> str:
+    """Remove extra spaces from text.
 
-    Parameters
-    ----------
-    text : str
-        The text to remove extra spaces from
+    Args:
+        text: The text to remove extra spaces from.
 
-    Returns
-    -------
-    str
-        The text with extra spaces removed
+    Returns:
+        The text with extra spaces removed.
 
     """
+
     text = text.strip()
     # remove extra spaces
     text = re.sub(" +", " ", text)
@@ -40,18 +49,14 @@ def remove_extra_spaces(text: str) -> str:
     return text
 
 
-def remove_page_numbers(text: str) -> str:
-    """Removes page numbers from text
+def _remove_page_numbers(text: str) -> str:
+    """Removes page numbers from text.
 
-    Parameters
-    ----------
-    text : str
-        The text to remove page numbers from
+    Args:
+        text: The text to remove page numbers from.
 
-    Returns
-    -------
-    str
-        The text with page numbers removed
+    Returns:
+        The text with page numbers removed.
 
     """
 
@@ -69,18 +74,14 @@ def remove_page_numbers(text: str) -> str:
 # =====================================
 
 
-def extract_text_from_pdf(pdf_path: str) -> str:
-    """Extracts text from a PDF file
+def _extract_text_from_pdf(pdf_path: str) -> str:
+    """Extracts text from a PDF file.
 
-    Parameters
-    ----------
-    pdf_path : str
-        The path to the PDF file
+    Args:
+        pdf_path: The path to the PDF file.
 
-    Returns
-    -------
-    str
-        The text from the PDF file
+    Returns:
+        The text from the PDF file.
 
     """
 
@@ -89,8 +90,8 @@ def extract_text_from_pdf(pdf_path: str) -> str:
     pages_text = []
     for page in pdf_reader.pages:
         text = page.extract_text(extraction_mode="layout")
-        text = remove_page_numbers(text)
-        text = remove_extra_spaces(text)
+        text = _remove_page_numbers(text)
+        text = _remove_extra_spaces(text)
         pages_text.append(text)
     document_text = "\n".join(pages_text)
 
@@ -103,17 +104,13 @@ def extract_text_from_pdf(pdf_path: str) -> str:
 
 
 def _word_process_paragraph(p) -> str:
-    """Get the text from a paragraph
+    """Get the text from a paragraph.
 
-    Parameters
-    ----------
-    p : etree._Element
-        The paragraph element
+    Args:
+        p (etree._Element): The paragraph element.
 
-    Returns
-    -------
-    str
-        The text from the paragraph
+    Returns:
+        The text from the paragraph.
 
     """
 
@@ -121,17 +118,13 @@ def _word_process_paragraph(p) -> str:
 
 
 def _word_process_table(t) -> str:
-    """Get the text from a table
+    """Get the text from a table.
 
-    Parameters
-    ----------
-    t : etree._Element
-        The table element
+    Args:
+        t (etree._Element): The table element.
 
-    Returns
-    -------
-    str
-        The text from the table
+    Returns:
+        The text from the table.
 
     """
 
@@ -147,18 +140,14 @@ def _word_process_table(t) -> str:
     return "\n".join(table_text)
 
 
-def extract_text_from_word(doc_path: str) -> str:
-    """Extracts text from a Word file
+def _extract_text_from_word(doc_path: str) -> str:
+    """Extracts text from a Word file.
 
-    Parameters
-    ----------
-    doc_path : str
-        The path to the Word file
+    Args:
+        doc_path: The path to the Word file.
 
-    Returns
-    -------
-    str
-        The text from the Word file
+    Returns:
+        The text from the Word file.
 
     """
 
@@ -183,18 +172,18 @@ def extract_text_from_word(doc_path: str) -> str:
 
 
 def open_file(file_path: str) -> str:
-    """
-    Opens a file and returns its content as a string
+    """Opens a file and returns its content as a string.
 
-    Parameters
-    ----------
-    file_path : str
-        The path to the file
+    Examples:
+        >>> from anonipy.utils import file_system
+        >>> file_system.open_file("path/to/file.txt")
+        "Hello, World!"
 
-    Returns
-    -------
-    str
-        The content of the file as a string
+    Args:
+        file_path: The path to the file.
+
+    Returns:
+        The content of the file as a string.
 
     """
 
@@ -203,9 +192,9 @@ def open_file(file_path: str) -> str:
 
     _, file_extension = os.path.splitext(file_path)
     if file_extension.lower() == ".pdf":
-        return extract_text_from_pdf(file_path)
+        return _extract_text_from_pdf(file_path)
     elif file_extension.lower() in [".doc", ".docx"]:
-        return extract_text_from_word(file_path)
+        return _extract_text_from_word(file_path)
     elif file_extension.lower() == ".txt":
         with open(file_path, "r", encoding="utf-8") as f:
             return f.read()
@@ -213,47 +202,21 @@ def open_file(file_path: str) -> str:
         raise ValueError(f"The file extension is not supported: {file_extension}")
 
 
-def open_json(file_path: str) -> dict:
-    """
-    Opens a JSON file and returns its content as a dictionary
-
-    Parameters
-    ----------
-    file_path : str
-        The path to the JSON file
-
-    Returns
-    -------
-    dict
-        The content of the JSON file as a dictionary
-
-    """
-
-    if not os.path.isfile(file_path):
-        raise FileNotFoundError(f"The file does not exist: {file_path}")
-
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
 def write_file(text: str, file_path: str, encode: Union[str, bool] = True) -> None:
-    """Writes text to a file
+    """Writes the text to a file.
 
-    Parameters
-    ----------
-    text : str
-        The text to write to the file
-    file_path : str
-        The path to the file
-    encode : Union[str, bool], optional
-        The encoding to use. Default: True
+    Examples:
+        >>> from anonipy.utils import file_system
+        >>> file_system.write_file("Hello, World!", "path/to/file.txt")
 
-    Raises
-    ------
-    TypeError
-        If text, file_path is not a string; encode is not a string or a boolean
-    FileNotFoundError
-        If the directory does not exist
+    Args:
+        text: The text to write to the file.
+        file_path: The path to the file.
+        encode: The encoding to use.
+
+    Raises:
+        TypeError: If text, `file_path` is not a string; `encode` is not a string or a boolean.
+        FileNotFoundError: If the directory does not exist.
 
     """
 
@@ -281,15 +244,39 @@ def write_file(text: str, file_path: str, encode: Union[str, bool] = True) -> No
         f.write(text)
 
 
-def write_json(data: dict, file_path: str) -> None:
-    """Writes data to a JSON file
+def open_json(file_path: str) -> dict:
+    """Opens a JSON file and returns its content as a dictionary.
 
-    Parameters
-    ----------
-    data : dict
-        The data to write to the JSON file
-    file_path : str
-        The path to the JSON file
+    Examples:
+        >>> from anonipy.utils import file_system
+        >>> file_system.open_json("path/to/file.json")
+        {"hello": "world"}
+
+    Args:
+        file_path: The path to the JSON file.
+
+    Returns:
+        The content of the JSON file as a dictionary.
+
+    """
+
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f"The file does not exist: {file_path}")
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def write_json(data: dict, file_path: str) -> None:
+    """Writes data to a JSON file.
+
+    Examples:
+        >>> from anonipy.utils import file_system
+        >>> file_system.write_json({"hello": "world"}, "path/to/file.json")
+
+    Args:
+        data: The data to write to the JSON file.
+        file_path: The path to the JSON file.
 
     """
 

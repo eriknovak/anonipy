@@ -1,5 +1,5 @@
 # Project information
-site_name: anonipy
+site_name: Anonipy
 site_author: Erik Novak
 site_description: >-
   Data anonymization package, supporting different anonymization strategies
@@ -45,6 +45,9 @@ theme:
 
 edit_uri: ""
 
+extra_css:
+  - css/extra.css
+
 # Plugins
 plugins:
   - blog
@@ -52,6 +55,14 @@ plugins:
       separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - mkdocs-jupyter:
       include: ["*.ipynb"]
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_root_heading: False
+            show_root_toc_entry: False
+            members_order: "source"
+            heading_level: 4
 
 # Markdown Extensions
 markdown_extensions:
@@ -76,13 +87,28 @@ markdown_extensions:
 nav:
   - Home: index.md
 
-  - Documentation:
-    - Overview: documentation/notebooks/00-overview.ipynb
-    - Extractors: documentation/notebooks/01-extractors.ipynb
-    - Generators: documentation/notebooks/02-generators.ipynb
-    - Strategies: documentation/notebooks/03-strategies.ipynb
-    - Utility: documentation/notebooks/04-utility.ipynb
+  - How-To Guides:
+    - Overview: how-to-guides/notebooks/00-overview.ipynb
+    - Extractors: how-to-guides/notebooks/01-extractors.ipynb
+    - Generators: how-to-guides/notebooks/02-generators.ipynb
+    - Strategies: how-to-guides/notebooks/03-strategies.ipynb
+    - Utility: how-to-guides/notebooks/04-utility.ipynb
+  - API Reference:
+    - references/index.md
+    - anonymize:
+      - references/anonymize/index.md
+      - extractors: references/anonymize/extractors.md
+      - generators: references/anonymize/generators.md
+      - strategies: references/anonymize/strategies.md
+    - utils:
+      - references/utils/index.md
+      - file_system: references/utils/file_system.md
+      - language_detector: references/utils/language_detector.md
+    - definitions: references/definitions.md
+    - constants: references/constants.md
+
   - Blog:
     - blog/index.md
 
+  - Changelog: changelog.md
   - Development: development.md

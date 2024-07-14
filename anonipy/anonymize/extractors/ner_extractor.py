@@ -22,30 +22,30 @@ from .interface import ExtractorInterface
 
 
 class NERExtractor(ExtractorInterface):
-    """The class representing the entity extractor
+    """The class representing the named entity recognition (NER) extractor.
 
-    Attributes
-    ----------
-    labels : List[dict]
-        The list of labels to extract
-    lang : str
-        The language of the text to extract
-    score_th : float
-        The score threshold
-    use_gpu : bool
-        Whether to use GPU
-    gliner_model : str
-        The gliner model to use
-    pipeline : spacy pipeline
-        The spacy pipeline
+    Examples:
+        >>> from anonipy.constants import LANGUAGES
+        >>> from anonipy.anonymize.extractors import NERExtractor
+        >>> labels = [{"label": "PERSON", "type": "string"}]
+        >>> extractor = NERExtractor(labels, lang=LANGUAGES.ENGLISH)
+        >>> extractor("John Doe is a 19 year old software engineer.")
+        Doc, [Entity]
 
+    Attributes:
+        labels (List[dict]): The list of labels to extract.
+        lang (str): The language of the text to extract.
+        score_th (float): The score threshold.
+        use_gpu (bool): Whether to use GPU.
+        gliner_model (str): The gliner model to use.
+        pipeline (Language): The spacy pipeline for extracting entities.
+        spacy_style (str): The style the entities should be stored in the spacy doc.
 
-    Methods
-    -------
-    __call__(self, text: str)
-        Extract the entities from the text
-    display(self, doc: Doc)
-        Display the entities in the text
+    Methods:
+        __call__(self, text):
+            Extract the entities from the text.
+        display(self, doc):
+            Display the entities in the text.
 
     """
 
@@ -60,17 +60,22 @@ class NERExtractor(ExtractorInterface):
         *args,
         **kwargs,
     ):
-        """
-        Parameters
-        ----------
-        labels : List[dict]
-            The list of labels to extract
-        lang : str
-            The language of the text to extract
-        score_th : float
-            The score threshold. Entities with a score below this threshold will be ignored. Default: 0.5
-        use_gpu : bool
-            Whether to use GPU. Default: False
+        """Initialize the named entity recognition (NER) extractor.
+
+        Examples:
+            >>> from anonipy.constants import LANGUAGES
+            >>> from anonipy.anonymize.extractors import NERExtractor
+            >>> labels = [{"label": "PERSON", "type": "string"}]
+            >>> extractor = NERExtractor(labels, lang=LANGUAGES.ENGLISH)
+            NERExtractor()
+
+        Args:
+            labels: The list of labels to extract.
+            lang: The language of the text to extract.
+            score_th: The score threshold. Entities with a score below this threshold will be ignored.
+            use_gpu: Whether to use GPU.
+            gliner_model: The gliner model to use to identify the entities.
+            spacy_style: The style the entities should be stored in the spacy doc. Options: `ent` or `span`.
 
         """
 
@@ -84,17 +89,18 @@ class NERExtractor(ExtractorInterface):
         self.pipeline = self._prepare_pipeline()
 
     def __call__(self, text: str, *args, **kwargs) -> Tuple[Doc, List[Entity]]:
-        """Extract the entities from the text
+        """Extract the entities from the text.
 
-        Parameters
-        ----------
-        text : str
-            The text to extract entities from
+        Examples:
+            >>> extractor("John Doe is a 19 year old software engineer.")
+            Doc, [Entity]
 
-        Returns
-        -------
-        Tuple[Doc, List[Entity]]
-            The spacy doc and the list of entities extracted
+        Args:
+            text: The text to extract entities from.
+
+        Returns:
+            The spacy document.
+            The list of extracted entities.
 
         """
 
@@ -104,17 +110,18 @@ class NERExtractor(ExtractorInterface):
         return doc, anoni_entities
 
     def display(self, doc: Doc) -> str:
-        """Display the entities in the text
+        """Display the entities in the text.
 
-        Parameters
-        ----------
-        doc : Doc
-            The spacy doc to display
+        Examples:
+            >>> doc, entities = extractor("John Doe is a 19 year old software engineer.")
+            >>> extractor.display(doc)
+            HTML
 
-        Returns
-        -------
-        str
-            The html representation of the doc
+        Args:
+            doc: The spacy doc to display.
+
+        Returns:
+            The HTML representation of the document and the extracted entities.
 
         """
 
@@ -128,17 +135,16 @@ class NERExtractor(ExtractorInterface):
     # ===========================================
 
     def _prepare_labels(self, labels: List[dict]) -> List[dict]:
-        """Prepare the labels for the extractor
+        """Prepare the labels for the extractor.
 
-        Parameters
-        ----------
-        labels : List[dict]
-            The list of labels to prepare
+        The provided labels are enriched with the corresponding regex
+        definitions, if the `regex` key was not provided.
 
-        Returns
-        -------
-        List[dict]
-            The prepared labels
+        Args:
+            labels: The list of labels to prepare.
+
+        Returns:
+            The enriched labels.
 
         """
         for l in labels:
@@ -150,12 +156,10 @@ class NERExtractor(ExtractorInterface):
         return labels
 
     def _create_gliner_config(self) -> dict:
-        """Create the config for the GLINER model
+        """Create the config for the GLINER model.
 
-        Returns
-        -------
-        dict
-            The config for the GLINER model
+        Returns:
+            The configuration dictionary for the GLINER model.
 
         """
 
@@ -178,12 +182,13 @@ class NERExtractor(ExtractorInterface):
         }
 
     def _prepare_pipeline(self) -> Language:
-        """Prepare the spacy pipeline
+        """Prepare the spacy pipeline.
 
-        Returns
-        -------
-        spacy pipeline
-            The spacy pipeline
+        Prepares the pipeline for processing the text in the corresponding
+        provided language.
+
+        Returns:
+            The spacy text processing and extraction pipeline.
 
         """
 
@@ -199,18 +204,14 @@ class NERExtractor(ExtractorInterface):
         return nlp
 
     def _prepare_entities(self, doc: Doc) -> Tuple[List[Entity], List[Span]]:
-        """Prepares the anonipy and spacy entities
+        """Prepares the anonipy and spacy entities.
 
-        Parameters
-        ----------
-        doc : Doc
-            The spacy doc to prepare
+        Args:
+            doc: The spacy doc to prepare.
 
-        Returns
-        -------
-        Tuple[List[Entity], List[Entity]]
-            The anonipy entities and the spacy entities
-
+        Returns:
+            The list of anonipy entities.
+            The list of spacy entities.
 
         """
 
@@ -225,17 +226,13 @@ class NERExtractor(ExtractorInterface):
         return anoni_entities, spacy_entities
 
     def _get_spacy_fields(self, doc: Doc) -> List[Span]:
-        """Get the spacy doc entity spans
+        """Get the spacy doc entity spans.
 
-        Parameters
-        ----------
-        doc : Doc
-            The spacy doc to get the entity spans from
+        args:
+            doc: The spacy doc to get the entity spans from.
 
-        Returns
-        -------
-        List[Span]
-            The entity spans
+        Returns:
+            The list of Spans from the spacy doc.
 
         """
 
@@ -246,15 +243,15 @@ class NERExtractor(ExtractorInterface):
         else:
             raise ValueError(f"Invalid spacy style: {self.spacy_style}")
 
-    def _set_spacy_fields(self, doc: Doc, entities: List[Entity]) -> None:
-        """Set the spacy doc entity spans
+    def _set_spacy_fields(self, doc: Doc, entities: List[Span]) -> None:
+        """Set the spacy doc entity spans.
 
-        Parameters
-        ----------
-        doc : Doc
-            The spacy doc to set the entity spans
-        entities : List[Span]
-            The entity spans to set
+        Args:
+            doc: The spacy doc to set the entity spans.
+            entities: The entity spans to set.
+
+        Returns:
+            None
 
         """
 

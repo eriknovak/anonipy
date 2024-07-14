@@ -1,16 +1,11 @@
-"""
-extractors
+"""Module containing the `extractors`.
 
-The module provides a set of extractors used in the library.
+The `extractors` module provides a set of extractors used to identify relevant
+information within a document. The module contains the following classes:
 
-Classes
--------
-ExtractorInterface :
-    The class representing the extractor interface
-NERExtractor :
-    The class representing the named entitiy recognition (NER) extractor
-RegexExtractor :
-    The class representing the regex extractor
+- `NERExtractor`: The class representing the named entity recognition (NER) extractor.
+- `PatternExtractor`: The class representing the pattern extractor.
+- `MultiExtractor`: The class representing the multi extractor.
 
 """
 

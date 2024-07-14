@@ -9,44 +9,50 @@ from ...definitions import Entity
 
 
 class NumberGenerator(GeneratorInterface):
-    """The class representing the number generator
+    """The class representing the number generator.
 
-    Methods
-    -------
-    generate(self, entity: Entity)
-        Generates a number replacement
+    Examples:
+        >>> from anonipy.anonymize.generators import NumberGenerator
+        >>> generator = NumberGenerator()
+        >>> generator.generate(entity)
+
+    Methods:
+        generate(self, entity):
+            Generates a substitute for the numeric entity.
 
     """
 
     def __init__(self, *args, **kwargs):
-        """
-        Parameters
-        ----------
-        None
+        """Initializes the number generator.
+
+        Examples:
+            >>> from anonipy.anonymize.generators import NumberGenerator
+            >>> generator = NumberGenerator()
 
         """
+
         super().__init__(*args, **kwargs)
-        pass
 
-    def generate(self, entity: Entity, *args, **kwargs):
-        """Generates a number replacement
+    def generate(self, entity: Entity, *args, **kwargs) -> str:
+        """Generates the substitute for the numeric entity.
 
-        Parameters
-        ----------
-        entity : Entity
-            The entity to generate the number from
+        Examples:
+            >>> from anonipy.anonymize.generators import NumberGenerator
+            >>> generator = NumberGenerator()
+            >>> generator.generate(entity)
+            "1234567890"
 
-        Returns
-        -------
-        str
-            The generated number
+        Args:
+            entity: The numeric entity to generate the numeric substitute.
 
-        Raises
-        ------
-        ValueError
-            If the entity type is not `integer`, `float`, `phone_number` or `custom`
+        Returns:
+            The generated numeric substitute.
+
+        Raises:
+            ValueError: If the entity type is not `integer`, `float`, `phone_number` or `custom`.
 
         """
+
         if entity.type in ["custom"]:
             warnings.warn(
                 "The entity type is `custom`. Make sure the generator is returning appropriate values."

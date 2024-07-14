@@ -22,29 +22,28 @@ from .interface import ExtractorInterface
 
 
 class PatternExtractor(ExtractorInterface):
-    """The class representing the pattern extractor
+    """The class representing the pattern extractor.
 
-    Attributes
-    ----------
-    labels : List[dict]
-        The list of labels and patterns to extract
-    lang : str
-        The language of the text to extract
-    pipeline : spacy pipeline
-        The spacy pipeline
-    token_matchers : spacy matcher
-        The spacy token pattern matcher
-    global_matchers : function
-        The global pattern matcher
+    Examples:
+        >>> from anonipy.constants import LANGUAGES
+        >>> from anonipy.anonymize.extractors import PatternExtractor
+        >>> labels = [{"label": "PERSON", "regex": "([A-Z][a-z]+ [A-Z][a-z]+)"}]
+        >>> extractor = PatternExtractor(labels, lang=LANGUAGES.ENGLISH)
+        >>> extractor("John Doe is a 19 year old software engineer.")
+        Doc, [Entity]
 
+    Attributes:
+        labels (List[dict]): The list of labels and patterns to extract.
+        lang (str): The language of the text to extract.
+        pipeline (Language): The spacy pipeline for extracting entities.
+        token_matchers (Matcher): The spacy token pattern matcher.
+        global_matchers (function): The global pattern matcher.
 
-    Methods
-    -------
-    __call__(self, text: str)
-        Extract the entities from the text
-
-    display(self, doc: Doc)
-        Display the entities in the text
+    Methods:
+        __call__(self, text):
+            Extract the entities from the text.
+        display(self, doc):
+            Display the entities in the text.
 
     """
 
@@ -56,13 +55,19 @@ class PatternExtractor(ExtractorInterface):
         *args,
         **kwargs,
     ):
-        """
-        Parameters
-        ----------
-        labels : List[dict]
-            The list of labels and patterns to extract
-        lang : str
-            The language of the text to extract
+        """Initialize the pattern extractor.
+
+        Examples:
+            >>> from anonipy.constants import LANGUAGES
+            >>> from anonipy.anonymize.extractors import PatternExtractor
+            >>> labels = [{"label": "PERSON", "regex": "([A-Z][a-z]+ [A-Z][a-z]+)"}]
+            >>> extractor = PatternExtractor(labels, lang=LANGUAGES.ENGLISH)
+            PatternExtractor()
+
+        Args:
+            labels: The list of labels and patterns to extract.
+            lang: The language of the text to extract.
+            spacy_style: The style the entities should be stored in the spacy doc. Options: `ent` or `span`.
 
         """
 
@@ -75,17 +80,18 @@ class PatternExtractor(ExtractorInterface):
         self.global_matchers = self._prepare_global_matchers()
 
     def __call__(self, text: str, *args, **kwargs) -> Tuple[Doc, List[Entity]]:
-        """Extract the entities from the text
+        """Extract the entities from the text.
 
-        Parameters
-        ----------
-        text : str
-            The text to extract entities from
+        Examples:
+            >>> extractor("John Doe is a 19 year old software engineer.")
+            Doc, [Entity]
 
-        Returns
-        -------
-        Tuple[Doc, List[Entity]]
-            The spacy doc and the list of entities extracted
+        Args:
+            text: The text to extract entities from.
+
+        Returns:
+            The spacy document.
+            The list of extracted entities.
 
         """
 
@@ -97,17 +103,18 @@ class PatternExtractor(ExtractorInterface):
         return doc, anoni_entities
 
     def display(self, doc: Doc) -> str:
-        """Display the entities in the text
+        """Display the entities in the text.
 
-        Parameters
-        ----------
-        doc : Doc
-            The spacy doc to display
+        Examples:
+            >>> doc, entities = extractor("John Doe is a 19 year old software engineer.")
+            >>> extractor.display(doc)
+            HTML
 
-        Returns
-        -------
-        str
-            The html representation of the doc
+        Args:
+            doc: The spacy doc to display.
+
+        Returns:
+            The HTML representation of the document and the extracted entities.
 
         """
 
@@ -121,12 +128,13 @@ class PatternExtractor(ExtractorInterface):
     # ===========================================
 
     def _prepare_pipeline(self) -> Language:
-        """Prepare the spacy pipeline
+        """Prepare the spacy pipeline.
 
-        Returns
-        -------
-        spacy pipeline
-            The spacy pipeline
+        Prepares the pipeline for processing the text in the corresponding
+        provided language.
+
+        Returns:
+            The spacy text processing and extraction pipeline.
 
         """
 
@@ -140,12 +148,12 @@ class PatternExtractor(ExtractorInterface):
         return nlp
 
     def _prepare_token_matchers(self) -> Optional[Matcher]:
-        """Prepare the token pattern matchers
+        """Prepare the token pattern matchers.
 
-        Returns
-        -------
-        spacy matcher
-            The spacy matcher
+        Prepares the token pattern matchers for the provided labels.
+
+        Returns:
+            The spacy matcher object or None if no relevant labels are provided.
 
         """
 
@@ -161,12 +169,12 @@ class PatternExtractor(ExtractorInterface):
         return matcher
 
     def _prepare_global_matchers(self) -> Optional[Callable]:
-        """Prepares the global pattern matching
+        """Prepares the global pattern matchers.
 
-        Returns
-        -------
-        function
-            The function used to match the patterns
+        Prepares the global pattern matchers for the provided labels.
+
+        Returns:
+            The function used to match the patterns or None if no relevant labels are provided.
 
         """
 
@@ -194,18 +202,14 @@ class PatternExtractor(ExtractorInterface):
         return global_matchers
 
     def _prepare_entities(self, doc: Doc) -> Tuple[List[Entity], List[Span]]:
-        """Prepares the anonipy and spacy entities
+        """Prepares the anonipy and spacy entities.
 
-        Parameters
-        ----------
-        doc : Doc
-            The spacy doc to prepare
+        Args:
+            doc: The spacy doc to prepare.
 
-        Returns
-        -------
-        Tuple[List[Entity], List[Entity]]
-            The anonipy entities and the spacy entities
-
+        Returns:
+            The list of anonipy entities.
+            The list of spacy entities.
 
         """
 
@@ -221,15 +225,11 @@ class PatternExtractor(ExtractorInterface):
     def _create_add_event_ent(self, label: str) -> Callable:
         """Create the add event entity function
 
-        Parameters
-        ----------
-        label : str
-            The label of the entity
+        Args:
+            label: The identified label entity.
 
-        Returns
-        -------
-        function
-            The function used to add the entity to the spacy doc
+        Returns:
+            The function used to add the entity to the spacy doc.
 
         """
 
@@ -251,17 +251,13 @@ class PatternExtractor(ExtractorInterface):
         return add_event_ent
 
     def _get_doc_entity_spans(self, doc: Doc) -> List[Span]:
-        """Get the spacy doc entity spans
+        """Get the spacy doc entity spans.
 
-        Parameters
-        ----------
-        doc : Doc
-            The spacy doc to get the entity spans from
+        Args:
+            doc: The spacy doc to get the entity spans from.
 
-        Returns
-        -------
-        List[Span]
-            The entity spans
+        Returns:
+            The list of entity spans.
 
         """
 
@@ -275,14 +271,11 @@ class PatternExtractor(ExtractorInterface):
             raise ValueError(f"Invalid spacy style: {self.spacy_style}")
 
     def _set_doc_entity_spans(self, doc: Doc, entities: List[Span]) -> None:
-        """Set the spacy doc entity spans
+        """Set the spacy doc entity spans.
 
-        Parameters
-        ----------
-        doc : Doc
-            The spacy doc to set the entity spans
-        entities : List[Span]
-            The entity spans to set
+        Args:
+            doc: The spacy doc to set the entity spans.
+            entities: The entity spans to assign the doc.
 
         """
 

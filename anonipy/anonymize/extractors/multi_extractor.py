@@ -17,13 +17,46 @@ from .interface import ExtractorInterface
 
 
 class MultiExtractor:
+    """The class representing the multi extractor.
+
+    Examples:
+        >>> from anonipy.constants import LANGUAGES
+        >>> from anonipy.anonymize.extractors import NERExtractor, PatternExtractor, MultiExtractor
+        >>> extractors = [
+        >>>     NERExtractor(ner_labels, lang=LANGUAGES.ENGLISH),
+        >>>     PatternExtractor(pattern_labels, lang=LANGUAGES.ENGLISH),
+        >>> ]
+        >>> extractor = MultiExtractor(extractors)
+        >>> extractor("John Doe is a 19 year old software engineer.")
+        [(Doc, [Entity]), (Doc, [Entity])], [Entity]
+
+    Attributes:
+        extractors (List[ExtractorInterface]):
+            The list of extractors to use.
+
+    Methods:
+        __call__(self, text):
+            Extract the entities fron the text using the provided extractors.
+        display(self, doc):
+            Display the entities extracted from the text document.
+
+    """
 
     def __init__(self, extractors: List[ExtractorInterface]):
-        """
-        Parameters
-        ----------
-        extractors : List[ExtractorInterface]
-            The list of extractors
+        """Initialize the multi extractor.
+
+        Examples:
+            >>> from anonipy.constants import LANGUAGES
+            >>> from anonipy.anonymize.extractors import NERExtractor, PatternExtractor, MultiExtractor
+            >>> extractors = [
+            >>>     NERExtractor(ner_labels, lang=LANGUAGES.ENGLISH),
+            >>>     PatternExtractor(pattern_labels, lang=LANGUAGES.ENGLISH),
+            >>> ]
+            >>> extractor = MultiExtractor(extractors)
+            MultiExtractor()
+
+        Args:
+            extractors: The list of extractors to use.
 
         """
 
@@ -32,19 +65,18 @@ class MultiExtractor:
     def __call__(
         self, text: str
     ) -> Tuple[List[Tuple[Doc, List[Entity]]], List[Entity]]:
-        """Extract the entities from the text
+        """Extract the entities fron the text using the provided extractors.
 
-        Parameters
-        ----------
-        text : str
-            The text to extract entities from
+        Examples:
+            >>> extractor("John Doe is a 19 year old software engineer.")
+            [(Doc, [Entity]), (Doc, [Entity])], [Entity]
 
-        Returns
-        -------
-        Tuple[List[Tuple[Doc, List[Entity]]], List[Entity]]
-            The touple containing the list of extractor outputs (doc, entities)
-            and the list of joint entities
+        Args:
+            text: The text to extract entities from.
 
+        Returns:
+            The list of extractor outputs containing the tuple (spacy document, extracted entities).
+            The list of joint entities.
         """
 
         extractor_outputs = [e(text) for e in self.extractors]
@@ -52,17 +84,18 @@ class MultiExtractor:
         return extractor_outputs, joint_entities
 
     def display(self, doc: Doc) -> str:
-        """Display the entities in the text
+        """Display the entities in the text.
 
-        Parameters
-        ----------
-        doc : Doc
-            The spacy doc to display
+        Examples:
+            >>> extractor_outputs, entities = extractor("John Doe is a 19 year old software engineer.")
+            >>> extractor.display(extractor_outputs[0][0])
+            HTML
 
-        Returns
-        -------
-        str
-            The html representation of the doc
+        Args:
+            doc: The spacy doc to display.
+
+        Returns:
+            The HTML representation of the document and the extracted entities.
 
         """
 
@@ -75,17 +108,13 @@ class MultiExtractor:
     def _merge_entities(
         self, extractor_outputs: List[Tuple[Doc, List[Entity]]]
     ) -> List[Entity]:
-        """Merges the entities returned by the extractors
+        """Merges the entities returned by the extractors.
 
-        Parameters
-        ----------
-        extractor_outputs : List[Tuple[Doc, List[Entity]]]
-            The list of extractor outputs
+        Args:
+            extractor_outputs: The list of extractor outputs.
 
-        Returns
-        -------
-        List[Entity]
-            The merged entities
+        Returns:
+            The merged entities list.
 
         """
 
@@ -104,17 +133,13 @@ class MultiExtractor:
         return joint_entities
 
     def _filter_entities(self, entities: Iterable[Entity]) -> List[Entity]:
-        """Filters the entities based on their start and end indices
+        """Filters the entities based on their start and end indices.
 
-        Parameters
-        ----------
-        entities : Iterable[Entity]
-            The entities to filter
+        Args:
+            entities: The entities to filter.
 
-        Returns
-        -------
-        List[Entity]
-            The filtered entities
+        Returns:
+            The filtered entities.
 
         """
 

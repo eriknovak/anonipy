@@ -11,26 +11,31 @@ from ..helpers import anonymize
 
 
 class MaskingStrategy(StrategyInterface):
-    """The class representing the masking strategy
+    """The class representing the masking strategy.
 
-    Attributes
-    ----------
-    substitute_label : str
-        The label to substitute in the anonymized text
+    Examples:
+        >>> from anonipy.anonymize.strategies import MaskingStrategy
+        >>> strategy = MaskingStrategy()
+        >>> strategy.anonymize(text, entities)
 
-    Methods
-    -------
-    anonymize(text: str, entities: List[Entity])
-        Anonymize the text based on the entities
+    Attributes:
+        substitute_label (str): The label to substitute in the anonymized text.
+
+    Methods:
+        anonymize(text, entities):
+            Anonymize the text based on the entities.
 
     """
 
     def __init__(self, substitute_label: str = "*", *args, **kwargs):
-        """
-        Parameters
-        ----------
-        substitute_label : str, optional
-            The label to substitute in the anonymized text. Default: "*"
+        """Initializes the masking strategy.
+
+        Examples:
+            >>> from anonipy.anonymize.strategies import MaskingStrategy
+            >>> strategy = MaskingStrategy()
+
+        Args:
+            substitute_label: The label to substitute in the anonymized text.
 
         """
 
@@ -40,19 +45,20 @@ class MaskingStrategy(StrategyInterface):
     def anonymize(
         self, text: str, entities: List[Entity], *args, **kwargs
     ) -> Tuple[str, List[Replacement]]:
-        """Anonymize the text based on the entities
+        """Anonymize the text using the masking strategy.
 
-        Parameters
-        ----------
-        text : str
-            The text to anonymize
-        entities : List[Entity]
-            The list of entities to anonymize
+        Examples:
+            >>> from anonipy.anonymize.strategies import MaskingStrategy
+            >>> strategy = MaskingStrategy()
+            >>> strategy.anonymize(text, entities)
 
-        Returns
-        -------
-        Tuple[str, List[Replacement]]
-            The anonymized text and the list of replacements applied
+        Args:
+            text: The text to anonymize.
+            entities: The list of entities to anonymize.
+
+        Returns:
+            The anonymized text.
+            The list of applied replacements.
 
         """
 
@@ -61,19 +67,16 @@ class MaskingStrategy(StrategyInterface):
         return anonymized_text, replacements
 
     def _create_replacement(self, entity: Entity) -> Replacement:
-        """Creates a replacement for the entity
+        """Creates a replacement for the entity.
 
-        Parameters
-        ----------
-        entity : Entity
-            The entity to create the replacement for
+        Args:
+            entity: The entity to create the replacement for.
 
-        Returns
-        -------
-        Replacement
-            The created replacement
+        Returns:
+            The created replacement.
 
         """
+
         mask = self._create_mask(entity)
         return {
             "original_text": entity.text,
@@ -84,19 +87,17 @@ class MaskingStrategy(StrategyInterface):
         }
 
     def _create_mask(self, entity: Entity) -> str:
-        """Creates a mask for the entity
+        """Creates a mask for the entity.
 
-        Parameters
-        ----------
-        entity : Entity
-            The entity to create the mask for
+        Args:
+            entity: The entity to create the mask for.
 
-        Returns
-        -------
-        str
-            The created mask
+        Returns:
+            The created mask.
 
         """
+
+        # TODO: add random length substitution
         return " ".join(
             [
                 self.substitute_label * len(chunk)

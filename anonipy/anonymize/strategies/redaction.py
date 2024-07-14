@@ -10,26 +10,31 @@ from ..helpers import anonymize
 
 
 class RedactionStrategy(StrategyInterface):
-    """The class representing the redaction strategy
+    """The class representing the redaction strategy.
 
-    Attributes
-    ----------
-    substitute_label : str
-        The label to substitute in the anonymized text
+    Examples:
+        >>> from anonipy.anonymize.strategies import RedactionStrategy
+        >>> strategy = RedactionStrategy()
+        >>> strategy.anonymize(text, entities)
 
-    Methods
-    -------
-    anonymize(text: str, entities: List[Entity])
-        Anonymize the text based on the entities
+    Attributes:
+        substitute_label (str): The label to substitute in the anonymized text.
+
+    Methods:
+        anonymize(text, entities):
+            Anonymize the text based on the entities.
 
     """
 
     def __init__(self, substitute_label: str = "[REDACTED]", *args, **kwargs) -> None:
-        """
-        Parameters
-        ----------
-        substitute_label : str, optional
-            The label to substitute in the anonymized text. Default: "[REDACTED]"
+        """Initializes the redaction strategy.
+
+        Examples:
+            >>> from anonipy.anonymize.strategies import RedactionStrategy
+            >>> strategy = RedactionStrategy()
+
+        Args:
+            substitute_label: The label to substitute in the anonymized text.
 
         """
 
@@ -39,19 +44,20 @@ class RedactionStrategy(StrategyInterface):
     def anonymize(
         self, text: str, entities: List[Entity], *args, **kwargs
     ) -> Tuple[str, List[Replacement]]:
-        """Anonymize the text based on the entities
+        """Anonymize the text using the redaction strategy.
 
-        Parameters
-        ----------
-        text : str
-            The text to anonymize
-        entities : List[Entity]
-            The list of entities to anonymize
+        Examples:
+            >>> from anonipy.anonymize.strategies import RedactionStrategy
+            >>> strategy = RedactionStrategy()
+            >>> strategy.anonymize(text, entities)
 
-        Returns
-        -------
-        Tuple[str, List[Replacement]]
-            The anonymized text and the list of replacements applied
+        Args:
+            text: The text to anonymize.
+            entities: The list of entities to anonymize.
+
+        Returns:
+            The anonymized text.
+            The list of applied replacements.
 
         """
 
@@ -60,17 +66,13 @@ class RedactionStrategy(StrategyInterface):
         return anonymized_text, replacements
 
     def _create_replacement(self, entity: Entity) -> Replacement:
-        """Creates a replacement for the entity
+        """Creates a replacement for the entity.
 
-        Parameters
-        ----------
-        entity : Entity
-            The entity to create the replacement for
+        Args:
+            entity: The entity to create the replacement for.
 
-        Returns
-        -------
-        Replacement
-            The replacement for the entity
+        Returns:
+            The created replacement.
 
         """
 

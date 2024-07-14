@@ -1,27 +1,32 @@
-from typing import List
+import re
+from typing import List, Union
+
+from spacy.tokens import Span
+
 from ..definitions import Entity, Replacement
+from ..constants import ENTITY_TYPES
 
 # =====================================
 # Entity converters
 # =====================================
 
 
-def convert_spacy_to_entity(entity, type=None, regex=".*", *args, **kwargs):
-    """Convert a SpaCy entity to an Entity object
+def convert_spacy_to_entity(
+    entity: Span,
+    type: ENTITY_TYPES = None,
+    regex: Union[str, re.Pattern] = ".*",
+    *args,
+    **kwargs,
+) -> Entity:
+    """Convert a spacy entity to an anonipy entity object.
 
-    Parameters
-    ----------
-    entity : SpaCy Span
-        The SpaCy entity to convert
-    type : ENTITY_TYPES, optional
-        The type of the entity. Default: None
-    regex : Union[str, re.Pattern], optional
-        The regular expression the entity must match. Default: ".*"
+    Args:
+        entity: The spacy Span representing the entity to convert.
+        type: The type of the entity.
+        regex: The regular expression the entity must match.
 
-    Returns
-    -------
-    Entity
-        The converted Entity object
+    Returns:
+        The converted anonipy entity object.
 
     """
 
@@ -36,22 +41,27 @@ def convert_spacy_to_entity(entity, type=None, regex=".*", *args, **kwargs):
     )
 
 
+# =====================================
+# Anonymization function
+# =====================================
+
+
 def anonymize(text: str, replacements: List[Replacement]) -> str:
-    """Anonymize a text based on a list of replacements
+    """Anonymize a text based on a list of replacements.
 
-    Parameters
-    ----------
-    text : str
-        The text to anonymize
-    replacements : List[Replacement]
-        The list of replacements to apply
+    Examples:
+        >>> from anonipy.anonymize import anonymize
+        >>> anonymize(text, replacements)
 
-    Returns
-    -------
-    Tuple[str, List[Replacement]]
-        The anonymized text and the list of replacements applied
+    Args:
+        text: The text to anonymize.
+        replacements: The list of replacements to apply.
+
+    Returns:
+        The anonymized text.
 
     """
+
     s_replacements = sorted(replacements, key=lambda x: x["start_index"], reverse=True)
 
     anonymized_text = text

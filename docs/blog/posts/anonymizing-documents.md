@@ -180,5 +180,5 @@ This process is very straightforward and can be applied to almost any document t
 Furthermore, it can be expanded to process multiple documents written in the same
 language at once. Stay tuned to see how this can be done in the future!
 
-[generators]: ../../documentation/notebooks/02-generators.ipynb
-[strategies]: ../../documentation/notebooks/03-strategies.ipynb
+[generators]: ../../how-to-guides/notebooks/02-generators.ipynb
+[strategies]: ../../how-to-guides/notebooks/03-strategies.ipynb

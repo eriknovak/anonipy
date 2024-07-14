@@ -1,19 +1,14 @@
-"""
-utils
+"""The module containing the `utils`.
 
-The module provides a set of utilities used in the library.
+The `utils` module provides a set of utilities used in the package.
 
-Submodules
-----------
-language_detector :
-    The module containing the language detector
-file_system :
-    The module containing the file system utilities
+Modules:
+    file_system: The module containing the file system utilities and functions.
+    language_detector: The module containing the language detector.
 
 """
 
-from . import language_detector
 from . import file_system
-
+from . import language_detector
 
 __all__ = ["language_detector", "file_system"]

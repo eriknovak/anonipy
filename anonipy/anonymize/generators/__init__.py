@@ -1,20 +1,12 @@
-"""
-generators
+"""Module containing the `generators`.
 
-The module provides a set of generators used in the library.
+The `generators` module provides a set of generators used to generate data
+substitutes. The module contains the following classes:
 
-Classes
--------
-GeneratorInterface :
-    The class representing the generator interface
-LLMLabelGenerator :
-    The class representing the LLM label generator
-MaskLabelGenerator :
-    The class representing the mask label generator
-NumberGenerator :
-    The class representing the number generator
-DateGenerator :
-    The class representing the date generator
+- `LLMLabelGenerator`: The class representing the label generator utilizing LLMs.
+- `MaskLabelGenerator`: The class representing the label generator utilizing token masking.
+- `NumberGenerator`: The class representing the number generator.
+- `DateGenerator`: The class representing the date generator.
 
 """
 
@@ -25,9 +17,9 @@ from .number_generator import NumberGenerator
 from .date_generator import DateGenerator
 
 __all__ = [
-    "GeneratorInterface",
     "LLMLabelGenerator",
     "MaskLabelGenerator",
     "NumberGenerator",
     "DateGenerator",
+    "GeneratorInterface",
 ]

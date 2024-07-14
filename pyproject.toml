@@ -33,6 +33,7 @@ dev = [
     "python-githooks",
     "mkdocs-material",
     "mkdocs-jupyter",
+    "mkdocstrings[python]",
 ]
 test = [
     "coverage",

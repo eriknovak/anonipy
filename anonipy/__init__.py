@@ -1,25 +1,15 @@
-"""
-anonipy
+"""`Anonipy`, the text anonymization package.
 
-The anonipy package provides utilities for data anonymization.
+The `anonipy` package provides utilities for data anonymization. It provides
+a set of modules and utilities for (1) identifying relevant information
+that needs to be anonymized, (2) generating substitutes for the identified
+information, and (3) strategies for anonymizing the identified information.
 
-Submodules
-----------
-anonymize :
-    The package containing anonymization classes and functions.
-utils :
-    The package containing utility classes and functions.
-definitions :
-    The object definitions used within the package.
-constants :
-    The constant values used to help with data anonymization.
-
-
-How to use the documentation
-----------------------------
-Documentation is available in two forms: docstrings provided
-with the code and a loose standing reference guide, available
-from `the anonipy homepage <https://eriknovak.github.io/anonipy>`.
+Modules:
+    anonymize: The module containing the anonymization submodules and utility.
+    utils: The module containing utility classes and functions.
+    definitions: The module containing predefined types used across the package.
+    constants: The module containing the predefined constants used across the package.
 
 """
 

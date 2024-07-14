@@ -30,24 +30,24 @@
 
 The anonipy package is a python package for data anonymization. It is designed to be simple to use and highly customizable, supporting different anonymization strategies. Powered by LLMs.
 
-## ✅ Requirements
+## Requirements
 Before starting the project make sure these requirements are available:
 
 - [python]. The python programming language (v3.8, v3.9, v3.10, v3.11).
 
-## 💾 Install
+## Install
 
 ```bash
 pip install anonipy
 ```
 
-## ⬆️ Upgrade
+## Upgrade
 
 ```bash
 pip install anonipy --upgrade
 ```
 
-## 🔎 Example
+## Example
 
 The details of the example can be found in the [Overview](https://eriknovak.github.io/anonipy/documentation/notebooks/00-overview.ipynb).
 
@@ -143,7 +143,7 @@ pseudo_strategy = PseudonymizationStrategy(mapping=anonymization_mapping)
 anonymized_text, replacements = pseudo_strategy.anonymize(original_text, entities)
 ```
 
-## 📖 Acknowledgements
+## Acknowledgements
 
 [Anonipy](https://eriknovak.github.io/anonipy/) is developed by the
 [Department for Artificial Intelligence](http://ailab.ijs.si/) at the

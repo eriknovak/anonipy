@@ -199,7 +199,7 @@ if torch.cuda.is_available():
         def test_generate_custom(self):
             entity = test_entities["name"]
             generated_text = self.generator.generate(
-                entity, entity_prefix="Spanish", temperature=0.5
+                entity, add_entity_attrs="Spanish", temperature=0.5
             )
             match = re.match(entity.regex, generated_text)
             self.assertNotEqual(match, None)
@@ -273,34 +273,34 @@ class TestDateGenerator(unittest.TestCase):
     def test_generate_first_day_of_the_month(self):
         entity = test_entities["date"][0]
         generated_text = self.generator.generate(
-            entity, output_gen="first_day_of_the_month"
+            entity, sub_variant="first_day_of_the_month"
         )
         self.assertEqual(generated_text, "01-05-2024")
 
     def test_generate_last_day_of_the_month(self):
         entity = test_entities["date"][0]
         generated_text = self.generator.generate(
-            entity, output_gen="last_day_of_the_month"
+            entity, sub_variant="last_day_of_the_month"
         )
         self.assertEqual(generated_text, "31-05-2024")
 
     def test_generate_middle_of_the_month(self):
         entity = test_entities["date"][0]
         generated_text = self.generator.generate(
-            entity, output_gen="middle_of_the_month"
+            entity, sub_variant="middle_of_the_month"
         )
         self.assertEqual(generated_text, "15-05-2024")
 
     def test_generate_middle_of_the_year(self):
         entity = test_entities["date"][0]
         generated_text = self.generator.generate(
-            entity, output_gen="middle_of_the_year"
+            entity, sub_variant="middle_of_the_year"
         )
         self.assertEqual(generated_text, "01-07-2024")
 
     def test_generate_random(self):
         entity = test_entities["date"][0]
-        generated_text = self.generator.generate(entity, output_gen="random")
+        generated_text = self.generator.generate(entity, sub_variant="random")
         match = re.match(entity.regex, generated_text)
         self.assertNotEqual(match, None)
         self.assertEqual(match.group(0), generated_text)
@@ -315,7 +315,7 @@ class TestDateGenerator(unittest.TestCase):
     def test_process_different_formats(self):
         for entity in test_entities["date"]:
             try:
-                self.generator.generate(entity, output_gen="random")
+                self.generator.generate(entity, sub_variant="random")
             except ValueError:
                 self.fail(
                     f"self.generator.generate() raised ValueError unexpectedly for date: {entity.text}"
