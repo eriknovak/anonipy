@@ -218,6 +218,20 @@ class PatternExtractor(ExtractorInterface):
         return anoni_entities, spacy_entities
 
     def _create_add_event_ent(self, label: str):
+        """Create the add event entity function
+
+        Parameters
+        ----------
+        label : str
+            The label of the entity
+
+        Returns
+        -------
+        function
+            The function used to add the entity to the spacy doc
+
+        """
+
         def add_event_ent(matcher, doc, i, matches):
             # define the entity span
             _, start, end = matches[i]

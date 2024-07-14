@@ -224,6 +224,20 @@ class NERExtractor(ExtractorInterface):
         return anoni_entities, spacy_entities
 
     def _get_spacy_fields(self, doc: Doc):
+        """Get the spacy doc entity spans
+
+        Parameters
+        ----------
+        doc : Doc
+            The spacy doc to get the entity spans from
+
+        Returns
+        -------
+        List[Span]
+            The entity spans
+
+        """
+
         if self.spacy_style == "ent":
             return doc.ents
         elif self.spacy_style == "span":
@@ -232,6 +246,17 @@ class NERExtractor(ExtractorInterface):
             raise ValueError(f"Invalid spacy style: {self.spacy_style}")
 
     def _set_spacy_fields(self, doc: Doc, entities: List[Entity]):
+        """Set the spacy doc entity spans
+
+        Parameters
+        ----------
+        doc : Doc
+            The spacy doc to set the entity spans
+        entities : List[Span]
+            The entity spans to set
+
+        """
+
         if self.spacy_style == "ent":
             doc.ents = entities
         elif self.spacy_style == "span":
