@@ -2,9 +2,8 @@ from typing import List, Set, Tuple, Iterable
 
 import itertools
 
-from spacy import util, displacy
-from spacy.tokens import Doc, Span
-from spacy.vocab import Vocab
+from spacy import displacy
+from spacy.tokens import Doc
 
 from ...definitions import Entity
 from ...utils.colors import get_label_color
@@ -52,7 +51,7 @@ class MultiExtractor:
         joint_entities = self._merge_entities(extractor_outputs)
         return extractor_outputs, joint_entities
 
-    def display(self, doc: Doc):
+    def display(self, doc: Doc) -> str:
         """Display the entities in the text
 
         Parameters

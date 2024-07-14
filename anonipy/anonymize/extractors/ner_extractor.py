@@ -5,7 +5,8 @@ import warnings
 
 import torch
 from spacy import displacy
-from spacy.tokens import Doc
+from spacy.tokens import Doc, Span
+from spacy.language import Language
 
 from ..helpers import convert_spacy_to_entity
 from ..regex import regex_map
@@ -102,7 +103,7 @@ class NERExtractor(ExtractorInterface):
         self._set_spacy_fields(doc, spacy_entities)
         return doc, anoni_entities
 
-    def display(self, doc: Doc):
+    def display(self, doc: Doc) -> str:
         """Display the entities in the text
 
         Parameters
@@ -148,7 +149,7 @@ class NERExtractor(ExtractorInterface):
                 l["regex"] = regex
         return labels
 
-    def _create_gliner_config(self):
+    def _create_gliner_config(self) -> dict:
         """Create the config for the GLINER model
 
         Returns
@@ -176,7 +177,7 @@ class NERExtractor(ExtractorInterface):
             "map_location": map_location,
         }
 
-    def _prepare_pipeline(self):
+    def _prepare_pipeline(self) -> Language:
         """Prepare the spacy pipeline
 
         Returns
@@ -197,7 +198,7 @@ class NERExtractor(ExtractorInterface):
         nlp.add_pipe("gliner_spacy", config=gliner_config)
         return nlp
 
-    def _prepare_entities(self, doc: Doc):
+    def _prepare_entities(self, doc: Doc) -> Tuple[List[Entity], List[Span]]:
         """Prepares the anonipy and spacy entities
 
         Parameters
@@ -223,7 +224,7 @@ class NERExtractor(ExtractorInterface):
                 spacy_entities.append(s)
         return anoni_entities, spacy_entities
 
-    def _get_spacy_fields(self, doc: Doc):
+    def _get_spacy_fields(self, doc: Doc) -> List[Span]:
         """Get the spacy doc entity spans
 
         Parameters
@@ -245,7 +246,7 @@ class NERExtractor(ExtractorInterface):
         else:
             raise ValueError(f"Invalid spacy style: {self.spacy_style}")
 
-    def _set_spacy_fields(self, doc: Doc, entities: List[Entity]):
+    def _set_spacy_fields(self, doc: Doc, entities: List[Entity]) -> None:
         """Set the spacy doc entity spans
 
         Parameters

@@ -1,10 +1,11 @@
 import re
 
 import importlib
-from typing import List, Tuple
+from typing import List, Tuple, Optional, Callable
 
 from spacy import displacy, util
 from spacy.tokens import Doc, Span
+from spacy.language import Language
 from spacy.matcher import Matcher
 
 from ..helpers import convert_spacy_to_entity
@@ -95,7 +96,7 @@ class PatternExtractor(ExtractorInterface):
         self._set_doc_entity_spans(doc, spacy_entities)
         return doc, anoni_entities
 
-    def display(self, doc: Doc):
+    def display(self, doc: Doc) -> str:
         """Display the entities in the text
 
         Parameters
@@ -119,7 +120,7 @@ class PatternExtractor(ExtractorInterface):
     # Private methods
     # ===========================================
 
-    def _prepare_pipeline(self):
+    def _prepare_pipeline(self) -> Language:
         """Prepare the spacy pipeline
 
         Returns
@@ -138,7 +139,7 @@ class PatternExtractor(ExtractorInterface):
         nlp.add_pipe("sentencizer")
         return nlp
 
-    def _prepare_token_matchers(self):
+    def _prepare_token_matchers(self) -> Optional[Matcher]:
         """Prepare the token pattern matchers
 
         Returns
@@ -159,7 +160,7 @@ class PatternExtractor(ExtractorInterface):
                 matcher.add(label["label"], label["pattern"], on_match=on_match)
         return matcher
 
-    def _prepare_global_matchers(self):
+    def _prepare_global_matchers(self) -> Optional[Callable]:
         """Prepares the global pattern matching
 
         Returns
@@ -173,7 +174,7 @@ class PatternExtractor(ExtractorInterface):
         if len(relevant_labels) == 0:
             return None
 
-        def global_matchers(doc: Doc):
+        def global_matchers(doc: Doc) -> None:
             for label in relevant_labels:
                 for match in re.finditer(label["regex"], doc.text):
                     # define the entity span
@@ -192,7 +193,7 @@ class PatternExtractor(ExtractorInterface):
 
         return global_matchers
 
-    def _prepare_entities(self, doc: Doc):
+    def _prepare_entities(self, doc: Doc) -> Tuple[List[Entity], List[Span]]:
         """Prepares the anonipy and spacy entities
 
         Parameters
@@ -217,7 +218,7 @@ class PatternExtractor(ExtractorInterface):
             spacy_entities.append(e)
         return anoni_entities, spacy_entities
 
-    def _create_add_event_ent(self, label: str):
+    def _create_add_event_ent(self, label: str) -> Callable:
         """Create the add event entity function
 
         Parameters
@@ -249,7 +250,7 @@ class PatternExtractor(ExtractorInterface):
 
         return add_event_ent
 
-    def _get_doc_entity_spans(self, doc: Doc):
+    def _get_doc_entity_spans(self, doc: Doc) -> List[Span]:
         """Get the spacy doc entity spans
 
         Parameters
@@ -273,7 +274,7 @@ class PatternExtractor(ExtractorInterface):
         else:
             raise ValueError(f"Invalid spacy style: {self.spacy_style}")
 
-    def _set_doc_entity_spans(self, doc: Doc, entities: List[Span]):
+    def _set_doc_entity_spans(self, doc: Doc, entities: List[Span]) -> None:
         """Set the spacy doc entity spans
 
         Parameters
