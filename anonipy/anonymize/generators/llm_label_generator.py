@@ -15,14 +15,18 @@ from ...definitions import Entity
 # =====================================
 
 
-def prepare_llama3_byte_decoder():
-    """Prepares the byte decoder
+def prepare_llama3_byte_decoder() -> dict:
+    """Prepares the byte decoder.
 
     This is an implementation of a workaround, such that the guidance module
     can be used with the LLaMa-3 model from Hugging Face. Once the issue is resolved,
     we will remove this function.
 
     Link to the guidance issue: https://github.com/guidance-ai/guidance/issues/782
+
+    Returns:
+        The byte decoder.
+
     """
     byte_decoder = {}
     # alphabet = pre_tokenizers.ByteLevel(False, False).alphabet()
@@ -78,6 +82,9 @@ def prepare_llama3_byte_decoder():
 
 class LLMLabelGenerator(GeneratorInterface):
     """The class representing the LLM label generator.
+
+    !!! info "GPU Requirements"
+        The `LLMLabelGenerator` utilizes the open source LLMs, specifically the [Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) model. Because the model is quite large, we utilize quantization using the `bitsandbytes` package to reduce its size. Therefore, the `LLMLabelGenerator` requires at least 8GB GPU and CUDA drivers to be available. If these resources are not available on your machine, you can use the `MaskLabelGenerator` instead.
 
     Examples:
         >>> from anonipy.anonymize.generators import LLMLabelGenerator

@@ -68,6 +68,10 @@ class PseudonymizationStrategy(StrategyInterface):
         anonymized_text, replacements = anonymize(text, replacements)
         return anonymized_text, replacements
 
+    # ===========================================
+    # Private methods
+    # ===========================================
+
     def _create_replacement(
         self, entity: Entity, text: str, replacements: List[dict]
     ) -> Replacement:

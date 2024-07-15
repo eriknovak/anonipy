@@ -59,10 +59,10 @@ plugins:
       handlers:
         python:
           options:
-            show_root_heading: False
+            show_root_heading: True
             show_root_toc_entry: False
             members_order: "source"
-            heading_level: 4
+            heading_level: 3
 
 # Markdown Extensions
 markdown_extensions:
@@ -104,6 +104,7 @@ nav:
       - references/utils/index.md
       - file_system: references/utils/file_system.md
       - language_detector: references/utils/language_detector.md
+      - regex: references/utils/regex.md
     - definitions: references/definitions.md
     - constants: references/constants.md
 

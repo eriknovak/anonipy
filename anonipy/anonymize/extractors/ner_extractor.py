@@ -9,7 +9,7 @@ from spacy.tokens import Doc, Span
 from spacy.language import Language
 
 from ..helpers import convert_spacy_to_entity
-from ..regex import regex_map
+from ...utils.regex import regex_mapping
 from ...constants import LANGUAGES
 from ...definitions import Entity
 from ...utils.colors import get_label_color
@@ -150,7 +150,7 @@ class NERExtractor(ExtractorInterface):
         for l in labels:
             if "regex" in l:
                 continue
-            regex = regex_map(l["type"])
+            regex = regex_mapping(l["type"])
             if regex is not None:
                 l["regex"] = regex
         return labels

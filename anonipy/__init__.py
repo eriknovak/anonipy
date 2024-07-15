@@ -1,4 +1,4 @@
-"""`Anonipy`, the text anonymization package.
+"""`Anonipy` is a text anonymization package.
 
 The `anonipy` package provides utilities for data anonymization. It provides
 a set of modules and utilities for (1) identifying relevant information

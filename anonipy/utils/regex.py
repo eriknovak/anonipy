@@ -1,3 +1,21 @@
+"""Module containing the `regex` related utilities.
+
+The `regex` module provides the regex definitions and functions used within the package.
+
+Classes:
+    RegexMapping: The class representing the mapping for data type to the corresponding regex.
+
+Attributes:
+    REGEX_STRING (str): The regex definition for string.
+    REGEX_INTEGER (str): The regex definition for integer.
+    REGEX_FLOAT (str): The regex definition for float.
+    REGEX_DATE (str): The regex definition for date.
+    REGEX_EMAIL_ADDRESS (str): The regex definition for email address.
+    REGEX_PHONE_NUMBER (str): The regex definition for phone number.
+    REGEX_WEBSITE_URL (str): The regex definition for website URL.
+
+"""
+
 from collections import defaultdict
 
 from ..constants import ENTITY_TYPES
@@ -8,8 +26,14 @@ from ..constants import ENTITY_TYPES
 # =====================================
 
 REGEX_STRING = ".*"
+"""The regex definition for string."""
+
 REGEX_INTEGER = "\d+"
+"""The regex definition for integer."""
+
 REGEX_FLOAT = "[\d\.,]+"
+"""The regex definition for float."""
+
 REGEX_DATE = (
     r"("
     r"(\d{4}[-/.\s]\d{2}[-/.\s]\d{2}[ T]\d{2}:\d{2}:\d{2})|"
@@ -32,13 +56,27 @@ REGEX_DATE = (
     r"([A-Za-z]+,[ ](January|February|March|April|May|June|July|August|September|October|November|December)[ ]\d{1,2},[ ]\d{4}[ ]?\d{2}:\d{2}[ ]?[APap][mM])"
     r")"
 )
+"""The regex definition for dates.
+
+The regex definition for dates includes string representations, which are currently in
+the English language.
+
+TODO:
+    - Add regex definitions for other languages.
+"""
+
 REGEX_EMAIL_ADDRESS = (
     "[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*"
 )
+"""The regex definition for email addresses."""
+
 REGEX_PHONE_NUMBER = (
     "[(]?[\+]?[(]?[0-9]{1,3}[)]?[-\s\.]?([0-9]{2,}[-\s\.]?){2,}([0-9]{3,})"
 )
+"""The regex definition for phone numbers."""
+
 REGEX_WEBSITE_URL = "((https?|ftp|smtp):\/\/)?(www.)?([a-zA-Z0-9]+\.)+[a-z]{2,}(\/[a-zA-Z0-9#\?\_\.\=\-\&]+|\/?)*"
+"""The regex definition for website URLs."""
 
 
 # =====================================
@@ -46,23 +84,30 @@ REGEX_WEBSITE_URL = "((https?|ftp|smtp):\/\/)?(www.)?([a-zA-Z0-9]+\.)+[a-z]{2,}(
 # =====================================
 
 
-class RegexMap:
-    """RegexMap
+class RegexMapping:
+    """The class representing the regex mapping.
 
-    The class representing the regex map
+    Examples:
+        >>> from anonipy.anonymize.regex import regex_map
+        >>> regex_map("string")
+        ".*"
 
-    Attributes
-    ----------
-    regex_mapping : defaultdict
-        The regex mapping
+    Attributes:
+        regex_mapping (defaultdict):
+            The mapping between the data type and the corresponding regex.
+
+    Methods:
+        __call__(type):
+            Gets the regex for the given type.
 
     """
 
     def __init__(self):
-        """
-        Parameters
-        ----------
-        None
+        """Initialize the regex mapping.
+
+        Examples:
+            >>> from anonipy.anonymize.regex import RegexMapping
+            >>> regex_mapping = RegexMapping()
 
         """
 
@@ -77,21 +122,24 @@ class RegexMap:
         self.regex_mapping[ENTITY_TYPES.WEBSITE_URL] = REGEX_WEBSITE_URL
 
     def __call__(self, type: str) -> str:
-        """Gets the regex for the given type
+        """Gets the regex for the given type.
 
-        Parameters
-        ----------
-        type : str
-            The type of the entity
+        Examples:
+            >>> from anonipy.anonymize.regex import RegexMapping
+            >>> regex_mapping = RegexMapping()
+            >>> regex_mapping("string")
+            ".*"
 
-        Returns
-        -------
-        str
-            The regex for the given type
+        Args:
+            type: The type of the entity.
+
+        Returns:
+            The regex for the given type.
 
         """
 
         return self.regex_mapping[type]
 
 
-regex_map = RegexMap()
+regex_mapping = RegexMapping()
+"""The shorthand to the `RegexMapping` instance."""

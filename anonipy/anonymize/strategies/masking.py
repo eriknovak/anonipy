@@ -66,6 +66,10 @@ class MaskingStrategy(StrategyInterface):
         anonymized_text, replacements = anonymize(text, replacements)
         return anonymized_text, replacements
 
+    # ===========================================
+    # Private methods
+    # ===========================================
+
     def _create_replacement(self, entity: Entity) -> Replacement:
         """Creates a replacement for the entity.
 

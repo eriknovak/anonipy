@@ -11,7 +11,7 @@ from anonipy.anonymize.generators import (
     DateGenerator,
     NumberGenerator,
 )
-from anonipy.anonymize.regex import regex_map
+from anonipy.utils.regex import regex_mapping
 
 # =====================================
 # Test Cases
@@ -118,7 +118,7 @@ test_entities = {
         end_index=38,
         score=1.0,
         type="string",
-        regex=regex_map("string"),
+        regex=regex_mapping("string"),
     ),
     "date": [
         Entity(
@@ -128,7 +128,7 @@ test_entities = {
             end_index=96,
             score=1.0,
             type="date",
-            regex=regex_map("date"),
+            regex=regex_mapping("date"),
         )
     ]
     + [
@@ -139,7 +139,7 @@ test_entities = {
             end_index=86 + len(str),
             score=1.0,
             type="date",
-            regex=regex_map("date"),
+            regex=regex_mapping("date"),
         )
         for str in DATETIME_STRS
     ],
@@ -150,7 +150,7 @@ test_entities = {
         end_index=132,
         score=1.0,
         type="integer",
-        regex=regex_map("integer"),
+        regex=regex_mapping("integer"),
     ),
     "float": Entity(
         text="123,456,789.000",
@@ -159,7 +159,7 @@ test_entities = {
         end_index=132,
         score=1.0,
         type="float",
-        regex=regex_map("float"),
+        regex=regex_mapping("float"),
     ),
     "custom": Entity(
         text="123-45-6789",

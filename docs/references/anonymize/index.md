@@ -1,15 +1,13 @@
 ---
 title: Anonymize Module
-hide:
-    - toc
 ---
 
 # Anonymize Module
 
 ::: anonipy.anonymize
 
-## Methods
-
-### Anonymize
+## Functions
 
 ::: anonipy.anonymize.anonymize
+    options:
+        heading_level: 3

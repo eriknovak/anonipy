@@ -1,12 +1,13 @@
 """Module containing the `generators`.
 
 The `generators` module provides a set of generators used to generate data
-substitutes. The module contains the following classes:
+substitutes.
 
-- `LLMLabelGenerator`: The class representing the label generator utilizing LLMs.
-- `MaskLabelGenerator`: The class representing the label generator utilizing token masking.
-- `NumberGenerator`: The class representing the number generator.
-- `DateGenerator`: The class representing the date generator.
+Classes:
+    LLMLabelGenerator: The class representing the label generator utilizing LLMs.
+    MaskLabelGenerator: The class representing the label generator utilizing token masking.
+    NumberGenerator: The class representing the number generator.
+    DateGenerator: The class representing the date generator.
 
 """
 

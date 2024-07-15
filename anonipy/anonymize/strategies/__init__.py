@@ -1,11 +1,12 @@
 """Module containing the `strategies`.
 
 The `strategies` module provides a set of strategies used to anonymize the
-identified vulnerable data. The module contains the following classes:
+identified vulnerable data.
 
-- `RedactionStrategy`: The class representing the redaction strategy.
-- `MaskingStrategy`: The class representing the masking strategy.
-- `PseudonymizationStrategy`: The class representing the pseudonymization strategy.
+Classes:
+    RedactionStrategy: The class representing the redaction strategy.
+    MaskingStrategy: The class representing the masking strategy.
+    PseudonymizationStrategy: The class representing the pseudonymization strategy.
 
 """
 

@@ -1,3 +1,13 @@
+"""The module containing the `language_detector` utilities.
+
+The `language_detector` module contains the `LanguageDetector` class, which is
+used to detect the language of a text.
+
+Classes:
+    LanguageDetector: The class representing the language detector.
+
+"""
+
 from typing import Tuple
 
 from lingua import LanguageDetectorBuilder
@@ -11,7 +21,7 @@ class LanguageDetector:
     """The class representing the language detector.
 
     Examples:
-        >>> from anonipy.utils import LanguageDetector
+        >>> from anonipy.utils.language_detector import LanguageDetector
         >>> detector = LanguageDetector()
         >>> detector.detect(text)
 
@@ -31,7 +41,7 @@ class LanguageDetector:
         """Initializes the language detector.
 
         Examples:
-            >>> from anonipy.utils import LanguageDetector
+            >>> from anonipy.utils.language_detector import LanguageDetector
             >>> detector = LanguageDetector()
 
         Args:
@@ -54,7 +64,7 @@ class LanguageDetector:
         """Detects the language of a text by calling the `detect` method.
 
         Examples:
-            >>> from anonipy.utils import LanguageDetector
+            >>> from anonipy.utils.language_detector import LanguageDetector
             >>> detector = LanguageDetector()
             >>> detector(text)
 
@@ -76,9 +86,9 @@ class LanguageDetector:
         """Detects the language of a text.
 
         Examples:
-            >>> from anonipy.utils import LanguageDetector
+            >>> from anonipy.utils.language_detector import LanguageDetector
             >>> detector = LanguageDetector()
-            >>> detector(text)
+            >>> detector.detect(text)
 
         Args:
             text: The text to detect the language of.
