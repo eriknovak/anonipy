@@ -2,7 +2,7 @@
 date: 2024-05-23
 authors: [eriknovak]
 description: >
-  Our package can be used to anonymize collections of documents.
+  Anonipy can be used to anonymize collections of documents.
 categories:
   - Tutorial
 ---
@@ -87,9 +87,9 @@ def anonymization_mapping(text, entity):
     if entity.type == "string":
         return mask_generator.generate(entity, text)
     if entity.label == "date":
-        return date_generator.generate(entity, output_gen="middle_of_the_month")
+        return date_generator.generate(entity, sub_variant="MIDDLE_OF_THE_MONTH")
     if entity.label == "date of birth":
-        return date_generator.generate(entity, output_gen="middle_of_the_year")
+        return date_generator.generate(entity, sub_variant="MIDDLE_OF_THE_YEAR")
     if entity.label == "social security number":
         return number_generator.generate(entity)
     return "[REDACTED]"
@@ -157,3 +157,90 @@ process. We then find all of the files we want to anonymize and anonymize them.
 Each anonymized file is finally stored in a separate folder which contains the
 anonymized text.
 
+## Full code
+
+
+```python
+import os
+from os.path import isfile, join
+
+from anonipy.anonymize.extractors import NERExtractor
+from anonipy.anonymize.generators import (
+    MaskLabelGenerator,
+    DateGenerator,
+    NumberGenerator,
+)
+from anonipy.anonymize.strategies import PseudonymizationStrategy
+from anonipy.utils.file_system import open_file, write_file, write_json
+from anonipy.constants import LANGUAGES
+
+# ===============================================
+# Preparing the anonymization components
+# ===============================================
+
+# define the labels to be extracted and their types
+labels = [
+    {"label": "name", "type": "string"},
+    {"label": "social security number", "type": "custom"},
+    {"label": "date of birth", "type": "date"},
+    {"label": "date", "type": "date"},
+]
+
+# initialize the entity extractor
+entity_extractor = NERExtractor(
+    labels, lang=LANGUAGES.ENGLISH, score_th=0.5
+)
+
+# initialize the generators
+mask_generator = MaskLabelGenerator()
+date_generator = DateGenerator()
+number_generator = NumberGenerator()
+
+# prepare the anonymization mapping
+def anonymization_mapping(text, entity):
+    if entity.type == "string":
+        return mask_generator.generate(entity, text)
+    if entity.label == "date":
+        return date_generator.generate(entity, sub_variant="MIDDLE_OF_THE_MONTH")
+    if entity.label == "date of birth":
+        return date_generator.generate(entity, sub_variant="MIDDLE_OF_THE_YEAR")
+    if entity.label == "social security number":
+        return number_generator.generate(entity)
+    return "[REDACTED]"
+
+# initialize the pseudonymization strategy
+pseudo_strategy = PseudonymizationStrategy(mapping=anonymization_mapping)
+
+# ===============================================
+# Anonymize the collection of documents
+# ===============================================
+
+# prepare the input and output folder paths
+input_folder = "path/to/input/folder"
+output_folder = "path/to/output/folder"
+
+# prepare a list of file paths in the input folder
+file_names = [
+    f for f in os.listdir(input_folder) if isfile(join(input_folder, f))
+]
+
+# iterate through each file
+for file_name in file_names:
+
+    # extract the text from the document
+    file_text = open_file(join(input_folder, file_name))
+
+    # extract the entities from the text
+    doc, entities = entity_extractor(file_text)
+
+    # anonymize the text
+    anonymized_text, replacements = pseudo_strategy.anonymize(file_text, entities)
+
+    # write the anonymized text into the output folder
+    output_file_name = ".".join(file_name.split(".")[:-1]) + "_anonymized"
+    write_file(anonymized_text, join(output_folder, output_file_name) + ".txt")
+
+    # write the replacements into the output folder
+    write_json(replacements, join(output_folder, output_file_name) + ".json")
+
+```

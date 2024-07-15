@@ -2,21 +2,17 @@
 date: 2024-05-22
 authors: [eriknovak]
 description: >
-  Our package can be used to anonymize a document such as PDF and word documents.
+  Anonipy can be used to anonymize a document such as PDF and word documents.
 categories:
   - Tutorial
 ---
 
 # Anonymizing documents
 
-The [anonipy][anonipy] package was designed for anonymizing text. However, a lot of text
-data can be found in document form, such as PDFs, word documents, and other. Copying
-the text from the documents  to be anonymized can be cumbersome. The `anonipy` package
-provides utility functions that extracts the text from the documents.
+The [anonipy][anonipy] package was designed for anonymizing text. However, a lot of text data can be found in document form, such as PDFs, word documents, and other. Copying the text from the documents  to be anonymized can be cumbersome. The `anonipy` package provides utility functions that extracts the text from the documents.
 
 
-In this blog post, we explain how `anonipy` can be used to anonymize texts in
-document form.
+In this blog post, we explain how `anonipy` can be used to anonymize texts in document form.
 
 <!-- more -->
 
@@ -136,9 +132,9 @@ def anonymization_mapping(text, entity):
     if entity.type == "string":
         return mask_generator.generate(entity, text)
     if entity.label == "date":
-        return date_generator.generate(entity, output_gen="middle_of_the_month")
+        return date_generator.generate(entity, sub_variant="MIDDLE_OF_THE_MONTH")
     if entity.label == "date of birth":
-        return date_generator.generate(entity, output_gen="middle_of_the_year")
+        return date_generator.generate(entity, sub_variant="MIDDLE_OF_THE_YEAR")
     if entity.label == "social security number":
         return number_generator.generate(entity)
     return "[REDACTED]"
@@ -239,9 +235,9 @@ def anonymization_mapping(text, entity):
     if entity.type == "string":
         return mask_generator.generate(entity, text)
     if entity.label == "date":
-        return date_generator.generate(entity, output_gen="middle_of_the_month")
+        return date_generator.generate(entity, sub_variant="MIDDLE_OF_THE_MONTH")
     if entity.label == "date of birth":
-        return date_generator.generate(entity, output_gen="middle_of_the_year")
+        return date_generator.generate(entity, sub_variant="MIDDLE_OF_THE_YEAR")
     if entity.label == "social security number":
         return number_generator.generate(entity)
     return "[REDACTED]"

@@ -89,13 +89,6 @@ markdown_extensions:
 nav:
   - Home: index.md
 
-  # - How-To Guides:
-  #   - Overview: how-to-guides/notebooks/00-overview.ipynb
-  #   - Extractors: how-to-guides/notebooks/01-extractors.ipynb
-  #   - Generators: how-to-guides/notebooks/02-generators.ipynb
-  #   - Strategies: how-to-guides/notebooks/03-strategies.ipynb
-  #   - Utility: how-to-guides/notebooks/04-utility.ipynb
-
   - How-To Guides:
     - how-to-guides/index.md
 
