@@ -41,10 +41,7 @@ pip install anonipy --upgrade
 
 ### Extracting the text from the document
 
-Next, we will use the `anonipy` package to anonymize the text in the document.
-First, we must extract the text. This can be done using the package's utility
-function [open_file][anonipy.utils.file_system.open_file]. The function supports
-extraction of text from `doc`, `docx`, `pdf` and `txt` files.
+Next, we will use the `anonipy` package to anonymize the text in the document. First, we must extract the text. This can be done using the package's utility function [open_file][anonipy.utils.file_system.open_file]. The function supports extraction of text from `doc`, `docx`, `pdf` and `txt` files.
 
 To extract the text, using the following code:
 
@@ -55,17 +52,13 @@ file_path = "path/to/file.txt"
 file_text = open_file(file_path)
 ```
 
-where `file_path` is the path to the document we want to anonymize.
-The [open_file][anonipy.utils.file_system.open_file] will open the document,
-extract the content, and return it as a string.
+where `file_path` is the path to the document we want to anonymize. The [open_file][anonipy.utils.file_system.open_file] will open the document, extract the content, and return it as a string.
 
 Once this is done, we can start anonymizing the text, in a regular way.
 
 ### Extracting personal information from the text
 
-Now we can identify and extract personal information from the text. We do this
-by using [NERExtractor][anonipy.anonymize.extractors.NERExtractor], an extractor
-that leverages the [GLiNER](https://github.com/urchade/GLiNER) span-based NER models.
+Now we can identify and extract personal information from the text. We do this by using [NERExtractor][anonipy.anonymize.extractors.NERExtractor], an extractor that leverages the [GLiNER](https://github.com/urchade/GLiNER) span-based NER models.
 
 It returns the text and the extracted entities.
 
@@ -98,20 +91,13 @@ extractor.display(doc)
 
 ### Preparing the anonymization mapping
 
-Next, we prepare the anonymization mapping. We do this by using the generators
-module part of the `anonipy` package. The generators are used to generate
-substitutes for the entities.
+Next, we prepare the anonymization mapping. We do this by using the generators module part of the `anonipy` package. The generators are used to generate substitutes for the entities.
 
-For example, we can use [MaskLabelGenerator][anonipy.anonymize.generators.MaskLabelGenerator]
-to generate substitutes using the language models to solve a `mask-filling` problem,
-i.e. finding the words that would be probabilistically suitable to replace the entity
-in the text.
+For example, we can use [MaskLabelGenerator][anonipy.anonymize.generators.MaskLabelGenerator] to generate substitutes using the language models to solve a `mask-filling` problem, i.e. finding the words that would be probabilistically suitable to replace the entity in the text.
 
-The full list of available generators can be found in the [generators][anonipy.anonymize.generators]
-submodule.
+The full list of available generators can be found in the [generators][anonipy.anonymize.generators] submodule.
 
-Furthermore, we use the [PseudonymizationStrategy][anonipy.anonymize.strategies.PseudonymizationStrategy] to anonymize the text. More on anonymization strategies
-can be found in the [strategies][anonipy.anonymize.strategies] submodule.
+Furthermore, we use the [PseudonymizationStrategy][anonipy.anonymize.strategies.PseudonymizationStrategy] to anonymize the text. More on anonymization strategies can be found in the [strategies][anonipy.anonymize.strategies] submodule.
 
 
 ```python
@@ -168,15 +154,9 @@ Where `output_file` is the path to the file where the anonymized text will be sa
 
 ## Conclusion
 
-In this blog post, we show how one can anonymize a document using the `anonipy` package.
-We first used the [open_file][anonipy.utils.file_system.open_file] utility function to
-extract the content of the document and store it as a string. We then used the
-[NERExtractor][anonipy.anonymize.extractors.NERExtractor] to identify and extract
-personal information form the text, and the [PseudonymizationStrategy][anonipy.anonymize.strategies.PseudonymizationStrategy] in combination with various [generators][anonipy.anonymize.generators] to anonymize the text. Finally, we used the [write_file][anonipy.utils.file_system.write_file] utility function to save the anonymized text to a file.
+In this blog post, we show how one can anonymize a document using the `anonipy` package. We first used the [open_file][anonipy.utils.file_system.open_file] utility function to extract the content of the document and store it as a string. We then used the [NERExtractor][anonipy.anonymize.extractors.NERExtractor] to identify and extract personal information form the text, and the [PseudonymizationStrategy][anonipy.anonymize.strategies.PseudonymizationStrategy] in combination with various [generators][anonipy.anonymize.generators] to anonymize the text. Finally, we used the [write_file][anonipy.utils.file_system.write_file] utility function to save the anonymized text to a file.
 
-This process is very straightforward and can be applied to almost any document type.
-Furthermore, it can be expanded to process multiple documents written in the same
-language at once. Stay tuned to see how this can be done in the future!
+This process is very straightforward and can be applied to almost any document type. Furthermore, it can be expanded to process multiple documents written in the same language at once. Stay tuned to see how this can be done in the future!
 
 ## Full code
 

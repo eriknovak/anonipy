@@ -15,6 +15,9 @@ All extractors and their API references are available in the  [extractors][anoni
 
 <!-- more -->
 
+
+
+
 ## Pre-requisites
 
 Let us first define the text, from which we want to extract the entities.
@@ -40,6 +43,9 @@ Next Examination Date:
 """
 ```
 
+
+
+
 ## Language configuration
 
 Each extractor requires a language to be configured. The language is used to determine how to process the text. If the language is not specified, the extractor will use the default language. The default language is `ENGLISH`.
@@ -53,6 +59,9 @@ LANGUAGE.ENGLISH# (1)!
 ```
 
 1. The `LANGUAGE.ENGLISH` return the `("en", "English")` literal tuple, which is the format required by the extractors.
+
+
+
 
 ### Using the language detector
 
@@ -68,6 +77,9 @@ language_detector(original_text)# (1)!
 
 1. The `language_detector` returns the literal tuple `("en", "English")`, similar to the `LANGUAGE.ENGLISH`, making it compatible with the extractors.
 
+
+
+
 ## Named Entity
 
 Each extractor will extract the `named entities` from the text. The entities can be people names, organizations, addresses, social security numbers, etc. The entities are represented using the [Entity][anonipy.definitions.Entity] dataclass, which consists of the following parameters:
@@ -80,9 +92,13 @@ Each extractor will extract the `named entities` from the text. The entities can
 
 
 
+
 ## Extractors
 
 All following extractors are available in the [extractors][anonipy.anonymize.extractors] module.
+
+
+
 
 ### Named entity recognition (NER) extractor
 
@@ -134,7 +150,7 @@ The entities extracted within the input text are:
 ner_extractor.display(doc)
 ```
 
-<div class="md-typeset admonition tip" style="line-height: 2.5; direction: ltr; padding: .6rem;">Medical Record<br><br>Patient Name:
+<div class="md-typeset admonition tip" style="line-height: 2.5; direction: ltr; padding: .6rem; border: .05rem solid var(--md-typeset-table-color);">Medical Record<br><br>Patient Name:
     <mark class="entity"
         style="background: #308774; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1; border-radius: 0.35em;">
         John Doe
@@ -196,6 +212,7 @@ For instance, when using `social security number` as the label name, the entity 
     Using more specific label names is better.
 
 
+
 **Use custom regex patterns.**
 In the `anonipy` package, we provide some predefined [ENTITY_TYPES][anonipy.constants.ENTITY_TYPES], which are:
 
@@ -212,8 +229,8 @@ If the user wants to use a custom regex pattern, they can define it in the `labe
 
 
 
-### Pattern extractor
 
+### Pattern extractor
 
 The [PatternExtractor][anonipy.anonymize.extractors.PatternExtractor] is an extractor that uses a custom spacy and regex pattern to extract entities. When documents have a consistent format and structure, the
 pattern extractor can be useful, as it can extract entities in a consistent way.
@@ -279,7 +296,7 @@ The entities extracted within the input text are:
 pattern_extractor.display(doc)
 ```
 
-<div class="md-typeset admonition tip" style="line-height: 2.5; direction: ltr; padding: .6rem;">Medical Record<br><br>Patient Name: John Doe<br>Date of
+<div class="md-typeset admonition tip" style="line-height: 2.5; direction: ltr; padding: .6rem; border: .05rem solid var(--md-typeset-table-color);">Medical Record<br><br>Patient Name: John Doe<br>Date of
     Birth:
     <mark class="entity"
         style="background: #E805DA; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1; border-radius: 0.35em;">
@@ -329,6 +346,8 @@ pattern_extractor.display(doc)
 </div>
 
 
+
+
 ### Multi extractor
 
 The [MultiExtractor][anonipy.anonymize.extractors.MultiExtractor] is a extractor that can be used to extract entities using multiple extractors.
@@ -361,6 +380,9 @@ Similar as before, the `MultiExtractor` receives the original text, but returns 
 ```python
 extractor_outputs, joint_entities = multi_extractor(original_text)
 ```
+
+
+
 
 ## Conclusion
 

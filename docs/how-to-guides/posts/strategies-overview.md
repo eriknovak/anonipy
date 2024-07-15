@@ -16,4 +16,35 @@ All strategies and their API references are available in the  [strategies][anoni
 
 <!-- more -->
 
+
+
+
+## Pre-requisites
+
+
+
+## Strategies
+
+All following strategies are available in the [strategies][anonipy.anonymize.strategies] module.
+
+
+### Redacted Strategy
+
+
+
+### Masking Strategy
+
+
+
+
+### Pseudonymization Strategy
+
+
+
+
+## Conclusion
+
+The strategies are used to anonymize the text in combination with the extracted `named entities`. The strategies are used to replace and anonymize the text as well as provide the list of replacements that were made to the original text.
+
+
 !!! info "Under construction"
