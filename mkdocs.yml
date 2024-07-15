@@ -50,7 +50,9 @@ extra_css:
 
 # Plugins
 plugins:
-  - blog
+  - blog:
+      blog_dir: how-to-guides
+  - autorefs
   - search:
       separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - mkdocs-jupyter:
@@ -87,12 +89,16 @@ markdown_extensions:
 nav:
   - Home: index.md
 
+  # - How-To Guides:
+  #   - Overview: how-to-guides/notebooks/00-overview.ipynb
+  #   - Extractors: how-to-guides/notebooks/01-extractors.ipynb
+  #   - Generators: how-to-guides/notebooks/02-generators.ipynb
+  #   - Strategies: how-to-guides/notebooks/03-strategies.ipynb
+  #   - Utility: how-to-guides/notebooks/04-utility.ipynb
+
   - How-To Guides:
-    - Overview: how-to-guides/notebooks/00-overview.ipynb
-    - Extractors: how-to-guides/notebooks/01-extractors.ipynb
-    - Generators: how-to-guides/notebooks/02-generators.ipynb
-    - Strategies: how-to-guides/notebooks/03-strategies.ipynb
-    - Utility: how-to-guides/notebooks/04-utility.ipynb
+    - how-to-guides/index.md
+
   - API Reference:
     - references/index.md
     - anonymize:
@@ -102,14 +108,11 @@ nav:
       - strategies: references/anonymize/strategies.md
     - utils:
       - references/utils/index.md
+      - regex: references/utils/regex.md
       - file_system: references/utils/file_system.md
       - language_detector: references/utils/language_detector.md
-      - regex: references/utils/regex.md
     - definitions: references/definitions.md
     - constants: references/constants.md
-
-  - Blog:
-    - blog/index.md
 
   - Changelog: changelog.md
   - Development: development.md

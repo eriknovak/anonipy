@@ -47,7 +47,7 @@ consists of preparing the entity extractor, the anonymization strategy, and the
 generators for the anonymization process.
 
 ```python
-from anonipy.anonymize.extractors import EntityExtractor
+from anonipy.anonymize.extractors import NERExtractor
 from anonipy.anonymize.generators import (
     MaskLabelGenerator,
     DateGenerator,
@@ -69,7 +69,7 @@ labels = [
 ]
 
 # initialize the entity extractor
-entity_extractor = EntityExtractor(
+entity_extractor = NERExtractor(
     labels, lang=LANGUAGES.ENGLISH, score_th=0.5
 )
 
@@ -126,15 +126,21 @@ file_names = [
 
 # iterate through each file
 for file_name in file_names:
+
     # extract the text from the document
     file_text = open_file(join(input_folder, file_name))
+
     # extract the entities from the text
     doc, entities = entity_extractor(file_text)
+
     # anonymize the text
     anonymized_text, replacements = pseudo_strategy.anonymize(file_text, entities)
+
     # write the anonymized text into the output folder
     output_file_name = ".".join(file_name.split(".")[:-1]) + "_anonymized"
     write_file(anonymized_text, join(output_folder, output_file_name) + ".txt")
+
+    # write the replacements into the output folder
     write_json(replacements, join(output_folder, output_file_name) + ".json")
 
 ```
