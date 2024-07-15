@@ -61,9 +61,9 @@ class TestRegex(unittest.TestCase):
     def test_regex_mapping(self):
 
         for test_case in TEST_CASES:
-            self.assertEqual(regex_mapping(test_case["entity"]), test_case["regex"])
+            self.assertEqual(regex_mapping[test_case["entity"]], test_case["regex"])
             self.assertEqual(
-                regex_mapping(test_case["value"]), regex_mapping(test_case["entity"])
+                regex_mapping[test_case["value"]], regex_mapping[test_case["entity"]]
             )
 
 

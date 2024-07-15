@@ -88,8 +88,8 @@ class RegexMapping:
     """The class representing the regex mapping.
 
     Examples:
-        >>> from anonipy.anonymize.regex import regex_map
-        >>> regex_map("string")
+        >>> from anonipy.anonymize.regex import regex_mapping
+        >>> regex_mapping["string"]
         ".*"
 
     Attributes:
@@ -97,7 +97,7 @@ class RegexMapping:
             The mapping between the data type and the corresponding regex.
 
     Methods:
-        __call__(type):
+        __getitem__(type):
             Gets the regex for the given type.
 
     """
@@ -121,13 +121,13 @@ class RegexMapping:
         self.regex_mapping[ENTITY_TYPES.PHONE_NUMBER] = REGEX_PHONE_NUMBER
         self.regex_mapping[ENTITY_TYPES.WEBSITE_URL] = REGEX_WEBSITE_URL
 
-    def __call__(self, type: str) -> str:
+    def __getitem__(self, type: str) -> str:
         """Gets the regex for the given type.
 
         Examples:
             >>> from anonipy.anonymize.regex import RegexMapping
             >>> regex_mapping = RegexMapping()
-            >>> regex_mapping("string")
+            >>> regex_mapping["string"]
             ".*"
 
         Args:
@@ -137,7 +137,6 @@ class RegexMapping:
             The regex for the given type.
 
         """
-
         return self.regex_mapping[type]
 
 

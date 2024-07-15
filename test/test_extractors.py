@@ -39,7 +39,6 @@ ner_entities = [
         start_index=30,
         end_index=38,
         type="string",
-        regex=regex_mapping("string"),
     ),
     Entity(
         text="15-01-1985",
@@ -47,7 +46,6 @@ ner_entities = [
         start_index=54,
         end_index=64,
         type="date",
-        regex=regex_mapping("date"),
     ),
     Entity(
         text="20-05-2024",
@@ -55,7 +53,6 @@ ner_entities = [
         start_index=86,
         end_index=96,
         type="date",
-        regex=regex_mapping("date"),
     ),
     Entity(
         text="123-45-6789",
@@ -71,7 +68,6 @@ ner_entities = [
         start_index=157,
         end_index=165,
         type="string",
-        regex=regex_mapping("string"),
     ),
     Entity(
         text="15-11-2024",
@@ -79,7 +75,6 @@ ner_entities = [
         start_index=717,
         end_index=727,
         type="date",
-        regex=regex_mapping("date"),
     ),
 ]
 
@@ -89,25 +84,20 @@ pattern_entities = [
         label="date",
         start_index=54,
         end_index=64,
-        score=1.0,
         type=None,
-        regex=".*",
     ),
     Entity(
         text="20-05-2024",
         label="date",
         start_index=86,
         end_index=96,
-        score=1.0,
         type=None,
-        regex=".*",
     ),
     Entity(
         text="blood pressure, heart rate, temperature",
         label="symptoms",
         start_index=254,
         end_index=293,
-        score=1.0,
         type=None,
         regex="\\((.*)\\)",
     ),
@@ -116,27 +106,21 @@ pattern_entities = [
         label="medicine",
         start_index=533,
         end_index=549,
-        score=1.0,
         type=None,
-        regex=".*",
     ),
     Entity(
         text="Lisinopril 10 mg",
         label="medicine",
         start_index=623,
         end_index=639,
-        score=1.0,
         type=None,
-        regex=".*",
     ),
     Entity(
         text="15-11-2024",
         label="date",
         start_index=717,
         end_index=727,
-        score=1.0,
         type=None,
-        regex=".*",
     ),
 ]
 

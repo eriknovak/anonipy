@@ -154,7 +154,7 @@ class NERExtractor(ExtractorInterface):
         for l in labels:
             if "regex" in l:
                 continue
-            regex = regex_mapping(l["type"])
+            regex = regex_mapping[l["type"]]
             if regex is not None:
                 l["regex"] = regex
         return labels

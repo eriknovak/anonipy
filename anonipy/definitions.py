@@ -13,6 +13,7 @@ from typing import Union, TypedDict
 from typing_extensions import NotRequired
 from dataclasses import dataclass
 
+from .utils.regex import regex_mapping
 from .constants import ENTITY_TYPES
 
 # ================================================
@@ -41,7 +42,13 @@ class Entity:
     end_index: int
     score: float = 1.0
     type: ENTITY_TYPES = None
-    regex: Union[str, re.Pattern] = ".*"
+    regex: Union[str, re.Pattern] = None
+
+    def __post_init__(self):
+        if self.regex is None:
+            if self.type == "custom":
+                raise ValueError("Custom entities require a regex.")
+            self.regex = regex_mapping[self.type]
 
 
 class Replacement(TypedDict):
