@@ -109,7 +109,7 @@ class NERExtractor(ExtractorInterface):
         self._set_spacy_fields(doc, spacy_entities)
         return doc, anoni_entities
 
-    def display(self, doc: Doc) -> str:
+    def display(self, doc: Doc, page: bool = False, jupyter: bool = None) -> str:
         """Display the entities in the text.
 
         Examples:
@@ -119,6 +119,8 @@ class NERExtractor(ExtractorInterface):
 
         Args:
             doc: The spacy doc to display.
+            page: Whether to display the doc in a web browser.
+            jupyter: Whether to display the doc in a jupyter notebook.
 
         Returns:
             The HTML representation of the document and the extracted entities.
@@ -128,7 +130,9 @@ class NERExtractor(ExtractorInterface):
         options = {
             "colors": {l["label"]: get_label_color(l["label"]) for l in self.labels}
         }
-        return displacy.render(doc, style=self.spacy_style, options=options)
+        return displacy.render(
+            doc, style=self.spacy_style, options=options, page=page, jupyter=jupyter
+        )
 
     # ===========================================
     # Private methods

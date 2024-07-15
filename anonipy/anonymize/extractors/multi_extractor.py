@@ -83,7 +83,7 @@ class MultiExtractor:
         joint_entities = self._merge_entities(extractor_outputs)
         return extractor_outputs, joint_entities
 
-    def display(self, doc: Doc) -> str:
+    def display(self, doc: Doc, page: bool = False, jupyter: bool = None) -> str:
         """Display the entities in the text.
 
         Examples:
@@ -93,6 +93,8 @@ class MultiExtractor:
 
         Args:
             doc: The spacy doc to display.
+            page: Whether to display the doc in a web browser.
+            jupyter: Whether to display the doc in a jupyter notebook.
 
         Returns:
             The HTML representation of the document and the extracted entities.
@@ -103,7 +105,9 @@ class MultiExtractor:
             itertools.chain.from_iterable([e.labels for e in self.extractors])
         )
         options = {"colors": {l["label"]: get_label_color(l["label"]) for l in labels}}
-        return displacy.render(doc, style="ent", options=options)
+        return displacy.render(
+            doc, style="ent", options=options, page=page, jupyter=jupyter
+        )
 
     def _merge_entities(
         self, extractor_outputs: List[Tuple[Doc, List[Entity]]]
