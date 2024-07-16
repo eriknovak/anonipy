@@ -1,30 +1,51 @@
+"""The module containing the `language_detector` utilities.
+
+The `language_detector` module contains the `LanguageDetector` class, which is
+used to detect the language of a text.
+
+Classes:
+    LanguageDetector: The class representing the language detector.
+
+"""
+
+from typing import Tuple
+
 from lingua import LanguageDetectorBuilder
+
+# =====================================
+# Main class
+# =====================================
 
 
 class LanguageDetector:
-    """The class for detecting the language of a text
+    """The class representing the language detector.
 
-    Attributes
-    ----------
-    detector : LanguageDetector
-        The language detector
+    Examples:
+        >>> from anonipy.utils.language_detector import LanguageDetector
+        >>> detector = LanguageDetector()
+        >>> detector.detect(text)
 
-    Methods
-    -------
-    __call__(self, text: str, output_standard: str = "iso_code_639_1")
-        Detect the language of a text. Calls the `detect` method.
+    Attributes:
+        detector (lingua.LanguageDetector): The language detector.
 
-    detect(text: str, output_standard: str = "iso_code_639_1")
-        Detect the language of a text
+    Methods:
+        __call__(text, output_standard):
+            Detect the language of a text. Calls the `detect` method.
+
+        detect(text, output_standard):
+            Detect the language of a text.
 
     """
 
     def __init__(self, low_accuracy: bool = False):
-        """
-        Parameters
-        ----------
-        low_accuracy : bool, optional
-            Whether to use the low accuracy mode. Default: False
+        """Initializes the language detector.
+
+        Examples:
+            >>> from anonipy.utils.language_detector import LanguageDetector
+            >>> detector = LanguageDetector()
+
+        Args:
+            low_accuracy: Whether to use the low accuracy mode.
 
         """
 
@@ -37,24 +58,45 @@ class LanguageDetector:
         )
         self.detector = builder.build()
 
-    def __call__(self, text: str, output_standard: str = "iso_code_639_1") -> str:
+    def __call__(
+        self, text: str, output_standard: str = "iso_code_639_1"
+    ) -> Tuple[str, str]:
+        """Detects the language of a text by calling the `detect` method.
+
+        Examples:
+            >>> from anonipy.utils.language_detector import LanguageDetector
+            >>> detector = LanguageDetector()
+            >>> detector(text)
+
+        Args:
+            text: The text to detect the language of.
+            output_standard: The output standard.
+
+        Returns:
+            The language code.
+            The full name of the language.
+
+        """
+
         return self.detect(text, output_standard)
 
-    def detect(self, text: str, output_standard: str = "iso_code_639_1") -> str:
-        """
-        Detect the language of a text
+    def detect(
+        self, text: str, output_standard: str = "iso_code_639_1"
+    ) -> Tuple[str, str]:
+        """Detects the language of a text.
 
-        Parameters
-        ----------
-        text : str
-            The text to detect the language of
-        output_standard : str, optional
-            The output standard. Default: "iso_code_639_1"
+        Examples:
+            >>> from anonipy.utils.language_detector import LanguageDetector
+            >>> detector = LanguageDetector()
+            >>> detector.detect(text)
 
-        Returns
-        -------
-        Tuple[str, str]
-            The language code and the full name of the language
+        Args:
+            text: The text to detect the language of.
+            output_standard: The output standard.
+
+        Returns:
+            The language code.
+            The full name of the language.
 
         """
 

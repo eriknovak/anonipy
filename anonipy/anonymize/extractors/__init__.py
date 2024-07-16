@@ -1,18 +1,19 @@
-"""
-extractors
+"""Module containing the `extractors`.
 
-The module provides a set of extractors used in the library.
+The `extractors` module provides a set of extractors used to identify relevant
+information within a document.
 
-Classes
--------
-ExtractorInterface :
-    The class representing the extractor interface
-EntityExtractor :
-    The class representing the entity extractor
+Classes:
+    NERExtractor: The class representing the named entity recognition (NER) extractor.
+    PatternExtractor: The class representing the pattern extractor.
+    MultiExtractor: The class representing the multi extractor.
 
 """
 
 from .interface import ExtractorInterface
-from .entity_extractor import EntityExtractor
+from .multi_extractor import MultiExtractor
+from .ner_extractor import NERExtractor
+from .pattern_extractor import PatternExtractor
 
-__all__ = ["ExtractorInterface", "EntityExtractor"]
+
+__all__ = ["ExtractorInterface", "MultiExtractor", "NERExtractor", "PatternExtractor"]

@@ -1,8 +1,8 @@
 import unittest
 
-from anonipy.anonymize.regex import (
-    regex_map,
-    RegexMap,
+from anonipy.utils.regex import (
+    regex_mapping,
+    RegexMapping,
     REGEX_STRING,
     REGEX_INTEGER,
     REGEX_FLOAT,
@@ -55,15 +55,15 @@ TEST_CASES = [
 class TestRegex(unittest.TestCase):
 
     def test_init(self):
-        self.assertEqual(regex_map.__class__, RegexMap)
-        self.assertEqual(hasattr(regex_map, "regex_mapping"), True)
+        self.assertEqual(regex_mapping.__class__, RegexMapping)
+        self.assertEqual(hasattr(regex_mapping, "regex_mapping"), True)
 
     def test_regex_mapping(self):
 
         for test_case in TEST_CASES:
-            self.assertEqual(regex_map(test_case["entity"]), test_case["regex"])
+            self.assertEqual(regex_mapping[test_case["entity"]], test_case["regex"])
             self.assertEqual(
-                regex_map(test_case["value"]), regex_map(test_case["entity"])
+                regex_mapping[test_case["value"]], regex_mapping[test_case["entity"]]
             )
 
 

@@ -2,7 +2,8 @@ import re
 import random
 import warnings
 import itertools
-from typing import List
+
+from typing import List, Tuple
 
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer, pipeline
@@ -19,43 +20,46 @@ STOPWORDS = [".", ",", ":", ";", "-", "<s>", "</s>"]
 
 
 class MaskLabelGenerator(GeneratorInterface):
-    """The class representing the mask label generator
+    """The class representing the mask label generator.
 
-    Attributes
-    ----------
-    context_window : int
-        The context window size
-    pipeline : transformers pipeline
-        The transformers pipeline
-    mask_token : str
-        The mask token
+    Examples:
+        >>> from anonipy.anonymize.generators import MaskLabelGenerator
+        >>> generator = MaskLabelGenerator(model_name, context_window=100, use_gpu=False)
+        >>> generator.generate(entity)
 
-    Methods
-    -------
-    generate(self, entity: Entity, text: str)
-        Anonymize the text based on the entities
+
+    Attributes:
+        pipeline (Pipeline): The transformers pipeline used to generate the label substitutes.
+        context_window (int): The context window size to use to generate the label substitutes.
+        mask_token (str): The mask token to use to replace the masked words.
+
+    Methods:
+        generate(entity, text):
+            Generate the substitute for the entity based on it's location in the text.
 
     """
 
     def __init__(
         self,
-        model_name="FacebookAI/xlm-roberta-large",
+        model_name: str = "FacebookAI/xlm-roberta-large",
         use_gpu: bool = False,
         context_window: int = 100,
         *args,
         **kwargs,
     ):
-        """
-        Parameters
-        ----------
-        model_name : str, optional
-            The name of the model to use. Default: "FacebookAI/xlm-roberta-large"
-        use_gpu : bool, optional
-            Whether to use GPU/CUDA. Default: False
-        context_window : int, optional
-            The context window size. Default: 100
+        """Initializes the mask label generator.
+
+        Examples:
+            >>> from anonipy.anonymize.generators import MaskLabelGenerator
+            >>> generator = MaskLabelGenerator(context_window=120, use_gpu=True)
+
+        Args:
+            model_name: The name of the masking model to use.
+            context_window: The context window size.
+            use_gpu: Whether to use GPU/CUDA, if available.
 
         """
+
         super().__init__(*args, **kwargs)
         self.context_window = context_window
         if use_gpu and not torch.cuda.is_available():
@@ -65,26 +69,29 @@ class MaskLabelGenerator(GeneratorInterface):
             use_gpu = False
 
         # prepare the fill-mask pipeline and store the mask token
-        model, tokenizer = self._prepare_model_and_tokenizer(model_name, use_gpu)
+        model, tokenizer, device = self._prepare_model_and_tokenizer(
+            model_name, use_gpu
+        )
         self.mask_token = tokenizer.mask_token
         self.pipeline = pipeline(
-            "fill-mask", model=model, tokenizer=tokenizer, top_k=40
+            "fill-mask", model=model, tokenizer=tokenizer, top_k=40, device=device
         )
 
-    def generate(self, entity: Entity, text: str, *args, **kwargs):
-        """Generate the substituted text based on the entity
+    def generate(self, entity: Entity, text: str, *args, **kwargs) -> str:
+        """Generate the substitute for the entity using the masking model.
 
-        Parameters
-        ----------
-        entity : Entity
-            The entity to generate the label from
-        text : str
-            The text to generate the label from
+        Examples:
+            >>> from anonipy.anonymize.generators import MaskLabelGenerator
+            >>> generator = MaskLabelGenerator(context_window=120, use_gpu=True)
+            >>> generator.generate(entity, text)
+            label
 
-        Returns
-        -------
-        str
-            The generated text
+        Args:
+            entity: The entity used to generate the substitute.
+            text: The original text in which the entity is located; used to get the entity's context.
+
+        Returns:
+            The generated substitute text.
 
         """
 
@@ -97,22 +104,22 @@ class MaskLabelGenerator(GeneratorInterface):
     # Private methods
     # =================================
 
-    def _prepare_model_and_tokenizer(self, model_name: str, use_gpu: bool):
-        """Prepares the model and tokenizer
+    def _prepare_model_and_tokenizer(
+        self, model_name: str, use_gpu: bool
+    ) -> Tuple[AutoModelForMaskedLM, AutoTokenizer]:
+        """Prepares the model and tokenizer.
 
-        Parameters
-        ----------
-        model_name : str
-            The name of the model to use
-        use_gpu : bool
-            Whether to use GPU/CUDA
+        Args:
+            model_name: The name of the model to use.
+            use_gpu: Whether to use GPU/CUDA, if available.
 
-        Returns
-        -------
-        model, tokenizer
-            The model and the tokenizer
+        Returns:
+            The huggingface model.
+            The huggingface tokenizer.
+            The device to use.
 
         """
+
         # prepare the model
         device = torch.device(
             "cuda" if use_gpu and torch.cuda.is_available() else "cpu"
@@ -120,22 +127,19 @@ class MaskLabelGenerator(GeneratorInterface):
         model = AutoModelForMaskedLM.from_pretrained(model_name).to(device)
         # prepare the tokenizer
         tokenizer = AutoTokenizer.from_pretrained(model_name)
-        return model, tokenizer
+        return model, tokenizer, device
 
-    def _create_masks(self, entity: Entity):
-        """Creates the masks for the entity
+    def _create_masks(self, entity: Entity) -> List[dict]:
+        """Creates the masks for the provided entity.
 
-        Parameters
-        ----------
-        entity : Entity
-            The entity to create the masks for
+        Args:
+            entity: The entity to create the masks for.
 
-        Returns
-        -------
-        list
-            The list of masks
+        Returns:
+            The list of masks attributes, including the true text, mask text, start index, and end index within the original text.
 
         """
+
         masks = []
         chunks = re.split(r"\s+", entity.text)
         for idx in range(len(chunks)):
@@ -152,41 +156,31 @@ class MaskLabelGenerator(GeneratorInterface):
         return masks
 
     def _get_context_text(self, text: str, start_index: int, end_index: int) -> str:
-        """Get the context text
+        """Get the context text.
 
-        Parameters
-        ----------
-        text : str
-            The text to get the context text from
-        start_index : int
-            The start index
-        end_index : int
-            The end index
+        Args:
+            text: The text to get the context from.
+            start_index: The start index of the context window.
+            end_index: The end index of the context window.
 
-        Returns
-        -------
-        str
-            The context text
+        Returns:
+            The context window text.
 
         """
+
         min_index = max(0, start_index - self.context_window)
         max_index = min(end_index + self.context_window, len(text))
         return text[min_index:max_index]
 
     def _prepare_generate_inputs(self, masks: List[dict], text: str) -> List[str]:
-        """Prepares the generate inputs
+        """Prepares the generate inputs.
 
-        Parameters
-        ----------
-        masks : List[dict]
-            The list of masks
-        text : str
-            The text to prepare the generate inputs for
+        Args:
+            masks: The list of masks attributes.
+            text: The text to prepare the generate inputs for.
 
-        Returns
-        -------
-        list
-            The list of generate inputs
+        Returns:
+            The list of generate inputs.
 
         """
         return [
@@ -201,23 +195,18 @@ class MaskLabelGenerator(GeneratorInterface):
     def _create_substitute(
         self, entity: Entity, masks: List[dict], suggestions: List[dict]
     ) -> str:
-        """Create a substitute for the entity
+        """Create a substitute for the entity.
 
-        Parameters
-        ----------
-        entity : Entity
-            The entity to create the substitute for
-        masks : List[dict]
-            The list of masks
-        suggestions : List[dict]
-            The list of suggestions
+        Args:
+            entity: The entity to create the substitute for.
+            masks: The list of masks attributes.
+            suggestions: The list of substitute suggestions.
 
-        Returns
-        -------
-        str
-            The created substitute
+        Returns:
+            The created and selected substitute text.
 
         """
+
         substitute_chunks = []
         for mask, suggestion in zip(masks, suggestions):
             suggestion = suggestion if type(suggestion) == list else [suggestion]

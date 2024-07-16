@@ -1,4 +1,7 @@
+import datetime
 import dateutil.parser as parser
+
+from typing import Tuple
 
 # =====================================
 # Constants
@@ -80,18 +83,14 @@ POSSIBLE_FORMATS = [
 # =====================================
 
 
-def detect_datetime_format(datetime):
-    """Detects the datetime format
+def detect_datetime_format(datetime: str) -> Tuple[datetime.datetime, str]:
+    """Detects the datetime format.
 
-    Parameters
-    ----------
-    datetime: str
-        The datetime string
+    Args:
+        datetime: The datetime string to detect the format.
 
-    Returns
-    -------
-    Tuple[datetime.datetime, str]
-        The detected datetime and the format
+    Returns:
+        The detected datetime and it's format.
 
     """
 

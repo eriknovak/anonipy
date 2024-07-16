@@ -11,7 +11,7 @@ from anonipy.anonymize.generators import (
     DateGenerator,
     NumberGenerator,
 )
-from anonipy.anonymize.regex import regex_map
+from anonipy.utils.regex import regex_mapping
 
 # =====================================
 # Test Cases
@@ -118,7 +118,6 @@ test_entities = {
         end_index=38,
         score=1.0,
         type="string",
-        regex=regex_map("string"),
     ),
     "date": [
         Entity(
@@ -128,7 +127,6 @@ test_entities = {
             end_index=96,
             score=1.0,
             type="date",
-            regex=regex_map("date"),
         )
     ]
     + [
@@ -139,7 +137,6 @@ test_entities = {
             end_index=86 + len(str),
             score=1.0,
             type="date",
-            regex=regex_map("date"),
         )
         for str in DATETIME_STRS
     ],
@@ -150,7 +147,6 @@ test_entities = {
         end_index=132,
         score=1.0,
         type="integer",
-        regex=regex_map("integer"),
     ),
     "float": Entity(
         text="123,456,789.000",
@@ -159,7 +155,6 @@ test_entities = {
         end_index=132,
         score=1.0,
         type="float",
-        regex=regex_map("float"),
     ),
     "custom": Entity(
         text="123-45-6789",
@@ -199,7 +194,7 @@ if torch.cuda.is_available():
         def test_generate_custom(self):
             entity = test_entities["name"]
             generated_text = self.generator.generate(
-                entity, entity_prefix="Spanish", temperature=0.5
+                entity, add_entity_attrs="Spanish", temperature=0.5
             )
             match = re.match(entity.regex, generated_text)
             self.assertNotEqual(match, None)
@@ -273,34 +268,34 @@ class TestDateGenerator(unittest.TestCase):
     def test_generate_first_day_of_the_month(self):
         entity = test_entities["date"][0]
         generated_text = self.generator.generate(
-            entity, output_gen="first_day_of_the_month"
+            entity, sub_variant="FIRST_DAY_OF_THE_MONTH"
         )
         self.assertEqual(generated_text, "01-05-2024")
 
     def test_generate_last_day_of_the_month(self):
         entity = test_entities["date"][0]
         generated_text = self.generator.generate(
-            entity, output_gen="last_day_of_the_month"
+            entity, sub_variant="LAST_DAY_OF_THE_MONTH"
         )
         self.assertEqual(generated_text, "31-05-2024")
 
     def test_generate_middle_of_the_month(self):
         entity = test_entities["date"][0]
         generated_text = self.generator.generate(
-            entity, output_gen="middle_of_the_month"
+            entity, sub_variant="MIDDLE_OF_THE_MONTH"
         )
         self.assertEqual(generated_text, "15-05-2024")
 
     def test_generate_middle_of_the_year(self):
         entity = test_entities["date"][0]
         generated_text = self.generator.generate(
-            entity, output_gen="middle_of_the_year"
+            entity, sub_variant="MIDDLE_OF_THE_YEAR"
         )
         self.assertEqual(generated_text, "01-07-2024")
 
     def test_generate_random(self):
         entity = test_entities["date"][0]
-        generated_text = self.generator.generate(entity, output_gen="random")
+        generated_text = self.generator.generate(entity, sub_variant="RANDOM")
         match = re.match(entity.regex, generated_text)
         self.assertNotEqual(match, None)
         self.assertEqual(match.group(0), generated_text)
@@ -315,7 +310,7 @@ class TestDateGenerator(unittest.TestCase):
     def test_process_different_formats(self):
         for entity in test_entities["date"]:
             try:
-                self.generator.generate(entity, output_gen="random")
+                self.generator.generate(entity, sub_variant="RANDOM")
             except ValueError:
                 self.fail(
                     f"self.generator.generate() raised ValueError unexpectedly for date: {entity.text}"

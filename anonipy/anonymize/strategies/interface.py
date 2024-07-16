@@ -7,12 +7,11 @@ from ...definitions import Entity
 
 
 class StrategyInterface:
-    """The class representing the strategy interface
+    """The class representing the strategy interface.
 
-    Methods
-    -------
-    anonymize(text: str, entities: List[Entity], *args, **kwargs)
-        Anonymize the text based on the entities
+    Methods:
+        anonymize(text, entities):
+            Anonymize the text based on the entities.
 
     """
 

@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Callable
 
 from .interface import StrategyInterface
 from ...definitions import Entity, Replacement
@@ -10,26 +10,31 @@ from ..helpers import anonymize
 
 
 class PseudonymizationStrategy(StrategyInterface):
-    """The class representing the pseudonymization strategy
+    """The class representing the pseudonymization strategy.
 
-    Attributes
-    ----------
-    mapping : dict
-        The mapping of entities to pseudonyms
+    Examples:
+        >>> from anonipy.anonymize.strategies import PseudonymizationStrategy
+        >>> strategy = PseudonymizationStrategy(mapping)
+        >>> strategy.anonymize(text, entities)
 
-    Methods
-    -------
-    anonymize(text: str, entities: List[Entity])
-        Anonymize the text based on the entities
+    Attributes:
+        mapping: The mapping of entities to pseudonyms.
+
+    Methods:
+        anonymize(text, entities):
+            Anonymize the text based on the entities.
 
     """
 
-    def __init__(self, mapping, *args, **kwargs):
-        """
-        Parameters
-        ----------
-        mapping : func
-            The mapping of entities to pseudonyms
+    def __init__(self, mapping: Callable, *args, **kwargs):
+        """Initializes the pseudonymization strategy.
+
+        Examples:
+            >>> from anonipy.anonymize.strategies import PseudonymizationStrategy
+            >>> strategy = PseudonymizationStrategy(mapping)
+
+        Args:
+            mapping: The mapping function on how to handle each entity type.
 
         """
 
@@ -39,19 +44,20 @@ class PseudonymizationStrategy(StrategyInterface):
     def anonymize(
         self, text: str, entities: List[Entity], *args, **kwargs
     ) -> Tuple[str, List[Replacement]]:
-        """Anonymize the text based on the entities
+        """Anonymize the text using the pseudonymization strategy.
 
-        Parameters
-        ----------
-        text : str
-            The text to anonymize
-        entities : List[Entity]
-            The list of entities to anonymize
+        Examples:
+            >>> from anonipy.anonymize.strategies import PseudonymizationStrategy
+            >>> strategy = PseudonymizationStrategy(mapping)
+            >>> strategy.anonymize(text, entities)
 
-        Returns
-        -------
-        Tuple[str, List[Replacement]]
-            The anonymized text and the list of replacements applied
+        Args:
+            text: The text to anonymize.
+            entities: The list of entities to anonymize.
+
+        Returns:
+            The anonymized text.
+            The list of applied replacements.
 
         """
 
@@ -62,26 +68,25 @@ class PseudonymizationStrategy(StrategyInterface):
         anonymized_text, replacements = anonymize(text, replacements)
         return anonymized_text, replacements
 
+    # ===========================================
+    # Private methods
+    # ===========================================
+
     def _create_replacement(
         self, entity: Entity, text: str, replacements: List[dict]
     ) -> Replacement:
-        """Creates a replacement for the entity
+        """Creates a replacement for the entity.
 
-        Parameters
-        ----------
-        entity : Entity
-            The entity to create the replacement for
-        text : str
-            The text to anonymize
-        replacements : List[dict]
-            The list of replacements
+        Args:
+            entity: The entity to create the replacement for.
+            text: The text to anonymize.
+            replacements: The list of existing replacements.
 
-        Returns
-        -------
-        Replacement
-            The created replacement
+        Returns:
+            The created replacement.
 
         """
+
         # check if the replacement already exists
         anonymized_text = self._check_replacement(entity, replacements)
         # create a new replacement if it doesn't exist
@@ -96,20 +101,17 @@ class PseudonymizationStrategy(StrategyInterface):
             "anonymized_text": anonymized_text,
         }
 
-    def _check_replacement(self, entity: Entity, replacements: List[dict]) -> str:
-        """Checks if a suitable replacement already exists
+    def _check_replacement(
+        self, entity: Entity, replacements: List[Replacement]
+    ) -> str:
+        """Checks if a suitable replacement already exists.
 
-        Parameters
-        ----------
-        entity : Entity
-            The entity to check
-        replacements : List[dict]
-            The list of replacements
+        Args:
+            entity: The entity to check.
+            replacements: The list of replacements.
 
-        Returns
-        -------
-        str
-            The anonymized text if the replacement already exists, None otherwise
+        Returns:
+            The anonymized text if the replacement already exists, None otherwise.
 
         """
         existing_replacement = list(

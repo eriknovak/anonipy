@@ -6,7 +6,7 @@ title: Development
 
 This section is for developers only. It describes the requirements, the setup process, how to run tests, and how to deploy.
 
-## ✅ Requirements
+## Requirements
 Before starting the project make sure these requirements are available:
 
 - [python][python]. The python programming language (v3.8, v3.9, v3.10, v3.11).
@@ -14,7 +14,7 @@ Before starting the project make sure these requirements are available:
 - [git][git]. For versioning your code.
 
 
-## 🛠️ Setup
+## Setup
 
 ### Create the python environment
 
@@ -49,7 +49,7 @@ pip install -e .[all]
 githooks
 ```
 
-## 🧪 Tests
+## Tests
 
 To run existing tests, simply run:
 
@@ -57,7 +57,7 @@ To run existing tests, simply run:
 python -m unittest discover test
 ```
 
-## 📝 Documentation
+## Documentation
 
 To start live-reloading the documentation, run:
 

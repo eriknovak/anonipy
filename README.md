@@ -30,26 +30,24 @@
 
 The anonipy package is a python package for data anonymization. It is designed to be simple to use and highly customizable, supporting different anonymization strategies. Powered by LLMs.
 
-## ✅ Requirements
+## Requirements
 Before starting the project make sure these requirements are available:
 
 - [python]. The python programming language (v3.8, v3.9, v3.10, v3.11).
 
-## 💾 Install
+## Install
 
 ```bash
 pip install anonipy
 ```
 
-## ⬆️ Upgrade
+## Upgrade
 
 ```bash
 pip install anonipy --upgrade
 ```
 
-## 🔎 Example
-
-The details of the example can be found in the [Overview](https://eriknovak.github.io/anonipy/documentation/notebooks/00-overview.ipynb).
+## Example
 
 ```python
 original_text = """\
@@ -77,14 +75,14 @@ Use the language detector to detect the language of the text:
 ```python
 from anonipy.utils.language_detector import LanguageDetector
 
-lang_detector = LanguageDetector()
-language = lang_detector(original_text)
+language_detector = LanguageDetector()
+language = language_detector(original_text)
 ```
 
 Prepare the entity extractor and extract the personal infomation from the original text:
 
 ```python
-from anonipy.anonymize.extractors import EntityExtractor
+from anonipy.anonymize.extractors import NERExtractor
 
 # define the labels to be extracted and anonymized
 labels = [
@@ -94,14 +92,14 @@ labels = [
     {"label": "date", "type": "date"},
 ]
 
-# language taken from the language detector
-entity_extractor = EntityExtractor(labels, lang=language, score_th=0.5)
+# initialize the NER extractor for the language and labels
+extractor = NERExtractor(labels, lang=language, score_th=0.5)
 
 # extract the entities from the original text
-doc, entities = entity_extractor(original_text)
+doc, entities = extractor(original_text)
 
 # display the entities in the original text
-entity_extractor.display(doc)
+extractor.display(doc)
 ```
 
 Use generators to create substitutes for the entities:
@@ -123,9 +121,9 @@ def anonymization_mapping(text, entity):
     if entity.type == "string":
         return llm_generator.generate(entity, temperature=0.7)
     if entity.label == "date":
-        return date_generator.generate(entity, output_gen="middle_of_the_month")
+        return date_generator.generate(entity, output_gen="MIDDLE_OF_THE_MONTH")
     if entity.label == "date of birth":
-        return date_generator.generate(entity, output_gen="middle_of_the_year")
+        return date_generator.generate(entity, output_gen="MIDDLE_OF_THE_YEAR")
     if entity.label == "social security number":
         return number_generator.generate(entity)
     return "[REDACTED]"
@@ -143,7 +141,7 @@ pseudo_strategy = PseudonymizationStrategy(mapping=anonymization_mapping)
 anonymized_text, replacements = pseudo_strategy.anonymize(original_text, entities)
 ```
 
-## 📖 Acknowledgements
+## Acknowledgements
 
 [Anonipy](https://eriknovak.github.io/anonipy/) is developed by the
 [Department for Artificial Intelligence](http://ailab.ijs.si/) at the
