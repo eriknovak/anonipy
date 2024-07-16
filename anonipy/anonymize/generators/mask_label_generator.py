@@ -69,10 +69,12 @@ class MaskLabelGenerator(GeneratorInterface):
             use_gpu = False
 
         # prepare the fill-mask pipeline and store the mask token
-        model, tokenizer = self._prepare_model_and_tokenizer(model_name, use_gpu)
+        model, tokenizer, device = self._prepare_model_and_tokenizer(
+            model_name, use_gpu
+        )
         self.mask_token = tokenizer.mask_token
         self.pipeline = pipeline(
-            "fill-mask", model=model, tokenizer=tokenizer, top_k=40
+            "fill-mask", model=model, tokenizer=tokenizer, top_k=40, device=device
         )
 
     def generate(self, entity: Entity, text: str, *args, **kwargs) -> str:
@@ -114,6 +116,7 @@ class MaskLabelGenerator(GeneratorInterface):
         Returns:
             The huggingface model.
             The huggingface tokenizer.
+            The device to use.
 
         """
 
@@ -124,7 +127,7 @@ class MaskLabelGenerator(GeneratorInterface):
         model = AutoModelForMaskedLM.from_pretrained(model_name).to(device)
         # prepare the tokenizer
         tokenizer = AutoTokenizer.from_pretrained(model_name)
-        return model, tokenizer
+        return model, tokenizer, device
 
     def _create_masks(self, entity: Entity) -> List[dict]:
         """Creates the masks for the provided entity.
