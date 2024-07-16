@@ -116,8 +116,15 @@ test_entities = {
         label="name",
         start_index=30,
         end_index=38,
-        score=1.0,
         type="string",
+    ),
+    "name:pattern": Entity(
+        text="John Doe",
+        label="name",
+        start_index=30,
+        end_index=38,
+        type="string",
+        regex="Person: (.*)",
     ),
     "date": [
         Entity(
@@ -125,7 +132,6 @@ test_entities = {
             label="date",
             start_index=86,
             end_index=96,
-            score=1.0,
             type="date",
         )
     ]
@@ -135,7 +141,6 @@ test_entities = {
             label="date",
             start_index=86,
             end_index=86 + len(str),
-            score=1.0,
             type="date",
         )
         for str in DATETIME_STRS
@@ -145,7 +150,6 @@ test_entities = {
         label="integer",
         start_index=121,
         end_index=132,
-        score=1.0,
         type="integer",
     ),
     "float": Entity(
@@ -153,7 +157,6 @@ test_entities = {
         label="float",
         start_index=121,
         end_index=132,
-        score=1.0,
         type="float",
     ),
     "custom": Entity(
@@ -161,7 +164,6 @@ test_entities = {
         label="custom",
         start_index=121,
         end_index=132,
-        score=1.0,
         type="custom",
         regex="\\d{3}-\\d{2}-\\d{4}",
     ),
@@ -187,7 +189,8 @@ if torch.cuda.is_available():
         def test_generate_default(self):
             entity = test_entities["name"]
             generated_text = self.generator.generate(entity)
-            match = re.match(entity.regex, generated_text)
+            regex = entity.get_regex_group() or entity.regex
+            match = re.match(regex, generated_text)
             self.assertNotEqual(match, None)
             self.assertEqual(match.group(0), generated_text)
 
@@ -196,7 +199,16 @@ if torch.cuda.is_available():
             generated_text = self.generator.generate(
                 entity, add_entity_attrs="Spanish", temperature=0.5
             )
-            match = re.match(entity.regex, generated_text)
+            regex = entity.get_regex_group() or entity.regex
+            match = re.match(regex, generated_text)
+            self.assertNotEqual(match, None)
+            self.assertEqual(match.group(0), generated_text)
+
+        def test_generate_pattern(self):
+            entity = test_entities["name:pattern"]
+            generated_text = self.generator.generate(entity)
+            regex = entity.get_regex_group() or entity.regex
+            match = re.match(regex, generated_text)
             self.assertNotEqual(match, None)
             self.assertEqual(match.group(0), generated_text)
 

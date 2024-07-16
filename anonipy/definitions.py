@@ -50,6 +50,17 @@ class Entity:
                 raise ValueError("Custom entities require a regex.")
             self.regex = regex_mapping[self.type]
 
+    def get_regex_group(self) -> Union[str, None]:
+        """Get the regex group.
+
+        Returns:
+            The regex group.
+
+        """
+
+        p_match = re.match(r"^.*?\((.*)\).*$", self.regex)
+        return p_match.group(1) if p_match else self.regex
+
 
 class Replacement(TypedDict):
     """The class representing the anonipy Replacement object.

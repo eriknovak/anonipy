@@ -1,3 +1,4 @@
+import re
 from typing import Tuple
 
 import torch
@@ -130,6 +131,7 @@ class LLMLabelGenerator(GeneratorInterface):
         entity: Entity,
         add_entity_attrs: str = "",
         temperature: float = 0.0,
+        use_regex: bool = True,
         *args,
         **kwargs,
     ) -> str:
@@ -145,6 +147,7 @@ class LLMLabelGenerator(GeneratorInterface):
             entity: The entity to generate the label from.
             add_entity_attrs: Additional entity attribute description to add to the generation.
             temperature: The temperature to use for the generation.
+            use_regex: Whether to use regex to determine the generated substitute.
 
         Returns:
             The generated entity label substitute.
@@ -152,10 +155,12 @@ class LLMLabelGenerator(GeneratorInterface):
         """
 
         user_prompt = f"What is a random {add_entity_attrs} {entity.label} replacement for {entity.text}? Respond only with the replacement."
+        # prepare the regex for the entity if needed
+        regex = None if not use_regex else entity.get_regex_group() or entity.regex
         assistant_prompt = gen(
             name="replacement",
             stop="<|eot_id|>",
-            regex=entity.regex,
+            regex=regex,
             temperature=temperature,
         )
         # generate the replacement for the entity
