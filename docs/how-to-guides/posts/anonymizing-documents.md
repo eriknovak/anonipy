@@ -1,5 +1,5 @@
 ---
-date: 2024-05-22
+date: 2024-07-16
 authors: [eriknovak]
 description: >
   Anonipy can be used to anonymize a document such as PDF and word documents.

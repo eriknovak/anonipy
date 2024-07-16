@@ -7,7 +7,7 @@ categories:
   - Overview
 ---
 
-# Extractors Overview
+# Extractors overview
 
 In this post, we will show an overview of the implemented extractors. The extractors are used to extract relevant `named entities` from text. These entities can be people names, organizations, addresses, social security numbers, etc. The entities are then used to anonymize the text.
 
@@ -354,6 +354,10 @@ The [MultiExtractor][anonipy.anonymize.extractors.MultiExtractor] is a extractor
 
 The motivation behind the multi extractor is the following: depending on the document format, personal information can be located in different locations; some of them can be found at similar places, while others can be found in different places and formats. Because of this, we would need to use the [NERExtractor][anonipy.anonymize.extractors.NERExtractor] to automatically identify the entities at different locations and the [PatternExtractor][anonipy.anonymize.extractors.PatternExtractor] to extract the entities that appear at the same location.
 
+`MultiExtractor` enables the use of both extractors at the same time. Furthermore, if both
+extractors identify entities at similar locations, then the `MultiExtractor` will also
+provide a list of joint entities.
+
 ```python
 from anonipy.anonymize.extractors import MultiExtractor
 ```
@@ -381,6 +385,8 @@ Similar as before, the `MultiExtractor` receives the original text, but returns 
 extractor_outputs, joint_entities = multi_extractor(original_text)
 ```
 
+In this case, `extractor_outputs[0]` will contain the `(doc, entities)` from the NER extractor, and `extractor_outputs[1]` will contain the `(doc, entities)` from the pattern extractor.
+The `joint_entities` will contain the joint entities from all the extractors.
 
 
 

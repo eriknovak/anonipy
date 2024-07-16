@@ -1,5 +1,5 @@
 ---
-date: 2024-05-23
+date: 2024-07-16
 authors: [eriknovak]
 description: >
   Anonipy can be used to anonymize collections of documents.
