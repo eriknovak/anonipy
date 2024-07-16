@@ -32,7 +32,6 @@ dev = [
     "flake8",
     "python-githooks",
     "mkdocs-material",
-    "mkdocs-jupyter",
     "mkdocstrings[python]",
 ]
 test = [
