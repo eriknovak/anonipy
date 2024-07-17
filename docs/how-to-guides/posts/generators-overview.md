@@ -129,7 +129,7 @@ Let us now change the label prefix and generate the replacement using a higher t
 ```python
 llm_generator.generate(
     entities[0],
-    entity_prefix="Spanish",
+    add_entity_attrs="Spanish",
     temperature=0.7
 )# (1)!
 ```

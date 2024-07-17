@@ -11,6 +11,7 @@
 
 - Rename the `EntityExtractor` to `NERExtractor`
 - Rename the input variable `output_gen` to `sub_variant` in `DateGenerator`
+- Rename the input variable `entity_prefix` to `add_entity_attrs` in `LLMLabelGenerator.generate`
 - Move the `regex` submodule from `anonipy.anonymize` to `anonipy.utils`
 
 **New Features:**
