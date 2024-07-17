@@ -5,7 +5,8 @@ build-backend = 'setuptools.build_meta'
 [project]
 name = "anonipy"
 description = "The data anonymization package"
-authors=[{ name = "Erik Novak", email = "erik.novak@ijs.si" }]
+authors=[{ name = "Erik Novak" }]
+maintainers = [{ name = "Erik Novak" }]
 readme = "README.md"
 license = { file = "LICENSE" }
 dynamic = ["dependencies", "version"]
@@ -23,8 +24,8 @@ classifiers = [
 requires-python = ">=3.8"
 
 [project.urls]
-Source = "https://github.com/eriknovak/anonipy"
-Docs = "https://github.com/eriknovak/anonipy"
+Source = "https://github.com/eriknovak/anonipy/"
+Docs = "https://eriknovak.github.io/anonipy/"
 
 [project.optional-dependencies]
 dev = [
@@ -43,7 +44,6 @@ all = ["anonipy[dev,test]"]
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["anonipy*"]
-
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
