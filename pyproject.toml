@@ -24,8 +24,8 @@ classifiers = [
 requires-python = ">=3.8"
 
 [project.urls]
-Source = "https://github.com/eriknovak/anonipy/"
-Docs = "https://eriknovak.github.io/anonipy/"
+Source = "https://github.com/eriknovak/anonipy"
+Docs = "https://eriknovak.github.io/anonipy"
 
 [project.optional-dependencies]
 dev = [
