@@ -6,6 +6,7 @@ title: Strategies Module
 
 ::: anonipy.anonymize.strategies
     options:
+        members: False
         heading_level: 2
 
 ::: anonipy.anonymize.strategies.RedactionStrategy

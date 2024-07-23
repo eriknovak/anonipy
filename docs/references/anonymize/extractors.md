@@ -6,6 +6,7 @@ title: Extractors Module
 
 ::: anonipy.anonymize.extractors
     options:
+        members: False
         heading_level: 2
 
 ::: anonipy.anonymize.extractors.NERExtractor
