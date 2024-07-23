@@ -33,7 +33,7 @@ The anonipy package is a python package for data anonymization. It is designed t
 ## Requirements
 Before starting the project make sure these requirements are available:
 
-- [python]. The python programming language (v3.8, v3.9, v3.10, v3.11).
+- [python]. The python programming language (v3.8, v3.9, v3.10).
 
 ## Install
 
