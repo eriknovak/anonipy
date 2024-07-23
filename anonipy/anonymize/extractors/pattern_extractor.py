@@ -192,6 +192,8 @@ class PatternExtractor(ExtractorInterface):
                     # define the entity span
                     start, end = match.span(1)
                     entity = doc.char_span(start, end, label=label["label"])
+                    if not entity:
+                        continue
                     entity._.score = 1.0
                     # add the entity to the previous entity list
                     prev_entities = self._get_doc_entity_spans(doc)
