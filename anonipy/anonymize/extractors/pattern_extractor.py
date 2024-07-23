@@ -27,7 +27,7 @@ class PatternExtractor(ExtractorInterface):
     Examples:
         >>> from anonipy.constants import LANGUAGES
         >>> from anonipy.anonymize.extractors import PatternExtractor
-        >>> labels = [{"label": "PERSON", "regex": "([A-Z][a-z]+ [A-Z][a-z]+)"}]
+        >>> labels = [{"label": "PERSON", "type": "string", "regex": "([A-Z][a-z]+ [A-Z][a-z]+)"}]
         >>> extractor = PatternExtractor(labels, lang=LANGUAGES.ENGLISH)
         >>> extractor("John Doe is a 19 year old software engineer.")
         Doc, [Entity]
@@ -60,7 +60,7 @@ class PatternExtractor(ExtractorInterface):
         Examples:
             >>> from anonipy.constants import LANGUAGES
             >>> from anonipy.anonymize.extractors import PatternExtractor
-            >>> labels = [{"label": "PERSON", "regex": "([A-Z][a-z]+ [A-Z][a-z]+)"}]
+            >>> labels = [{"label": "PERSON", "type": "string", "regex": "([A-Z][a-z]+ [A-Z][a-z]+)"}]
             >>> extractor = PatternExtractor(labels, lang=LANGUAGES.ENGLISH)
             PatternExtractor()
 

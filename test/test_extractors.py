@@ -204,14 +204,17 @@ class TestPatternExtractor(unittest.TestCase):
         self.labels = [
             {
                 "label": "symptoms",
+                "type": "string",
                 "regex": r"\((.*)\)",  # symptoms are enclosed in parentheses
             },
             {
                 "label": "medicine",
+                "type": "string",
                 "pattern": [[{"IS_ALPHA": True}, {"LIKE_NUM": True}, {"LOWER": "mg"}]],
             },
             {
                 "label": "date",
+                "type": "date",
                 "pattern": [  # represent the date as a sequence of digits using spacy
                     [
                         {"SHAPE": "dd"},
