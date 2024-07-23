@@ -84,21 +84,21 @@ pattern_entities = [
         label="date",
         start_index=54,
         end_index=64,
-        type=None,
+        type="date",
     ),
     Entity(
         text="20-05-2024",
         label="date",
         start_index=86,
         end_index=96,
-        type=None,
+        type="date",
     ),
     Entity(
         text="blood pressure, heart rate, temperature",
         label="symptoms",
         start_index=254,
         end_index=293,
-        type=None,
+        type="string",
         regex="\\((.*)\\)",
     ),
     Entity(
@@ -106,21 +106,21 @@ pattern_entities = [
         label="medicine",
         start_index=533,
         end_index=549,
-        type=None,
+        type="string",
     ),
     Entity(
         text="Lisinopril 10 mg",
         label="medicine",
         start_index=623,
         end_index=639,
-        type=None,
+        type="string",
     ),
     Entity(
         text="15-11-2024",
         label="date",
         start_index=717,
         end_index=727,
-        type=None,
+        type="date",
     ),
 ]
 
@@ -275,14 +275,17 @@ class TestMultiExtractor(unittest.TestCase):
         self.pattern_labels = [
             {
                 "label": "symptoms",
+                "type": "string",
                 "regex": r"\((.*)\)",  # symptoms are enclosed in parentheses
             },
             {
                 "label": "medicine",
+                "type": "string",
                 "pattern": [[{"IS_ALPHA": True}, {"LIKE_NUM": True}, {"LOWER": "mg"}]],
             },
             {
                 "label": "date",
+                "type": "date",
                 "pattern": [  # represent the date as a sequence of digits using spacy
                     [
                         {"SHAPE": "dd"},

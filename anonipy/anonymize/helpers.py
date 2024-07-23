@@ -14,7 +14,7 @@ from ..constants import ENTITY_TYPES
 def convert_spacy_to_entity(
     entity: Span,
     type: ENTITY_TYPES = None,
-    regex: Union[str, re.Pattern] = ".*",
+    regex: Union[str, re.Pattern] = None,
     *args,
     **kwargs,
 ) -> Entity:
