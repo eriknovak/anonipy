@@ -56,8 +56,8 @@ class MaskLabelGenerator(GeneratorInterface):
 
         Args:
             model_name: The name of the masking model to use.
-            context_window: The context window size.
             use_gpu: Whether to use GPU/CUDA, if available.
+            context_window: The context window size.
 
         """
 

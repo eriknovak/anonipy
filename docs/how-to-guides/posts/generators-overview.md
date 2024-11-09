@@ -75,7 +75,7 @@ entities = [
 
 All following generators are available in the [generators][anonipy.anonymize.generators] module.
 
-### LLMLabelGenerator
+### The LLM label generator
 
 The [LLMLabelGenerator][anonipy.anonymize.generators.LLMLabelGenerator] is a one-stop-shop generator that utilizes LLMs to generate replacements for entities. It is implemented to support any entity type.
 
@@ -145,7 +145,7 @@ to a specific pattern. However, it is recommended to specify to have as specific
 
 This will help the `LLMLabelGenerator` to generate more accurate replacements.
 
-### MaskLabelGenerator
+### The mask label generator
 
 The [MaskLabelGenerator][anonipy.anonymize.generators.MaskLabelGenerator] is a generator that uses smaller language models, such as [XLM-RoBERTa](https://huggingface.co/FacebookAI/xlm-roberta-large), to generate replacements for entities. It is implemented to support any entity type, but we suggest using it only with string entities. For other entity types, please use other available [generators][anonipy.anonymize.generators].
 
@@ -155,7 +155,7 @@ from anonipy.anonymize.generators import MaskLabelGenerator
 
 The `MaskLabelGenerator` requires the following input parameters at initialization:
 
-::: anonipy.anonymize.generators.MaskLabelGenerator.**init**
+::: anonipy.anonymize.generators.MaskLabelGenerator.__init__
 options:
 show_root_heading: False
 show_docstring_description: False
@@ -199,7 +199,7 @@ mask_generator.generate(entities[0], text=original_text)# (3)!
 **Using only for string entities.**
 As seen from the above examples, the `MaskLabelGenerator` is best used with string entities. For number and date entities, it is best to use other generators, such as `NumberGenerator` and `DateGenerator`.
 
-### NumberGenerator
+### The number generator
 
 The [NumberGenerator][anonipy.anonymize.generators.NumberGenerator] is a generator for generating random numbers. It is implemented to support integers, floats, and phone numbers, but it can be used to generate values for custom types which include numbers.
 
@@ -243,7 +243,7 @@ except Exception as e:
 1. The provided entity is a `string`, therefore it will raise an error.
 2. The exception will state `The entity type must be 'integer', 'float', 'phone_number' or 'custom' to generate numbers.`
 
-### DateGenerator
+### The date generator
 
 The [DateGenerator][anonipy.anonymize.generators.DateGenerator] is a generator for generating dates. It is implemented to support date entities.
 
@@ -253,7 +253,7 @@ from anonipy.anonymize.generators import DateGenerator
 
 The `DateGenerator` requires the following input parameters at initialization:
 
-::: anonipy.anonymize.generators.DateGenerator.**init**
+::: anonipy.anonymize.generators.DateGenerator.__init__
 options:
 show_root_heading: False
 show_docstring_description: False

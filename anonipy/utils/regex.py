@@ -25,13 +25,13 @@ from ..constants import ENTITY_TYPES
 # Regex definitions
 # =====================================
 
-REGEX_STRING = ".*"
+REGEX_STRING = r".*"
 """The regex definition for string."""
 
-REGEX_INTEGER = "\d+"
+REGEX_INTEGER = r"\d+"
 """The regex definition for integer."""
 
-REGEX_FLOAT = "[\d\.,]+"
+REGEX_FLOAT = r"[\d\.,]+"
 """The regex definition for float."""
 
 REGEX_DATE = (
@@ -66,16 +66,16 @@ TODO:
 """
 
 REGEX_EMAIL_ADDRESS = (
-    "[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*"
+    r"[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*"
 )
 """The regex definition for email addresses."""
 
 REGEX_PHONE_NUMBER = (
-    "[(]?[\+]?[(]?[0-9]{1,3}[)]?[-\s\.]?([0-9]{2,}[-\s\.]?){2,}([0-9]{3,})"
+    r"[(]?[\+]?[(]?[0-9]{1,3}[)]?[-\s\.]?([0-9]{2,}[-\s\.]?){2,}([0-9]{3,})"
 )
 """The regex definition for phone numbers."""
 
-REGEX_WEBSITE_URL = "((https?|ftp|smtp):\/\/)?(www.)?([a-zA-Z0-9]+\.)+[a-z]{2,}(\/[a-zA-Z0-9#\?\_\.\=\-\&]+|\/?)*"
+REGEX_WEBSITE_URL = r"((https?|ftp|smtp):\/\/)?(www.)?([a-zA-Z0-9]+\.)+[a-z]{2,}(\/[a-zA-Z0-9#\?\_\.\=\-\&]+|\/?)*"
 """The regex definition for website URLs."""
 
 
@@ -121,7 +121,7 @@ class RegexMapping:
         self.regex_mapping[ENTITY_TYPES.PHONE_NUMBER] = REGEX_PHONE_NUMBER
         self.regex_mapping[ENTITY_TYPES.WEBSITE_URL] = REGEX_WEBSITE_URL
 
-    def __getitem__(self, type: str) -> str:
+    def __getitem__(self, regex_type: str) -> str:
         """Gets the regex for the given type.
 
         Examples:
@@ -131,13 +131,13 @@ class RegexMapping:
             ".*"
 
         Args:
-            type: The type of the entity.
+            regex_type: The type of the entity.
 
         Returns:
             The regex for the given type.
 
         """
-        return self.regex_mapping[type]
+        return self.regex_mapping[regex_type]
 
 
 regex_mapping = RegexMapping()
