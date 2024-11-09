@@ -176,11 +176,43 @@ class TestNERExtractor(unittest.TestCase):
         self.assertEqual(hasattr(extractor, "__call__"), True)
         self.assertEqual(hasattr(extractor, "display"), True)
 
-    def test_extract_default(self):
+    def test_extract_default_params(self):
+        extractor = NERExtractor(labels=self.labels)
+        _, entities = extractor(original_text)
+        for p_entity, t_entity in zip(entities, ner_entities):
+            self.assertEqual(p_entity.text, t_entity.text)
+            self.assertEqual(p_entity.label, t_entity.label)
+            self.assertEqual(p_entity.start_index, t_entity.start_index)
+            self.assertEqual(p_entity.end_index, t_entity.end_index)
+            self.assertEqual(p_entity.type, t_entity.type)
+            self.assertEqual(p_entity.regex, t_entity.regex)
+            self.assertEqual(p_entity.score >= 0.5, True)
+
+    def test_extract_default_params_input(self):
         extractor = NERExtractor(
-            labels=self.labels, lang=LANGUAGES.ENGLISH, score_th=0.5
+            labels=self.labels,
+            lang=LANGUAGES.ENGLISH,
+            gliner_model="urchade/gliner_multi_pii-v1",
+            score_th=0.5,
         )
-        doc, entities = extractor(original_text)
+        _, entities = extractor(original_text)
+        for p_entity, t_entity in zip(entities, ner_entities):
+            self.assertEqual(p_entity.text, t_entity.text)
+            self.assertEqual(p_entity.label, t_entity.label)
+            self.assertEqual(p_entity.start_index, t_entity.start_index)
+            self.assertEqual(p_entity.end_index, t_entity.end_index)
+            self.assertEqual(p_entity.type, t_entity.type)
+            self.assertEqual(p_entity.regex, t_entity.regex)
+            self.assertEqual(p_entity.score >= 0.5, True)
+
+    def test_extract_custom_params_input(self):
+        extractor = NERExtractor(
+            labels=self.labels,
+            lang=LANGUAGES.ENGLISH,
+            gliner_model="E3-JSI/gliner-multi-pii-domains-v1",
+            score_th=0.5,
+        )
+        _, entities = extractor(original_text)
         for p_entity, t_entity in zip(entities, ner_entities):
             self.assertEqual(p_entity.text, t_entity.text)
             self.assertEqual(p_entity.label, t_entity.label)
