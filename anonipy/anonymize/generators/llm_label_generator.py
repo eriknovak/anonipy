@@ -1,79 +1,12 @@
 import re
-from typing import Tuple
+import warnings
+from typing import Tuple, List
 
 import torch
-from tokenizers import pre_tokenizers
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
-
-from guidance import models, gen, select
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from .interface import GeneratorInterface
 from ...definitions import Entity
-
-
-# =====================================
-# Helper functions
-# =====================================
-
-
-def prepare_llama3_byte_decoder() -> dict:
-    """Prepares the byte decoder.
-
-    This is an implementation of a workaround, such that the guidance module
-    can be used with the LLaMa-3 model from Hugging Face. Once the issue is resolved,
-    we will remove this function.
-
-    Link to the guidance issue: https://github.com/guidance-ai/guidance/issues/782
-
-    Returns:
-        The byte decoder.
-
-    """
-    byte_decoder = {}
-    # alphabet = pre_tokenizers.ByteLevel(False, False).alphabet()
-    known_vals = set([])
-
-    for j in range(256):
-        for k in range(256):
-            for l in range(256):
-                if len(byte_decoder.keys()) < 256:
-                    b = b""
-                    vals = [j, k, l]
-                    if not set(vals).issubset(known_vals):
-                        for d in range(3):
-                            b = b + vals[d].to_bytes(1, "little", signed=False)
-                        try:
-                            c = b.decode()
-                            t = pre_tokenizers.ByteLevel(False, False).pre_tokenize_str(
-                                c
-                            )[0][0]
-                            for m in range(3):
-                                if t[m] not in byte_decoder.keys():
-                                    byte_decoder[t[m]] = vals[m]
-                                    known_vals.add(vals[m])
-                        except UnicodeDecodeError:
-                            pass
-
-    byte_decoder["À"] = 192
-    byte_decoder["Á"] = 193
-    byte_decoder["ð"] = 240
-    byte_decoder["ñ"] = 241
-    byte_decoder["ò"] = 242
-    byte_decoder["ó"] = 243
-    byte_decoder["ô"] = 244
-    byte_decoder["õ"] = 245
-    byte_decoder["ö"] = 246
-    byte_decoder["÷"] = 247
-    byte_decoder["ø"] = 248
-    byte_decoder["ù"] = 249
-    byte_decoder["ú"] = 250
-    byte_decoder["û"] = 251
-    byte_decoder["ü"] = 252
-    byte_decoder["ý"] = 253
-    byte_decoder["þ"] = 254
-    byte_decoder["ÿ"] = 255
-
-    return byte_decoder
 
 
 # =====================================
@@ -83,9 +16,6 @@ def prepare_llama3_byte_decoder() -> dict:
 
 class LLMLabelGenerator(GeneratorInterface):
     """The class representing the LLM label generator.
-
-    !!! info "GPU Requirements"
-        The `LLMLabelGenerator` utilizes the open source LLMs, specifically the [Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) model. Because the model is quite large, we utilize quantization using the `bitsandbytes` package to reduce its size. Therefore, the `LLMLabelGenerator` requires at least 8GB GPU and CUDA drivers to be available. If these resources are not available on your machine, you can use the `MaskLabelGenerator` instead.
 
     Examples:
         >>> from anonipy.anonymize.generators import LLMLabelGenerator
@@ -99,13 +29,20 @@ class LLMLabelGenerator(GeneratorInterface):
         generate(entity, entity_prefix, temperature):
             Generate the label based on the entity.
 
-        validate(entity):
-            [EXPERIMENTAL] Validate if the entity text corresponds to the entity label.
-
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(
+        self,
+        *args,
+        model_name: str = "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+        use_gpu: bool = False,
+        **kwargs,
+    ):
         """Initializes the LLM label generator.
+
+        Args:
+            model_name: The name of the model to use.
+            use_gpu: Whether to use GPU or not.
 
         Examples:
             >>> from anonipy.anonymize.generators import LLMLabelGenerator
@@ -115,24 +52,24 @@ class LLMLabelGenerator(GeneratorInterface):
         """
 
         super().__init__(*args, **kwargs)
-        # TODO: make this configurable
-        model_name = "meta-llama/Meta-Llama-3-8B-Instruct"
 
-        if not torch.cuda.is_available():
-            raise RuntimeError(
-                "The LabelGenerator requires GPU/CUDA, but it is not available."
+        if use_gpu and not torch.cuda.is_available():
+            warnings.warn(
+                "The use_gpu=True flag requires GPU/CUDA, but it is not available. Setting use_gpu=False."
             )
+            use_gpu = False
 
-        model, tokenizer = self._prepare_model_and_tokenizer(model_name)
-        self.model = models.Transformers(model=model, tokenizer=tokenizer, echo=False)
+        self.model, self.tokenizer = self._prepare_model_and_tokenizer(
+            model_name, use_gpu
+        )
 
     def generate(
         self,
         entity: Entity,
-        add_entity_attrs: str = "",
-        temperature: float = 0.0,
-        use_regex: bool = True,
         *args,
+        add_entity_attrs: str = "",
+        temperature: float = 1.0,
+        top_p: float = 0.95,
         **kwargs,
     ) -> str:
         """Generate the substitute for the entity based on it's attributes.
@@ -147,65 +84,31 @@ class LLMLabelGenerator(GeneratorInterface):
             entity: The entity to generate the label from.
             add_entity_attrs: Additional entity attribute description to add to the generation.
             temperature: The temperature to use for the generation.
-            use_regex: Whether to use regex to determine the generated substitute.
+            top_p: The top p to use for the generation.
 
         Returns:
             The generated entity label substitute.
 
         """
 
-        user_prompt = f"What is a random {add_entity_attrs} {entity.label} replacement for {entity.text}? Respond only with the replacement."
-        # prepare the regex for the entity if needed
-        regex = None if not use_regex else entity.get_regex_group() or entity.regex
-        assistant_prompt = gen(
-            name="replacement",
-            stop="<|eot_id|>",
-            regex=regex,
-            temperature=temperature,
-        )
-        # generate the replacement for the entity
-        lm = (
-            self.model
-            + self._system_prompt()
-            + self._user_prompt(user_prompt)
-            + self._assistant_prompt(assistant_prompt)
-        )
-        return lm["replacement"]
-
-    def validate(self, entity: Entity) -> bool:
-        """[EXPERIMENTAL] Validate the appropriateness of the entity.
-
-        Examples:
-            >>> from anonipy.anonymize.generators import LLMLabelGenerator
-            >>> generator = LLMLabelGenerator()
-            >>> generator.validate(entity)
-            True
-
-        Args:
-            entity: The entity to be validated.
-
-        Returns:
-            The validation result.
-
-        """
-
-        user_prompt = f"Is {entity.text} a {entity.label}?"
-        assistant_prompt = select(["True", "False"], name="validation")
-        # validate the entity with the validation prompt
-        lm = (
-            self.model
-            + self._system_prompt()
-            + self._user_prompt(user_prompt)
-            + self._assistant_prompt(assistant_prompt)
-        )
-        return bool(lm["validation"])
+        message = [
+            {
+                "role": "system",
+                "content": "You are a helpful AI assistant for generating replacements for text entities.",
+            },
+            {
+                "role": "user",
+                "content": f"What is a random {add_entity_attrs} {entity.label} replacement for {entity.text}? Respond only with the replacement.",
+            },
+        ]
+        return self._generate_response(message, temperature, top_p)
 
     # =================================
     # Private methods
     # =================================
 
     def _prepare_model_and_tokenizer(
-        self, model_name: str
+        self, model_name: str, use_gpu: bool
     ) -> Tuple[AutoModelForCausalLM, AutoTokenizer]:
         """Prepares the model and tokenizer.
 
@@ -219,49 +122,62 @@ class LLMLabelGenerator(GeneratorInterface):
         """
 
         # prepare the model
-        bnb_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_use_double_quant=True,
-            bnb_4bit_compute_dtype=torch.bfloat16,
+        device = torch.device(
+            "cuda" if use_gpu and torch.cuda.is_available() else "cpu"
         )
-        model = AutoModelForCausalLM.from_pretrained(
-            model_name, quantization_config=bnb_config, low_cpu_mem_usage=True
-        )
+        model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
         # prepare the tokenizer
         tokenizer = AutoTokenizer.from_pretrained(
             model_name, padding_side="right", use_fast=False
         )
-        # use the workaround for the LLaMa-3 model
-        tokenizer.byte_decoder = prepare_llama3_byte_decoder()
         return model, tokenizer
 
-    def _system_prompt(self) -> str:
-        """Returns the system prompt."""
-        return "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nYou are a helpful AI assistant for generating replacements for text entities.<|eot_id|>"
-
-    def _user_prompt(self, prompt: str) -> str:
-        """Returns the user prompt.
+    def _generate_response(
+        self, message: List[dict], temperature: float, top_p: float
+    ) -> str:
+        """Generate the response from the LLM.
 
         Args:
-            prompt: The prompt to use.
+            message: The message to generate the response from.
+            temperature: The temperature to use for the generation.
+            top_p: The top p to use for the generation.
 
         Returns:
-            The user part of the prompt.
+            The generated response.
 
         """
 
-        return f"<|start_header_id|>user<|end_header_id|>\n\n{prompt}<|eot_id|>"
+        # tokenize the message
+        input_ids = self.tokenizer.apply_chat_template(
+            message, tokenize=True, return_tensors="pt"
+        ).to(self.model.device)
 
-    def _assistant_prompt(self, prompt: str) -> str:
-        """Returns the assistant prompt.
+        # generate the response
+        with torch.no_grad():
+            output_ids = self.model.generate(
+                input_ids,
+                max_new_tokens=50,
+                temperature=temperature,
+                top_p=top_p,
+                do_sample=True,
+            )
+
+        # decode the response
+        response = self.tokenizer.decode(
+            output_ids[0][len(input_ids[0]) :], skip_special_tokens=True
+        )
+        return self._parse_response(response)
+
+    def _parse_response(self, response: str) -> str:
+        """Parse the response from the LLM.
 
         Args:
-            prompt: The prompt to use.
+            response: The response to parse.
 
         Returns:
-            The assistant part of the prompt.
+            The parsed response.
 
         """
 
-        return f"<|start_header_id|>assistant<|end_header_id|>\n\n{prompt}"
+        match = re.search(r"assistant\s*(.*)", response, re.IGNORECASE | re.DOTALL)
+        return match.group(1).strip() if match else response

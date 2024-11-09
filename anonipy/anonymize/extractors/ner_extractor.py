@@ -1,7 +1,7 @@
 import re
+import warnings
 import importlib
 from typing import List, Tuple
-import warnings
 
 import torch
 from spacy import displacy
@@ -52,12 +52,12 @@ class NERExtractor(ExtractorInterface):
     def __init__(
         self,
         labels: List[dict],
+        *args,
         lang: LANGUAGES = LANGUAGES.ENGLISH,
         score_th: float = 0.5,
         use_gpu: bool = False,
         gliner_model: str = "urchade/gliner_multi_pii-v1",
         spacy_style: str = "ent",
-        *args,
         **kwargs,
     ):
         """Initialize the named entity recognition (NER) extractor.

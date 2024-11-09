@@ -14,6 +14,7 @@ from ...definitions import Entity
 
 STOPWORDS = [".", ",", ":", ";", "-", "<s>", "</s>"]
 
+
 # =====================================
 # Main class
 # =====================================
@@ -41,10 +42,10 @@ class MaskLabelGenerator(GeneratorInterface):
 
     def __init__(
         self,
+        *args,
         model_name: str = "FacebookAI/xlm-roberta-large",
         use_gpu: bool = False,
         context_window: int = 100,
-        *args,
         **kwargs,
     ):
         """Initializes the mask label generator.
@@ -127,6 +128,7 @@ class MaskLabelGenerator(GeneratorInterface):
         model = AutoModelForMaskedLM.from_pretrained(model_name).to(device)
         # prepare the tokenizer
         tokenizer = AutoTokenizer.from_pretrained(model_name)
+
         return model, tokenizer, device
 
     def _create_masks(self, entity: Entity) -> List[dict]:

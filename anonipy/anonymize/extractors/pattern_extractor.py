@@ -50,9 +50,9 @@ class PatternExtractor(ExtractorInterface):
     def __init__(
         self,
         labels: List[dict],
+        *args,
         lang: LANGUAGES = LANGUAGES.ENGLISH,
         spacy_style: str = "ent",
-        *args,
         **kwargs,
     ):
         """Initialize the pattern extractor.
@@ -271,12 +271,11 @@ class PatternExtractor(ExtractorInterface):
 
         if self.spacy_style == "ent":
             return doc.ents
-        elif self.spacy_style == "span":
+        if self.spacy_style == "span":
             if "sc" not in doc.spans:
                 doc.spans["sc"] = []
             return doc.spans["sc"]
-        else:
-            raise ValueError(f"Invalid spacy style: {self.spacy_style}")
+        raise ValueError(f"Invalid spacy style: {self.spacy_style}")
 
     def _set_doc_entity_spans(self, doc: Doc, entities: List[Span]) -> None:
         """Set the spacy doc entity spans.
