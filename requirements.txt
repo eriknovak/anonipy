@@ -3,7 +3,6 @@ spacy==3.8.2
 gliner==0.2.13
 gliner-spacy==0.0.10
 transformers==4.45.2
-bitsandbytes==0.44.1
 accelerate>=0.26.0
 lingua-language-detector==1.3.5
 guidance==0.1.16

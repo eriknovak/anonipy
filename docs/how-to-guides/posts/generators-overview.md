@@ -9,14 +9,11 @@ categories:
 
 # Generators overview
 
-In this post, we will show an overview of the implemented  generators. The generators are used to create new texts that would serve as substitutes to the extracted `named entities`. The substitutes can be then used to replace and anonymize the text.
+In this post, we will show an overview of the implemented generators. The generators are used to create new texts that would serve as substitutes to the extracted `named entities`. The substitutes can be then used to replace and anonymize the text.
 
-All generators and their API references are available in the  [generators][anonipy.anonymize.generators] module. What follows is the presentation of the different generators `anonipy` provides.
+All generators and their API references are available in the [generators][anonipy.anonymize.generators] module. What follows is the presentation of the different generators `anonipy` provides.
 
 <!-- more -->
-
-
-
 
 ## Pre-requisites
 
@@ -74,21 +71,13 @@ entities = [
 ]
 ```
 
-
-
 ## Generators
 
 All following generators are available in the [generators][anonipy.anonymize.generators] module.
 
-
-
-
 ### LLMLabelGenerator
 
 The [LLMLabelGenerator][anonipy.anonymize.generators.LLMLabelGenerator] is a one-stop-shop generator that utilizes LLMs to generate replacements for entities. It is implemented to support any entity type.
-
-!!! info "GPU Requirements"
-    The `LLMLabelGenerator` utilizes the open source LLMs,     specifically the [Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct) model. Because the model is quite large, we utilize quantization using the `bitsandbytes` package to reduce its size. Therefore, the `LLMLabelGenerator` requires at least 8GB GPU and CUDA drivers to be available. If these resources are not available on your machine, consider using the `MaskLabelGenerator` instead.
 
 ```python
 from anonipy.anonymize.generators import LLMLabelGenerator
@@ -103,17 +92,17 @@ llm_generator = LLMLabelGenerator()
 ```
 
 !!! info "Initialization warnings"
-    The initialization of `LLMLabelGenerator` will throw some warnings. Ignore them. These are expected due to the use of package dependencies.
+The initialization of `LLMLabelGenerator` will throw some warnings. Ignore them. These are expected due to the use of package dependencies.
 
 To use the generator, we can call the `generate` method. The `generate` method receives the following parameters:
 
 ::: anonipy.anonymize.generators.LLMLabelGenerator.generate
-    options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_docstring_examples: False
-      show_docstring_returns: False
-      show_source: False
+options:
+show_root_heading: False
+show_docstring_description: False
+show_docstring_examples: False
+show_docstring_returns: False
+show_source: False
 
 Let us generate the replacement for the first entity from `entities` using the default parameters.
 
@@ -122,7 +111,6 @@ llm_generator.generate(entities[0])# (1)!
 ```
 
 1. The generator receives the `John Doe` name entity and might return the replacement: `Ethan Thomson`
-
 
 Let us now change the label prefix and generate the replacement using a higher temperature.
 
@@ -144,7 +132,6 @@ Going through the whole `entities` list, the `LLMLabelGenerator`, using the defa
 | `20-05-2024`  | `date`   | `date`                   | `23-07-2027`    |
 | `123-45-6789` | `custom` | `social security number` | `987-65-4321`   |
 
-
 **Advices and suggestions**
 
 **Using LLMLabelGenerator only for string and custom types.**
@@ -158,9 +145,6 @@ to a specific pattern. However, it is recommended to specify to have as specific
 
 This will help the `LLMLabelGenerator` to generate more accurate replacements.
 
-
-
-
 ### MaskLabelGenerator
 
 The [MaskLabelGenerator][anonipy.anonymize.generators.MaskLabelGenerator] is a generator that uses smaller language models, such as [XLM-RoBERTa](https://huggingface.co/FacebookAI/xlm-roberta-large), to generate replacements for entities. It is implemented to support any entity type, but we suggest using it only with string entities. For other entity types, please use other available [generators][anonipy.anonymize.generators].
@@ -171,13 +155,13 @@ from anonipy.anonymize.generators import MaskLabelGenerator
 
 The `MaskLabelGenerator` requires the following input parameters at initialization:
 
-::: anonipy.anonymize.generators.MaskLabelGenerator.__init__
-    options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_docstring_examples: False
-      show_docstring_returns: False
-      show_source: False
+::: anonipy.anonymize.generators.MaskLabelGenerator.**init**
+options:
+show_root_heading: False
+show_docstring_description: False
+show_docstring_examples: False
+show_docstring_returns: False
+show_source: False
 
 Let us now initialize the mask label generator.
 
@@ -186,17 +170,17 @@ mask_generator = MaskLabelGenerator()
 ```
 
 !!! info "Initialization warnings"
-    The initialization of `LLMLabelGenerator` will throw some warnings. Ignore them. These are expected due to the use of package dependencies.
+The initialization of `LLMLabelGenerator` will throw some warnings. Ignore them. These are expected due to the use of package dependencies.
 
 To use the generator, we can call the `generate` method. The `generate` method receives the following parameters:
 
 ::: anonipy.anonymize.generators.MaskLabelGenerator.generate
-    options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_docstring_examples: False
-      show_docstring_returns: False
-      show_source: False
+options:
+show_root_heading: False
+show_docstring_description: False
+show_docstring_examples: False
+show_docstring_returns: False
+show_source: False
 
 This generator will create a list of suggestions from which it will select one at random. Therefore, the generator will return different suggestions every time it is called.
 
@@ -215,9 +199,6 @@ mask_generator.generate(entities[0], text=original_text)# (3)!
 **Using only for string entities.**
 As seen from the above examples, the `MaskLabelGenerator` is best used with string entities. For number and date entities, it is best to use other generators, such as `NumberGenerator` and `DateGenerator`.
 
-
-
-
 ### NumberGenerator
 
 The [NumberGenerator][anonipy.anonymize.generators.NumberGenerator] is a generator for generating random numbers. It is implemented to support integers, floats, and phone numbers, but it can be used to generate values for custom types which include numbers.
@@ -235,12 +216,12 @@ number_generator = NumberGenerator()
 To use the generator, we can call the `generate` method. The `generate` method receives the following parameters:
 
 ::: anonipy.anonymize.generators.NumberGenerator.generate
-    options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_docstring_examples: False
-      show_docstring_returns: False
-      show_source: False
+options:
+show_root_heading: False
+show_docstring_description: False
+show_docstring_examples: False
+show_docstring_returns: False
+show_source: False
 
 This generator will create a suggestion by replacing numeric values in the entity text at random. Therefore, the generator will return different suggestions every time it is called.
 
@@ -262,9 +243,6 @@ except Exception as e:
 1. The provided entity is a `string`, therefore it will raise an error.
 2. The exception will state `The entity type must be 'integer', 'float', 'phone_number' or 'custom' to generate numbers.`
 
-
-
-
 ### DateGenerator
 
 The [DateGenerator][anonipy.anonymize.generators.DateGenerator] is a generator for generating dates. It is implemented to support date entities.
@@ -275,13 +253,13 @@ from anonipy.anonymize.generators import DateGenerator
 
 The `DateGenerator` requires the following input parameters at initialization:
 
-::: anonipy.anonymize.generators.DateGenerator.__init__
-    options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_docstring_examples: False
-      show_docstring_returns: False
-      show_source: False
+::: anonipy.anonymize.generators.DateGenerator.**init**
+options:
+show_root_heading: False
+show_docstring_description: False
+show_docstring_examples: False
+show_docstring_returns: False
+show_source: False
 
 Let us now initialize the date generator.
 
@@ -292,13 +270,13 @@ date_generator = DateGenerator()
 To use the generator, we can call the `generate` method. The `generate` method receives the following parameters:
 
 ::: anonipy.anonymize.generators.DateGenerator.generate
-    options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_docstring_examples: False
-      show_docstring_returns: False
-      show_docstring_raises: False
-      show_source: False
+options:
+show_root_heading: False
+show_docstring_description: False
+show_docstring_examples: False
+show_docstring_returns: False
+show_docstring_raises: False
+show_source: False
 
 Using the above parameters, this generator will create the appropriate date suggestions:
 
@@ -319,7 +297,6 @@ date_generator.generate(entities[1], sub_variant="MIDDLE_OF_THE_YEAR")# (6)!
 5. The `MIDDLE_OF_THE_MONTH` sub variant will return the middle day of the month: `15-05-2024`
 6. The `MIDDLE_OF_THE_YEAR` sub variant will return the middle day of the year: `01-07-2024`
 
-
 Furthermore, it will throw an error if the entity type is not `date`.
 
 ```python
@@ -331,9 +308,6 @@ except Exception as e:
 
 1. The provided entity is a `string`, therefore it will raise an error.
 2. The exception will state `The entity type must be 'date' to generate dates.`
-
-
-
 
 ## Conclusion
 
