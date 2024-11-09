@@ -34,7 +34,7 @@ class LLMLabelGenerator(GeneratorInterface):
     def __init__(
         self,
         *args,
-        model_name: str = "meta-llama/Meta-Llama-3-8B-Instruct",
+        model_name: str = "HuggingFaceTB/SmolLM2-1.7B-Instruct",
         use_gpu: bool = False,
         **kwargs,
     ):
