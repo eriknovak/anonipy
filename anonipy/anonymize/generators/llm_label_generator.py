@@ -98,7 +98,7 @@ class LLMLabelGenerator(GeneratorInterface):
             },
             {
                 "role": "user",
-                "content": f"What is a random {add_entity_attrs} {entity.label} replacement for {entity.text}? Respond only with the replacement, on additional information.",
+                "content": f"What is a random {add_entity_attrs} {entity.label} replacement for {entity.text}? Respond only with the replacement.",
             },
         ]
         return self._generate_response(message, temperature, top_p)
@@ -179,9 +179,5 @@ class LLMLabelGenerator(GeneratorInterface):
 
         """
 
-        res_match = re.search(r"assistant\s*(.*)", response, re.IGNORECASE | re.DOTALL)
-        tmp_response = res_match.group(1).strip() if res_match else response
-
-        res_match = re.search(r"\:\s*(.*)", tmp_response, re.IGNORECASE | re.DOTALL)
-
-        return
+        match = re.search(r"assistant\s*(.*)", response, re.IGNORECASE | re.DOTALL)
+        return match.group(1).strip() if match else response
