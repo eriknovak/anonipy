@@ -2,12 +2,14 @@ import unittest
 import warnings
 
 import torch
+from transformers import logging
 
 from anonipy.definitions import Entity
 from anonipy.anonymize.extractors import NERExtractor, PatternExtractor, MultiExtractor
-from anonipy.utils.regex import regex_mapping
 from anonipy.constants import LANGUAGES
 
+# disable transformers logging
+logging.set_verbosity_error()
 
 # =====================================
 # Helper functions

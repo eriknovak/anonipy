@@ -117,7 +117,7 @@ class DateGenerator(GeneratorInterface):
 
     """
 
-    def __init__(self, date_format: str = "auto", day_sigma: int = 30, *args, **kwargs):
+    def __init__(self, *args, date_format: str = "auto", day_sigma: int = 30, **kwargs):
         """Initializes he date generator.
 
         Examples:
@@ -137,8 +137,8 @@ class DateGenerator(GeneratorInterface):
     def generate(
         self,
         entity: Entity,
-        sub_variant: DATE_TRANSFORM_VARIANTS = DATE_TRANSFORM_VARIANTS.RANDOM,
         *args,
+        sub_variant: DATE_TRANSFORM_VARIANTS = DATE_TRANSFORM_VARIANTS.RANDOM,
         **kwargs,
     ) -> str:
         """Generate the entity substitute based on the input parameters.

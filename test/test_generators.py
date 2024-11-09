@@ -2,7 +2,7 @@ import re
 import unittest
 import warnings
 
-import torch
+from transformers import logging
 
 from anonipy.definitions import Entity
 from anonipy.anonymize.generators import (
@@ -11,7 +11,9 @@ from anonipy.anonymize.generators import (
     DateGenerator,
     NumberGenerator,
 )
-from anonipy.utils.regex import regex_mapping
+
+# disable transformers logging
+logging.set_verbosity_error()
 
 # =====================================
 # Test Cases
@@ -174,43 +176,41 @@ test_entities = {
 # Test LLM Label Generator
 # =====================================
 
-if torch.cuda.is_available():
-    # ! THESE TESTS REQUIRE GPU/CUDA! THIS WILL FAIL IF YOU DON'T HAVE GPU/CUDA!
 
-    class TestLLMLabelGenerator(unittest.TestCase):
+class TestLLMLabelGenerator(unittest.TestCase):
 
-        @classmethod
-        def setUpClass(self):
-            self.generator = LLMLabelGenerator()
+    @classmethod
+    def setUpClass(self):
+        self.generator = LLMLabelGenerator()
 
-        def test_has_methods(self):
-            self.assertEqual(hasattr(self.generator, "generate"), True)
+    def test_has_methods(self):
+        self.assertEqual(hasattr(self.generator, "generate"), True)
 
-        def test_generate_default(self):
-            entity = test_entities["name"]
-            generated_text = self.generator.generate(entity)
-            regex = entity.get_regex_group() or entity.regex
-            match = re.match(regex, generated_text)
-            self.assertNotEqual(match, None)
-            self.assertEqual(match.group(0), generated_text)
+    def test_generate_default(self):
+        entity = test_entities["name"]
+        generated_text = self.generator.generate(entity)
+        regex = entity.get_regex_group() or entity.regex
+        match = re.match(regex, generated_text)
+        self.assertNotEqual(match, None)
+        self.assertEqual(match.group(0), generated_text)
 
-        def test_generate_custom(self):
-            entity = test_entities["name"]
-            generated_text = self.generator.generate(
-                entity, add_entity_attrs="Spanish", temperature=0.5
-            )
-            regex = entity.get_regex_group() or entity.regex
-            match = re.match(regex, generated_text)
-            self.assertNotEqual(match, None)
-            self.assertEqual(match.group(0), generated_text)
+    def test_generate_custom(self):
+        entity = test_entities["name"]
+        generated_text = self.generator.generate(
+            entity, add_entity_attrs="Spanish", temperature=0.5
+        )
+        regex = entity.get_regex_group() or entity.regex
+        match = re.match(regex, generated_text)
+        self.assertNotEqual(match, None)
+        self.assertEqual(match.group(0), generated_text)
 
-        def test_generate_pattern(self):
-            entity = test_entities["name:pattern"]
-            generated_text = self.generator.generate(entity)
-            regex = entity.get_regex_group() or entity.regex
-            match = re.match(regex, generated_text)
-            self.assertNotEqual(match, None)
-            self.assertEqual(match.group(0), generated_text)
+    def test_generate_pattern(self):
+        entity = test_entities["name:pattern"]
+        generated_text = self.generator.generate(entity)
+        regex = entity.get_regex_group() or entity.regex
+        match = re.match(regex, generated_text)
+        self.assertNotEqual(match, None)
+        self.assertEqual(match.group(0), generated_text)
 
 
 # =====================================

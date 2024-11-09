@@ -147,20 +147,22 @@ class MultiExtractor:
 
         """
 
-        get_sort_key = lambda entity: (
-            entity.end_index - entity.start_index,
-            -entity.start_index,
-        )
+        def get_sort_key(entity):
+            return (
+                entity.end_index - entity.start_index,
+                -entity.start_index,
+            )
+
         sorted_entities = sorted(entities, key=get_sort_key, reverse=True)
         result = []
         seen_tokens: Set[int] = set()
-        for entities in sorted_entities:
+        for entity in sorted_entities:
             # Check for end - 1 here because boundaries are inclusive
             if (
-                entities.start_index not in seen_tokens
-                and entities.end_index - 1 not in seen_tokens
+                entity.start_index not in seen_tokens
+                and entity.end_index - 1 not in seen_tokens
             ):
-                result.append(entities)
-                seen_tokens.update(range(entities.start_index, entities.end_index))
+                result.append(entity)
+                seen_tokens.update(range(entity.start_index, entity.end_index))
         result = sorted(result, key=lambda entity: entity.start_index)
         return result
