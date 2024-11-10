@@ -30,11 +30,6 @@
 
 The anonipy package is a python package for data anonymization. It is designed to be simple to use and highly customizable, supporting different anonymization strategies. Powered by LLMs.
 
-## Requirements
-Before starting the project make sure these requirements are available:
-
-- [python]. The python programming language (v3.8, v3.9, v3.10).
-
 ## Install
 
 ```bash
@@ -154,4 +149,3 @@ and innovation programme under Grant Agreement No 101080288 ([PREPARE](https://p
   <img src="https://github.com/eriknovak/anonipy/blob/main/docs/assets/imgs/EU.png?raw=true" alt=European Union flag" width="80" />
 </figure>
 
-[python]: https://www.python.org/
