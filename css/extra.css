@@ -1,0 +1,4 @@
+/* Hide the package name in the header */
+header.md-header .md-header__ellipsis .md-header__topic:first-of-type {
+    display: none;
+}
