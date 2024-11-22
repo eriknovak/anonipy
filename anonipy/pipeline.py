@@ -1,15 +1,17 @@
+import os
+from typing import Union, List
+
 from .anonymize.extractors import ExtractorInterface, MultiExtractor
 from .anonymize.strategies import StrategyInterface
-from .utils.file_system import *
-import json
-from typing import Union, List
-import os
+from .utils.file_system import open_file, write_file
+
 
 # =====================================
 # Pipeline class
 # =====================================
 
-class Pipeline():
+
+class Pipeline:
     """ A class for anonymizing files using a pipeline of extractors and strategies.
 
         Examples:
@@ -17,18 +19,19 @@ class Pipeline():
             >>> extractor = NERExtractor(labels, lang=LANGUAGES.ENGLISH)
             >>> strategy = RedactionStrategy()        
             >>> pipeline = Pipeline(extractor, strategy)        
-            >>> pipeline.anonymize(r"/path/to/input_dir", r"/path/to/output_dir", False)    
+            >>> pipeline.anonymize("/path/to/input_dir", "/path/to/output_dir", flatten=True)    
     
         Attributes:
-            extractor (ExtractorInterface): The extractor to use for entity extraction.
+            extractor (ExtractorInterface, MultiExtractor, List[ExtractorInterface]): The extractor to use for entity extraction.
             strategy (StrategyInterface): The strategy to use for anonymization.
 
         Methods:
-            anonymize(input_dir, output_dir, flatten=False): Anonymize files in the input directory and save the anonymized files to the output directory. 
+            anonymize(input_dir, output_dir, flatten=False): 
+                Anonymize files in the input directory and save the anonymized files to the output directory. 
 
         """
     
-    def __init__(self, extractor: Union[ExtractorInterface, List[ExtractorInterface]], strategy: StrategyInterface):
+    def __init__(self, extractor: Union[ExtractorInterface, MultiExtractor, List[ExtractorInterface]], strategy: StrategyInterface):
         """ Initialize the pipeline.
 
             Examples:
@@ -38,13 +41,13 @@ class Pipeline():
                 >>> pipeline = Pipeline(extractor, strategy)
 
             Args:
-                extractor (Union[ExtractorInterface, List[ExtractorInterface]]): The extractor to use for entity extraction.
-                strategy (StrategyInterface): The strategy to use for anonymization.    
+                extractor: The extractor to use for entity extraction.
+                strategy: The strategy to use for anonymization.    
             
         """
 
         try:
-            if isinstance(extractor, ExtractorInterface):
+            if isinstance(extractor, ExtractorInterface) or isinstance(extractor, MultiExtractor):
                 self.extractor = extractor
             elif isinstance(extractor, list):
                 self.extractor = MultiExtractor(extractor)
@@ -58,33 +61,35 @@ class Pipeline():
             raise ValueError("Strategy must be a StrategyInterface.")
         
         self.strategy = strategy
-        self.anonymized_files_count = 0
 
-    def anonymize(self, input_dir: str, output_dir: str, flatten: bool = False) -> str:
+    def anonymize(self, input_dir: str, output_dir: str, flatten: bool = False) -> dict:
         """ Anonymize files in the input directory and save the anonymized files to the output directory.
 
             Args:
-                input_dir (str): The path to the input directory containing files to be anonymized.
-                output_dir (str): The path to the output directory where anonymized files will be saved.
-                flatten (bool, optional): Whether to flatten the output directory structure. Defaults to False.
+                input_dir: The path to the input directory containing files to be anonymized.
+                output_dir: The path to the output directory where anonymized files will be saved.
+                flatten: Whether to flatten the output directory structure. Defaults to False.
 
             Raises:
                 ValueError: If the input directory does not exist or if the input and output directories are the same.
 
             Returns:    
-                str: A JSON string containing a mapping of input file paths to their corresponding anonymized file names.
+                A dictionary mapping the original file paths to the anonymized file paths.
+
         """
 
         if not os.path.exists(input_dir):
             raise ValueError(f"Input directory '{input_dir}' does not exist.")
         
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir, exist_ok=True)
-        
         if os.path.abspath(input_dir) == os.path.abspath(output_dir):
             raise ValueError("Input and output directories cannot be the same.")
-    
+        
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir, exist_ok=True)
+
+        anonymized_files_count = 1
         file_name_mapping = {}
+
         for root, _, files in os.walk(input_dir):
             for file_name in files:
                 file_path = os.path.join(root, file_name)
@@ -98,10 +103,10 @@ class Pipeline():
                     print(f"Error processing file {file_path}: {e}")
                     continue
 
-                base_name, ext = os.path.splitext(file_name)
-                self.anonymized_files_count += 1
-                base_name = f"file{self.anonymized_files_count}"
-                output_file_name = f"{base_name}_anony{ext}"
+                _, ext = os.path.splitext(file_name)
+                output_file_name = f"file{anonymized_files_count}_anony{ext}"
+                anonymized_files_count += 1
+
                 relative_path = os.path.relpath(file_path, input_dir)
                 
                 if flatten:
@@ -116,16 +121,17 @@ class Pipeline():
                 file_path_after = os.path.relpath(output_file_path, output_dir)
                 file_name_mapping[file_path_before] = os.path.join(output_dir.split(os.sep)[-1], file_path_after)
 
-        return json.dumps(file_name_mapping, indent=4, sort_keys=True)
+        return file_name_mapping
     
     def _anonymize_file(self, file_path: str) -> str: 
         """ Anonymize a single file.
 
             Args:
-                file_path (str): The path to the file to be anonymized.
+                file_path: The path to the file to be anonymized.
 
             Returns:
-                str: The anonymized text.
+                The anonymized text.
+                
         """
 
         original_text = open_file(file_path)
