@@ -96,8 +96,7 @@ class Pipeline:
                 
                 try:
                     anonymized_text = self._anonymize_file(file_path)
-                    if not anonymized_text.strip():
-                        print(f"Skipping file {file_path}: Anonymized text is empty.")
+                    if anonymized_text is None:
                         continue
                 except Exception as e:
                     print(f"Error processing file {file_path}: {e}")
@@ -123,27 +122,27 @@ class Pipeline:
 
         return file_name_mapping
     
-    def _anonymize_file(self, file_path: str) -> str: 
+    def _anonymize_file(self, file_path: str) -> Union[str, None]:  
         """ Anonymize a single file.
 
             Args:
                 file_path: The path to the file to be anonymized.
 
             Returns:
-                The anonymized text.
+                The anonymized text or None if the file is empty or if entity extraction fails.
                 
         """
 
         original_text = open_file(file_path)
-        if original_text is None:
+        if original_text is None or not original_text.strip():
             print(f"Skipping file {file_path}: Failed to read or file is empty.")
-            return ""
+            return None
 
         doc, entities = self.extractor(original_text)
 
-        if entities is None:
+        if not entities:
             print(f"Skipping file {file_path}: Entity extraction returned None.")
-            return ""
+            return None
     
         anonymized_text, replacements = self.strategy.anonymize(original_text, entities)
 
