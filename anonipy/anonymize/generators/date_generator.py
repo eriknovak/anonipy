@@ -1,11 +1,16 @@
 import random
 import warnings
 import datetime
+from typing import Union
+
+from babel.dates import format_datetime
 
 from ...utils.datetime import detect_datetime_format
 from .interface import GeneratorInterface
 from ...definitions import Entity
 from ...constants import DATE_TRANSFORM_VARIANTS
+from ...constants import LANGUAGES
+
 
 # =====================================
 # Operation functions
@@ -104,7 +109,7 @@ class DateGenerator(GeneratorInterface):
 
     Examples:
         >>> from anonipy.anonymize.generators import DateGenerator
-        >>> generator = DateGenerator()
+        >>> generator = DateGenerator(lang="de")
         >>> generator.generate(entity)
 
     Attributes:
@@ -115,10 +120,10 @@ class DateGenerator(GeneratorInterface):
         generate(entity, output_gen):
             Generate the date substitute based on the input parameters.
 
-    """
+    """ 
 
-    def __init__(self, *args, date_format: str = "auto", day_sigma: int = 30, **kwargs):
-        """Initializes he date generator.
+    def __init__(self, *args, date_format: str = "auto", lang: Union[str, LANGUAGES] = "en", day_sigma: int = 30, **kwargs):
+        """Initializes the date generator.
 
         Examples:
             >>> from anonipy.anonymize.generators import DateGenerator
@@ -126,12 +131,21 @@ class DateGenerator(GeneratorInterface):
 
         Args:
             date_format: The date format in which the date should be generated. More on date formats [see here](https://www.contensis.com/help-and-docs/guides/querying-your-content/zenql-search/date-formats).
+            lang: The language of the text.
             day_sigma: The range of the random date in days.
 
         """
 
         super().__init__(*args, **kwargs)
         self.date_format = date_format
+
+        if isinstance(lang, str) and lang in ["en", "de", "el", "nl", "fr", "it", "sl", "es", "uk"]:
+            self.lang = lang
+        elif isinstance(lang, LANGUAGES):
+            self.lang = lang[0]
+        else:
+            raise Exception(f"Unknown lang value: {lang}")
+        
         self.day_sigma = day_sigma
 
     def generate(
@@ -169,7 +183,7 @@ class DateGenerator(GeneratorInterface):
 
         # detect the date format
         if self.date_format == "auto":
-            entity_date, date_format = detect_datetime_format(entity.text)
+            entity_date, date_format = detect_datetime_format(entity.text, self.lang)
         else:
             entity_date = datetime.datetime.strptime(entity.text, self.date_format)
             date_format = self.date_format
@@ -182,4 +196,4 @@ class DateGenerator(GeneratorInterface):
 
         # generate the date substitute
         generate_date = DATE_VARIANTS_MAPPING[sub_variant](entity_date, self.day_sigma)
-        return generate_date.strftime(date_format)
+        return format_datetime(generate_date, format=date_format, locale=self.lang)
