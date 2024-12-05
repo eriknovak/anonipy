@@ -8,8 +8,7 @@ from babel.dates import format_datetime
 from ...utils.datetime import detect_datetime_format
 from .interface import GeneratorInterface
 from ...definitions import Entity
-from ...constants import DATE_TRANSFORM_VARIANTS
-from ...constants import LANGUAGES
+from ...constants import DATE_TRANSFORM_VARIANTS, LANGUAGES, SUPPORTED_LANGUAGES
 
 
 # =====================================
@@ -113,6 +112,7 @@ class DateGenerator(GeneratorInterface):
         >>> generator.generate(entity)
 
     Attributes:
+        lang (str, LANGUAGES): The language of the text.
         date_format (str): The date format in which the date should be generated.
         day_sigma (int): The range of the random date in days.
 
@@ -122,7 +122,7 @@ class DateGenerator(GeneratorInterface):
 
     """ 
 
-    def __init__(self, *args, date_format: str = "auto", lang: Union[str, LANGUAGES] = "en", day_sigma: int = 30, **kwargs):
+    def __init__(self, *args, lang: Union[str, LANGUAGES] = "en", date_format: str = "auto",  day_sigma: int = 30, **kwargs):
         """Initializes the date generator.
 
         Examples:
@@ -130,23 +130,22 @@ class DateGenerator(GeneratorInterface):
             >>> generator = DateGenerator()
 
         Args:
-            date_format: The date format in which the date should be generated. More on date formats [see here](https://www.contensis.com/help-and-docs/guides/querying-your-content/zenql-search/date-formats).
             lang: The language of the text.
+            date_format: The date format in which the date should be generated. More on date formats [see here](https://www.contensis.com/help-and-docs/guides/querying-your-content/zenql-search/date-formats).
             day_sigma: The range of the random date in days.
 
         """
 
         super().__init__(*args, **kwargs)
         self.date_format = date_format
+        self.day_sigma = day_sigma
 
-        if isinstance(lang, str) and lang in ["en", "de", "el", "nl", "fr", "it", "sl", "es", "uk"]:
+        if isinstance(lang, str) and lang in SUPPORTED_LANGUAGES:
             self.lang = lang
         elif isinstance(lang, LANGUAGES):
             self.lang = lang[0]
         else:
-            raise Exception(f"Unknown lang value: {lang}")
-        
-        self.day_sigma = day_sigma
+            raise Exception(f"Unknown lang value: {lang}") 
 
     def generate(
         self,
