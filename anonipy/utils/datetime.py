@@ -5,8 +5,6 @@ from typing import Tuple
 import dateparser
 from babel.dates import format_datetime, format_datetime
 
-from ..constants import LANGUAGES
-
 
 # =====================================
 # Constants
@@ -123,40 +121,20 @@ def detect_datetime_format(datetime: str, lang: str) -> Tuple[datetime.datetime,
 
     Args:
         datetime: The datetime string to detect the format.
-
+        lang: The language of the datetime string.
     Returns:
         The detected datetime and it's format.
 
     """
 
-    # Lowercase the first word
-    if lang not in ['en', 'de', 'el']:
-        datetime = datetime.lower()
-
-    # Remove AM/PM 
-    datetime = re.sub(r"[ ]?[APap][mM]", "", datetime).strip()
-
-    # Remove all occurrences of '1er'
-    datetime = re.sub(r'\b1er\b', '1', datetime)
-
-    # Remove all occurrences of 'του' and 'η'
-    datetime = re.sub(r"(\d+)η", r"\1", datetime)
-    datetime = re.sub(r"\bτου\b", "", datetime)
-    datetime = re.sub(r"\s+", " ", datetime).strip()
-
-    # Remove all occurrences of '1°'
-    datetime = re.sub(r"1°", '1', datetime)
-    
-    # Remove all occurrences of 'року'
-    datetime = re.sub(r"\bроку\b", "", datetime).strip()
+    datetime = _prepare_datetime(datetime, lang)
     
     try:
         parsed_datetime = dateparser.parse(datetime, languages=[lang])
-    	
+
         for FMT in POSSIBLE_FORMATS:
             try:
                 formatted_date = format_datetime(parsed_datetime, format=FMT, locale=lang)
-                
                 if formatted_date == datetime:
                     return parsed_datetime, FMT
             except ValueError:
@@ -167,3 +145,33 @@ def detect_datetime_format(datetime: str, lang: str) -> Tuple[datetime.datetime,
     except dateparser.ParserError:
         return None, None
     
+def _prepare_datetime(datetime: str, lang: str) -> str:
+    """Preares the datetime string for formatting.
+
+    Args:
+        datetime: The datetime string to format.
+        lang: The language of the datetime string.
+
+    Returns:
+        The formatted datetime string.
+
+    """
+
+    if lang not in ["en", "de", "el"]:
+        datetime = datetime.lower()
+
+    # Remove AM/PM 
+    datetime = re.sub(r"[ ]?[APap][mM]", "", datetime).strip()
+
+    # Language-specific cleaning
+    datetime = re.sub(r"\b1er\b", "1", datetime)    # French
+    datetime = re.sub(r"(\d+)η", r"\1", datetime)   # Greek
+    datetime = re.sub(r"\bτου\b", "", datetime)     # Greek
+    datetime = re.sub(r"1°", "1", datetime)         # Italian, Spanish
+    datetime = re.sub(r"\bроку\b", "", datetime)    # Ukrainian
+    
+    # Remove extra spaces
+    datetime = re.sub(r"\s+", " ", datetime).strip()
+
+    return datetime
+
