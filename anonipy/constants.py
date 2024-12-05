@@ -41,6 +41,9 @@ class LANGUAGES:
     UKRAINIAN = ("uk", "Ukrainian")
 
 
+SUPPORTED_LANGUAGES = [value[0] for attr, value in LANGUAGES.__dict__.items() if not attr.startswith("_") and isinstance(value, tuple)]
+
+
 class ENTITY_TYPES:
     """The anonipy supported entity types.
 
