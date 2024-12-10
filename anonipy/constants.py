@@ -52,7 +52,6 @@ class LANGUAGES:
             The list of supported languages.
 
         """
-
         return [lang[0] for lang in self.__dict__.values() if isinstance(lang, tuple)]
 
 

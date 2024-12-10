@@ -249,7 +249,7 @@ class TestDateGenerator(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        self.generator = DateGenerator()
+        self.generator = DateGenerator(lang="en")
 
     def test_has_methods(self):
         self.assertEqual(hasattr(self.generator, "generate"), True)
@@ -263,7 +263,7 @@ class TestDateGenerator(unittest.TestCase):
 
     def test_generate_custom_date_format(self):
         entity = test_entities["date"][0]
-        generator = DateGenerator(date_format="%d-%m-%Y")
+        generator = DateGenerator(date_format="dd-MM-yyyy")
         generated_text = generator.generate(entity)
         match = re.match(entity.regex, generated_text)
         self.assertNotEqual(match, None)
@@ -271,7 +271,7 @@ class TestDateGenerator(unittest.TestCase):
 
     def text_generate_uncorrect_date_format(self):
         entity = test_entities["date"][0]
-        generator = DateGenerator(date_format="%Y-%m-%d")
+        generator = DateGenerator(date_format="yyyy-MM-dd")
         try:
             generator.generate(entity)
         except Exception as e:

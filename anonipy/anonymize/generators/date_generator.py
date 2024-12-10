@@ -3,13 +3,14 @@ import warnings
 import datetime
 from typing import Union
 
+import dateparser
 from babel.dates import format_datetime
 
-from ...utils.datetime_format import detect_datetime_format
-from .interface import GeneratorInterface
 from ...definitions import Entity
+from ...utils.datetime_format import detect_datetime_format
 from ...constants import DATE_TRANSFORM_VARIANTS, LANGUAGES
 
+from .interface import GeneratorInterface
 
 # =====================================
 # Operation functions
@@ -120,9 +121,16 @@ class DateGenerator(GeneratorInterface):
         generate(entity, output_gen):
             Generate the date substitute based on the input parameters.
 
-    """ 
+    """
 
-    def __init__(self, *args, lang: Union[str, LANGUAGES] = "en", date_format: str = "auto",  day_sigma: int = 30, **kwargs):
+    def __init__(
+        self,
+        *args,
+        lang: Union[str, LANGUAGES] = "en",
+        date_format: str = "auto",
+        day_sigma: int = 30,
+        **kwargs,
+    ):
         """Initializes the date generator.
 
         Examples:
@@ -145,7 +153,7 @@ class DateGenerator(GeneratorInterface):
         elif isinstance(lang, LANGUAGES):
             self.lang = lang[0]
         else:
-            raise Exception(f"Unknown lang value: {lang}") 
+            raise Exception(f"Unknown lang value: {lang}")
 
     def generate(
         self,
@@ -177,20 +185,20 @@ class DateGenerator(GeneratorInterface):
 
         if not DATE_TRANSFORM_VARIANTS.is_valid(sub_variant):
             raise ValueError(
-                f"The output_gen must be one of {', '.join(DATE_TRANSFORM_VARIANTS.values())} to generate dates."
+                f"The sub_variant must be one of {', '.join(DATE_TRANSFORM_VARIANTS.values())} to generate dates."
             )
 
         # detect the date format
         if self.date_format == "auto":
             entity_date, date_format = detect_datetime_format(entity.text, self.lang)
         else:
-            entity_date = datetime.datetime.strptime(entity.text, self.date_format)
+            entity_date = dateparser.parse(entity.text, languages=[self.lang])
             date_format = self.date_format
 
         # validate the input values
         if entity_date is None:
             raise ValueError(f"Entity `{entity.text}` is not a valid date.")
-        if date_format is None or date_format == ValueError("Unknown Format"):
+        if date_format is None or isinstance(date_format, ValueError):
             raise ValueError(f"Entity `{entity.text}` is not a valid date.")
 
         # generate the date substitute
