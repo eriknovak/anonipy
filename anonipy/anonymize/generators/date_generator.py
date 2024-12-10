@@ -5,10 +5,10 @@ from typing import Union
 
 from babel.dates import format_datetime
 
-from ...utils.datetime import detect_datetime_format
+from ...utils.datetime_format import detect_datetime_format
 from .interface import GeneratorInterface
 from ...definitions import Entity
-from ...constants import DATE_TRANSFORM_VARIANTS, LANGUAGES, SUPPORTED_LANGUAGES
+from ...constants import DATE_TRANSFORM_VARIANTS, LANGUAGES
 
 
 # =====================================
@@ -140,7 +140,7 @@ class DateGenerator(GeneratorInterface):
         self.date_format = date_format
         self.day_sigma = day_sigma
 
-        if isinstance(lang, str) and lang in SUPPORTED_LANGUAGES:
+        if isinstance(lang, str) and lang in LANGUAGES.supported_languages():
             self.lang = lang
         elif isinstance(lang, LANGUAGES):
             self.lang = lang[0]
