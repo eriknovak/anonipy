@@ -28,6 +28,10 @@ class LANGUAGES:
         SPANISH (Tuple[Literal["es"], Literal["Spanish"]]): The Spanish language.
         UKRAINIAN (Tuple[Literal["uk"], Literal["Ukrainian"]]): The Ukrainian language.
 
+    Methods:
+        supported_languages():
+            Return a list of supported languages.
+
     """
 
     DUTCH = ("nl", "Dutch")
@@ -39,6 +43,17 @@ class LANGUAGES:
     SLOVENE = ("sl", "Slovene")
     SPANISH = ("es", "Spanish")
     UKRAINIAN = ("uk", "Ukrainian")
+
+    @classmethod
+    def supported_languages(self) -> List[str]:
+        """Return a list of supported languages.
+
+        Returns:
+            The list of supported languages.
+
+        """
+
+        return [lang[0] for lang in self.__dict__.values() if isinstance(lang, tuple)]
 
 
 class ENTITY_TYPES:

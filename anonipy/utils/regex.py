@@ -110,14 +110,7 @@ REGEX_DATE = (
     r"([A-Za-z]+,?[ ](sichnia|liutoho|bereznia|kvitnia|travniia|chervnia|lypnia|serpnia|veresnia|zhovtnia|lystopada|hrudnia)[ ]\d{1,2}[\.]?,?[ ]\d{4}( roku)?(?:[ ]?\d{2}:\d{2}(?::\d{2})?)?)"
     r")"
 )
-"""The regex definition for dates.
-
-The regex definition for dates includes string representations, which are currently in
-the English language.
-
-TODO:
-    - Add regex definitions for other languages.
-"""
+"""The regex definition for dates."""
 
 REGEX_EMAIL_ADDRESS = (
     "[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*"
