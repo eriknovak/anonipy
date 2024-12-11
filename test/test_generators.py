@@ -366,10 +366,8 @@ class TestNumberGenerator(unittest.TestCase):
 
     def test_generate_uncorrect_type(self):
         entity = test_entities["name"]
-        try:
+        with self.assertRaises(ValueError):
             self.generator.generate(entity)
-        except Exception as e:
-            self.assertEqual(type(e), ValueError)
 
 
 if __name__ == "__main__":

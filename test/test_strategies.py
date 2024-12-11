@@ -206,10 +206,8 @@ class TestMaskingStrategy(unittest.TestCase):
 
 class TestPseudonymizationStrategy(unittest.TestCase):
     def test_init(self):
-        try:
+        with self.assertRaises(TypeError):
             PseudonymizationStrategy()
-        except Exception as e:
-            self.assertRaises(TypeError, e)
 
     def test_init_inputs(self):
         strategy = PseudonymizationStrategy(mapping=anonymization_mapping)
