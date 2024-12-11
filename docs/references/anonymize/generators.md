@@ -16,3 +16,5 @@ title: Generators Module
 ::: anonipy.anonymize.generators.NumberGenerator
 
 ::: anonipy.anonymize.generators.DateGenerator
+
+::: anonipy.anonymize.generators.GeneratorInterface

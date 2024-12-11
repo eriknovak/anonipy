@@ -14,3 +14,5 @@ title: Extractors Module
 ::: anonipy.anonymize.extractors.PatternExtractor
 
 ::: anonipy.anonymize.extractors.MultiExtractor
+
+::: anonipy.anonymize.extractors.ExtractorInterface

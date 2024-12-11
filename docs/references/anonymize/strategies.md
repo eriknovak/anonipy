@@ -14,3 +14,5 @@ title: Strategies Module
 ::: anonipy.anonymize.strategies.MaskingStrategy
 
 ::: anonipy.anonymize.strategies.PseudonymizationStrategy
+
+::: anonipy.anonymize.strategies.StrategyInterface

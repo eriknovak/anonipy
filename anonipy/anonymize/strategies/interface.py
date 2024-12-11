@@ -9,6 +9,8 @@ from ...definitions import Entity
 class StrategyInterface:
     """The class representing the strategy interface.
 
+    All strategies should inherit from this class.
+
     Methods:
         anonymize(text, entities):
             Anonymize the text based on the entities.

@@ -86,9 +86,9 @@ Each extractor will extract the `named entities` from the text. The entities can
 
 ::: anonipy.definitions.Entity
     options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_source: False
+        show_root_heading: False
+        show_docstring_description: False
+        show_source: False
 
 
 
@@ -112,10 +112,10 @@ The `NERExtractor` takes the following input parameters:
 
 ::: anonipy.anonymize.extractors.NERExtractor.__init__
     options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_docstring_examples: False
-      show_source: False
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_source: False
 
 We must define the labels to be extracted and their types. In this example, we will extract the following entities:
 
@@ -218,9 +218,9 @@ In the `anonipy` package, we provide some predefined [ENTITY_TYPES][anonipy.cons
 
 ::: anonipy.constants.ENTITY_TYPES
     options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_source: False
+        show_root_heading: False
+        show_docstring_description: False
+        show_source: False
 
 These entity types also have a corresponding regex pattern, as defined in the [regex][anonipy.utils.regex] submodule.
 
@@ -243,10 +243,10 @@ The `PatternExtractor` takes the following parameters:
 
 ::: anonipy.anonymize.extractors.PatternExtractor.__init__
     options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_docstring_examples: False
-      show_source: False
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_source: False
 
 We must define the labels and their patterns used to extract the
 relevant entities. The patterns are defined using [spacy patterns](https://spacy.io/usage/rule-based-matching/) or [regex patterns](https://docs.python.org/3/library/re.html).
@@ -366,10 +366,10 @@ The `MultiExtractor` takes the following parameters:
 
 ::: anonipy.anonymize.extractors.MultiExtractor.__init__
     options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_docstring_examples: False
-      show_source: False
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_source: False
 
 In this example, we will use the previously initialized NER and pattern extractors.
 

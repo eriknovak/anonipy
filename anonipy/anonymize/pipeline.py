@@ -1,3 +1,13 @@
+"""Module containing the `pipeline`.
+
+The `pipeline` module provides a class for anonymizing files using a pipeline of
+extractors and strategies.
+
+Classes:
+    Pipeline: The class representing the anonymization pipeline.
+
+"""
+
 import os
 import warnings
 from typing import Union, List
