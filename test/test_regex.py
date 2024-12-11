@@ -1,4 +1,4 @@
-import unittest
+import pytest
 
 from anonipy.utils.regex import (
     regex_mapping,
@@ -12,7 +12,6 @@ from anonipy.utils.regex import (
     REGEX_WEBSITE_URL,
 )
 from anonipy.constants import ENTITY_TYPES
-
 
 # =====================================
 # Test Cases
@@ -46,26 +45,17 @@ TEST_CASES = [
     {"value": "test", "entity": "test", "regex": ".*"},
 ]
 
-
 # =====================================
 # Test Entity
 # =====================================
 
 
-class TestRegex(unittest.TestCase):
-
-    def test_init(self):
-        self.assertEqual(regex_mapping.__class__, RegexMapping)
-        self.assertEqual(hasattr(regex_mapping, "regex_mapping"), True)
-
-    def test_regex_mapping(self):
-
-        for test_case in TEST_CASES:
-            self.assertEqual(regex_mapping[test_case["entity"]], test_case["regex"])
-            self.assertEqual(
-                regex_mapping[test_case["value"]], regex_mapping[test_case["entity"]]
-            )
+def test_init():
+    assert isinstance(regex_mapping, RegexMapping)
+    assert hasattr(regex_mapping, "regex_mapping")
 
 
-if __name__ == "__main__":
-    unittest.main()
+@pytest.mark.parametrize("test_case", TEST_CASES)
+def test_regex_mapping(test_case):
+    assert regex_mapping[test_case["entity"]] == test_case["regex"]
+    assert regex_mapping[test_case["value"]] == regex_mapping[test_case["entity"]]

@@ -1,5 +1,3 @@
-import unittest
-
 from anonipy.anonymize import anonymize
 
 # =====================================
@@ -30,18 +28,12 @@ test_replacements = [
     },
 ]
 
-
 # =====================================
 # Test Anonymize
 # =====================================
 
 
-class TestAnonymize(unittest.TestCase):
-    def test_anonymize(self):
-        anonymized_text, replacements = anonymize(test_text, test_replacements)
-        self.assertEqual(anonymized_text, test_text_anonymized)
-        self.assertEqual(replacements, test_replacements)
-
-
-if __name__ == "__main__":
-    unittest.main()
+def test_anonymize():
+    anonymized_text, replacements = anonymize(test_text, test_replacements)
+    assert anonymized_text == test_text_anonymized
+    assert replacements == test_replacements

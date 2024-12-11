@@ -1,7 +1,8 @@
 import os
-import unittest
 import shutil
+import warnings
 
+import pytest
 from transformers import logging
 
 from anonipy.anonymize.pipeline import Pipeline
@@ -13,87 +14,94 @@ from anonipy.constants import LANGUAGES
 logging.set_verbosity_error()
 
 # =====================================
-# Helper functions
-# =====================================
-
-
-# =====================================
 # Test Pipeline
 # =====================================
 
 
-class TestPipeline(unittest.TestCase):
-
-    def setUp(self):
-        self.ner_labels = [{"label": "PERSON", "type": "string"}]
-        self.pattern_labels = [
-            {"label": "DATE", "type": "regex", "regex": r"\d{4}-\d{2}-\d{2}"}
-        ]
-        self.extractors = [
-            NERExtractor(self.ner_labels, lang=LANGUAGES.ENGLISH),
-            PatternExtractor(self.pattern_labels, lang=LANGUAGES.ENGLISH),
-        ]
-        self.multi_extractor = MultiExtractor(self.extractors)
-        self.strategy = RedactionStrategy()
-        self.input_dir = "test/resources"
-        self.output_dir = "test/output"
-
-    def tearDown(self):
-        if not os.path.exists(self.output_dir):
-            return
-        # remove the output directory
-        shutil.rmtree(self.output_dir)
-
-    def test_init(self):
-        with self.assertRaises(TypeError):
-            Pipeline()
-
-    def test_init_extractor_single(self):
-        pipeline = Pipeline(self.extractors[0], self.strategy)
-        self.assertEqual(pipeline.__class__, Pipeline)
-
-    def test_init_extractor_list(self):
-        pipeline = Pipeline(self.extractors, self.strategy)
-        self.assertEqual(pipeline.__class__, Pipeline)
-
-    def test_init_extractor_multi(self):
-        pipeline = Pipeline(self.multi_extractor, self.strategy)
-        self.assertEqual(pipeline.__class__, Pipeline)
-
-    def test_methods(self):
-        pipeline = Pipeline(self.multi_extractor, self.strategy)
-        self.assertTrue(hasattr(pipeline, "anonymize"))
-
-    def test_anonymize(self):
-        pipeline = Pipeline(self.multi_extractor, self.strategy)
-        pipeline.anonymize(self.input_dir, self.output_dir)
-
-        self.assertTrue(os.path.exists(self.output_dir))
-        for root, _, files in os.walk(self.output_dir):
-            for file in files:
-                with open(os.path.join(root, file), "r") as f:
-                    self.assertTrue(f.read())
-
-    def test_anonymize_flatten(self):
-        pipeline = Pipeline(self.multi_extractor, self.strategy)
-        pipeline.anonymize(self.input_dir, self.output_dir, flatten=True)
-
-        self.assertTrue(os.path.exists(self.output_dir))
-        for root, _, files in os.walk(self.output_dir):
-            for file in files:
-                with open(os.path.join(root, file), "r") as f:
-                    self.assertTrue(f.read())
-
-    def test_anonymize_invalid_input_dir(self):
-        pipeline = Pipeline(self.multi_extractor, self.strategy)
-        with self.assertRaises(ValueError):
-            pipeline.anonymize("invalid", self.output_dir)
-
-    def test_anonymize_invalid_output_dir(self):
-        pipeline = Pipeline(self.multi_extractor, self.strategy)
-        with self.assertRaises(ValueError):
-            pipeline.anonymize(self.input_dir, self.input_dir)
+@pytest.fixture(autouse=True)
+def suppress_warnings():
+    warnings.filterwarnings("ignore", category=UserWarning)
 
 
-if __name__ == "__main__":
-    unittest.main()
+@pytest.fixture(scope="module")
+def setup():
+    ner_labels = [{"label": "PERSON", "type": "string"}]
+    pattern_labels = [{"label": "DATE", "type": "regex", "regex": r"\d{4}-\d{2}-\d{2}"}]
+    extractors = [
+        NERExtractor(ner_labels, lang=LANGUAGES.ENGLISH),
+        PatternExtractor(pattern_labels, lang=LANGUAGES.ENGLISH),
+    ]
+    multi_extractor = MultiExtractor(extractors)
+    strategy = RedactionStrategy()
+    input_dir = "test/resources"
+    output_dir = "test/output"
+    yield extractors, multi_extractor, strategy, input_dir, output_dir
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
+
+
+def test_init():
+    with pytest.raises(TypeError):
+        Pipeline()
+
+
+def test_init_extractor_single(setup):
+    extractors, _, strategy, _, _ = setup
+    pipeline = Pipeline(extractors[0], strategy)
+    assert isinstance(pipeline, Pipeline)
+
+
+def test_init_extractor_list(setup):
+    extractors, _, strategy, _, _ = setup
+    pipeline = Pipeline(extractors, strategy)
+    assert isinstance(pipeline, Pipeline)
+
+
+def test_init_extractor_multi(setup):
+    _, multi_extractor, strategy, _, _ = setup
+    pipeline = Pipeline(multi_extractor, strategy)
+    assert isinstance(pipeline, Pipeline)
+
+
+def test_methods(setup):
+    _, multi_extractor, strategy, _, _ = setup
+    pipeline = Pipeline(multi_extractor, strategy)
+    assert hasattr(pipeline, "anonymize")
+
+
+def test_anonymize(setup):
+    _, multi_extractor, strategy, input_dir, output_dir = setup
+    pipeline = Pipeline(multi_extractor, strategy)
+    pipeline.anonymize(input_dir, output_dir)
+
+    assert os.path.exists(output_dir)
+    for root, _, files in os.walk(output_dir):
+        for file in files:
+            with open(os.path.join(root, file), "r") as f:
+                assert f.read()
+
+
+def test_anonymize_flatten(setup):
+    _, multi_extractor, strategy, input_dir, output_dir = setup
+    pipeline = Pipeline(multi_extractor, strategy)
+    pipeline.anonymize(input_dir, output_dir, flatten=True)
+
+    assert os.path.exists(output_dir)
+    for root, _, files in os.walk(output_dir):
+        for file in files:
+            with open(os.path.join(root, file), "r") as f:
+                assert f.read()
+
+
+def test_anonymize_invalid_input_dir(setup):
+    _, multi_extractor, strategy, _, output_dir = setup
+    pipeline = Pipeline(multi_extractor, strategy)
+    with pytest.raises(ValueError):
+        pipeline.anonymize("invalid", output_dir)
+
+
+def test_anonymize_invalid_output_dir(setup):
+    _, multi_extractor, strategy, input_dir, _ = setup
+    pipeline = Pipeline(multi_extractor, strategy)
+    with pytest.raises(ValueError):
+        pipeline.anonymize(input_dir, input_dir)
