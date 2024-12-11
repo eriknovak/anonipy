@@ -151,10 +151,8 @@ class TestNERExtractor(unittest.TestCase):
         ]
 
     def test_init(self):
-        try:
+        with self.assertRaises(TypeError):
             NERExtractor()
-        except Exception as e:
-            self.assertRaises(TypeError, e)
 
     def test_init_inputs(self):
         extractor = NERExtractor(
@@ -262,10 +260,8 @@ class TestPatternExtractor(unittest.TestCase):
         ]
 
     def test_init(self):
-        try:
+        with self.assertRaises(TypeError):
             PatternExtractor()
-        except Exception as e:
-            self.assertRaises(TypeError, e)
 
     def test_init_inputs(self):
         extractor = PatternExtractor(labels=self.labels, lang=LANGUAGES.ENGLISH)
@@ -333,10 +329,8 @@ class TestMultiExtractor(unittest.TestCase):
         ]
 
     def test_init(self):
-        try:
+        with self.assertRaises(TypeError):
             MultiExtractor()
-        except Exception as e:
-            self.assertRaises(TypeError, e)
 
     def test_init_inputs(self):
         extractors = [
@@ -387,6 +381,69 @@ class TestMultiExtractor(unittest.TestCase):
         for p_entity, t_entity in zip(
             joint_entities, extractor._filter_entities(ner_entities + pattern_entities)
         ):
+            self.assertEqual(p_entity.text, t_entity.text)
+            self.assertEqual(p_entity.label, t_entity.label)
+            self.assertEqual(p_entity.start_index, t_entity.start_index)
+            self.assertEqual(p_entity.end_index, t_entity.end_index)
+            self.assertEqual(p_entity.type, t_entity.type)
+            self.assertEqual(p_entity.regex, t_entity.regex)
+            self.assertEqual(p_entity.score >= 0.5, True)
+
+    def test_extract_empty_extractor_list(self):
+        extractors = []
+        with self.assertRaises(ValueError):
+            MultiExtractor(extractors)
+
+    def test_extract_invalid_extractor_list(self):
+        extractors = [
+            NERExtractor(labels=self.ner_labels, lang=LANGUAGES.ENGLISH),
+            "invalid",
+        ]
+        with self.assertRaises(ValueError):
+            MultiExtractor(extractors)
+
+    def test_extract_single_extractor_ner(self):
+        extractors = [NERExtractor(labels=self.ner_labels, lang=LANGUAGES.ENGLISH)]
+        extractor = MultiExtractor(extractors)
+        extractor_outputs, joint_entities = extractor(original_text)
+
+        # check the performance of the extractor
+        for p_entity, t_entity in zip(extractor_outputs[0][1], ner_entities):
+            self.assertEqual(p_entity.text, t_entity.text)
+            self.assertEqual(p_entity.label, t_entity.label)
+            self.assertEqual(p_entity.start_index, t_entity.start_index)
+            self.assertEqual(p_entity.end_index, t_entity.end_index)
+            self.assertEqual(p_entity.type, t_entity.type)
+            self.assertEqual(p_entity.regex, t_entity.regex)
+            self.assertEqual(p_entity.score >= 0.5, True)
+
+        # check the performance of the joint entities generation
+        for p_entity, t_entity in zip(joint_entities, ner_entities):
+            self.assertEqual(p_entity.text, t_entity.text)
+            self.assertEqual(p_entity.label, t_entity.label)
+            self.assertEqual(p_entity.start_index, t_entity.start_index)
+            self.assertEqual(p_entity.end_index, t_entity.end_index)
+            self.assertEqual(p_entity.type, t_entity.type)
+            self.assertEqual(p_entity.regex, t_entity.regex)
+            self.assertEqual(p_entity.score >= 0.5, True)
+
+    def test_extract_single_extractor_pattern(self):
+        extractors = [NERExtractor(labels=self.ner_labels, lang=LANGUAGES.ENGLISH)]
+        extractor = MultiExtractor(extractors)
+        extractor_outputs, joint_entities = extractor(original_text)
+
+        # check the performance of the extractor
+        for p_entity, t_entity in zip(extractor_outputs[0][1], ner_entities):
+            self.assertEqual(p_entity.text, t_entity.text)
+            self.assertEqual(p_entity.label, t_entity.label)
+            self.assertEqual(p_entity.start_index, t_entity.start_index)
+            self.assertEqual(p_entity.end_index, t_entity.end_index)
+            self.assertEqual(p_entity.type, t_entity.type)
+            self.assertEqual(p_entity.regex, t_entity.regex)
+            self.assertEqual(p_entity.score >= 0.5, True)
+
+        # check the performance of the joint entities generation
+        for p_entity, t_entity in zip(joint_entities, ner_entities):
             self.assertEqual(p_entity.text, t_entity.text)
             self.assertEqual(p_entity.label, t_entity.label)
             self.assertEqual(p_entity.start_index, t_entity.start_index)

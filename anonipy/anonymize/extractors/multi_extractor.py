@@ -59,6 +59,10 @@ class MultiExtractor:
             extractors: The list of extractors to use.
 
         """
+        if len(extractors) == 0:
+            raise ValueError("At least one extractor must be provided.")
+        if not all(isinstance(e, ExtractorInterface) for e in extractors):
+            raise ValueError("All extractors must be instances of ExtractorInterface.")
 
         self.extractors = extractors
 
@@ -125,7 +129,7 @@ class MultiExtractor:
         if len(extractor_outputs) == 0:
             return []
         if len(extractor_outputs) == 1:
-            return extractor_outputs[1]
+            return extractor_outputs[0][1]
 
         joint_entities = self._filter_entities(
             list(
