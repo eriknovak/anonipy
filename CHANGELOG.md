@@ -1,3 +1,15 @@
+### anonipy-0.3.0 (2024-12-11)
+
+**New Features:**
+
+- Add `Pipeline` module for streamlining text anonymization
+- Add better date handling and support in `DateGenerator`
+
+**Bug Fixes:**
+
+- Fix unit tests
+- Change unit test framework to `pytest`
+
 ### anonipy-0.2.0 (2024-11-09)
 
 **Breaking Changes:**
