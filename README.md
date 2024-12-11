@@ -1,4 +1,3 @@
-
 <p align="center">
   <img src="https://raw.githubusercontent.com/eriknovak/anonipy/main/docs/assets/imgs/logo.png" alt="logo" height="100" style="height: 100px;">
 </p>
@@ -17,8 +16,13 @@
   <a href="https://pypi.org/project/anonipy" target="_blank">
     <img src="https://img.shields.io/pypi/pyversions/anonipy.svg?color=%2334D058" alt="Supported Python versions" />
   </a>
+  <a href="https://pypi.org/project/anonipy" target="_blank">
+    <img src="https://static.pepy.tech/badge/anonipy/month" alt="Monthly package downloads" />
+  </a>
+  <a href="https://pypi.org/project/anonipy" target="_blank">
+    <img src="https://static.pepy.tech/badge/anonipy" alt="Total package downloads" />
+  </a>
 </p>
-
 
 ---
 
@@ -148,4 +152,3 @@ and innovation programme under Grant Agreement No 101080288 ([PREPARE](https://p
 <figure >
   <img src="https://github.com/eriknovak/anonipy/blob/main/docs/assets/imgs/EU.png?raw=true" alt=European Union flag" width="80" />
 </figure>
-
