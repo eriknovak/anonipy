@@ -26,7 +26,7 @@ class Pipeline:
     """A class for anonymizing files using a pipeline of extractors and strategies.
 
     Examples:
-        >>> from anonipy.pipeline import Pipeline
+        >>> from anonipy.anonymize.pipeline import Pipeline
         >>> extractor = NERExtractor(labels, lang=LANGUAGES.ENGLISH)
         >>> strategy = RedactionStrategy()
         >>> pipeline = Pipeline(extractor, strategy)
@@ -50,7 +50,7 @@ class Pipeline:
         """Initialize the pipeline.
 
         Examples:
-            >>> from anonipy.pipeline import Pipeline
+            >>> from anonipy.anonymize.pipeline import Pipeline
             >>> extractor = NERExtractor(labels, lang=LANGUAGES.ENGLISH)
             >>> strategy = RedactionStrategy()
             >>> pipeline = Pipeline(extractor, strategy)
