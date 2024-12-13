@@ -149,7 +149,7 @@ class LLMLabelGenerator(GeneratorInterface):
 
         # tokenize the message
         input_ids = self.tokenizer.apply_chat_template(
-            message, tokenize=True, return_tensors="pt"
+            message, tokenize=True, return_tensors="pt", add_generation_prompt=True
         ).to(self.model.device)
 
         # generate the response
@@ -166,18 +166,4 @@ class LLMLabelGenerator(GeneratorInterface):
         response = self.tokenizer.decode(
             output_ids[0][len(input_ids[0]) :], skip_special_tokens=True
         )
-        return self._parse_response(response)
-
-    def _parse_response(self, response: str) -> str:
-        """Parse the response from the LLM.
-
-        Args:
-            response: The response to parse.
-
-        Returns:
-            The parsed response.
-
-        """
-
-        match = re.search(r"assistant\s*(.*)", response, re.IGNORECASE | re.DOTALL)
-        return match.group(1).strip() if match else response
+        return response
