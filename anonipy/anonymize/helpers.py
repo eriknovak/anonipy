@@ -1,7 +1,9 @@
 import re
-from typing import List, Union
+from typing import List, Union, Tuple, Iterable, Set
+import itertools
 
-from spacy.tokens import Span
+from spacy import util
+from spacy.tokens import Span, Doc
 
 from ..definitions import Entity, Replacement
 from ..constants import ENTITY_TYPES
@@ -72,3 +74,167 @@ def anonymize(text: str, replacements: List[Replacement]) -> str:
             + anonymized_text[replacement["end_index"] :]
         )
     return anonymized_text, s_replacements[::-1]
+
+
+# =====================================
+# Entity helpers
+# =====================================
+
+
+def merge_entities(extractor_outputs: List[Tuple[Doc, List[Entity]]]) -> List[Entity]:
+        """Merges the entities returned by the extractors.
+
+        Args:
+            extractor_outputs: The list of extractor outputs.
+
+        Returns:
+            The merged entities list.
+
+        """
+
+        if len(extractor_outputs) == 0:
+            return []
+        if len(extractor_outputs) == 1:
+            return extractor_outputs[1]
+
+        joint_entities = _filter_entities(
+            list(
+                itertools.chain.from_iterable(
+                    [entity[1] for entity in extractor_outputs]
+                )
+            )
+        )
+        return joint_entities
+
+def _filter_entities(entities: Iterable[Entity]) -> List[Entity]:
+        """Filters the entities based on their start and end indices.
+
+        Args:
+            entities: The entities to filter.
+
+        Returns:
+            The filtered entities.
+
+        """
+
+        def get_sort_key(entity):
+            return (
+                entity.end_index - entity.start_index,
+                -entity.start_index,
+            )
+
+        sorted_entities = sorted(entities, key=get_sort_key, reverse=True)
+        result = []
+        seen_tokens: Set[int] = set()
+        for entity in sorted_entities:
+            # Check for end - 1 here because boundaries are inclusive
+            if (
+                entity.start_index not in seen_tokens
+                and entity.end_index - 1 not in seen_tokens
+            ):
+                result.append(entity)
+                seen_tokens.update(range(entity.start_index, entity.end_index))
+        result = sorted(result, key=lambda entity: entity.start_index)
+        return result
+
+
+def detect_repeated_entities(entities: List[Entity], doc: Doc, spacy_style: str) -> List[Entity]:
+        """Detects repeated entities in the text.
+
+        Args:
+            entities: The entities to detect.
+            doc: The spacy doc to detect entities in.
+            spacy_style: The spacy style to use.
+
+        Returns:
+            The list of all entities.
+
+        """
+
+        repeated_entities = []
+
+        for entity in entities:
+            matches = re.finditer(re.escape(entity.text), doc.text)
+        
+            for match in matches:
+                start_index, end_index = match.start(), match.end()
+                if (start_index != entity.start_index and end_index != entity.end_index):
+                    repeated_entities.append(
+                        Entity(
+                            text = entity.text,
+                            label = entity.label,
+                            start_index = start_index,
+                            end_index = end_index,
+                            score = entity.score,
+                            type = entity.type,
+                            regex = entity.text
+                        )
+                    )
+        
+        filtered_entities = _filter_entities(entities + repeated_entities)
+        new_entities = [ent for ent in filtered_entities if ent not in entities]
+        updated_spans = get_doc_entity_spans(spacy_style, doc)
+        for entity in new_entities:
+             span = doc.char_span(entity.start_index, entity.end_index, label=entity.label)
+             if span:
+                  span._.score = entity.score
+                  if spacy_style == "ent":
+                      updated_spans = util.filter_spans(updated_spans + (span,))
+                  elif spacy_style == "span":
+                      updated_spans.append(span)
+                  else:
+                      raise ValueError(f"Invalid spacy style: {spacy_style}")
+
+        set_doc_entity_spans(spacy_style, doc, updated_spans)
+
+        final_entities = sorted(filtered_entities, key=lambda e: e.start_index)
+
+        return final_entities
+
+# Filtriramo entitete tako, da če se slučajno kje prekrivajo entiteti, vzamemo tisto, ki ima večji span. Mislim da imamo že eno metodo merge_entities (poglej v MultiExtractor)
+# Entity(text='John Doe', label='name', start_index=30, end_index=38, score=0.9963099360466003, type='string', regex='.*')
+# covert spacy to entities
+# pip install -e .[all]
+
+
+# ====================================
+# Spacy helpers
+# ====================================
+
+
+def get_doc_entity_spans(spacy_style: str, doc: Doc) -> List[Span]:
+        """Get the spacy doc entity spans.
+
+        Args:
+            spacy_style: The spacy style to use.
+            doc: The spacy doc to get the entity spans from.
+
+        Returns:
+            The list of entity spans.
+
+        """
+
+        if spacy_style == "ent":
+            return doc.ents
+        if spacy_style == "span":
+            if "sc" not in doc.spans:
+                doc.spans["sc"] = []
+            return doc.spans["sc"]
+        raise ValueError(f"Invalid spacy style: {spacy_style}")
+
+def set_doc_entity_spans(spacy_style: str, doc: Doc, entities: List[Span]) -> None:
+        """Set the spacy doc entity spans.
+
+        Args:
+            spacy_style: The spacy style to use.
+            doc: The spacy doc to set the entity spans.
+            entities: The entity spans to assign the doc.
+
+        """
+
+        if spacy_style == "ent":
+            doc.ents = entities
+        elif spacy_style == "span":
+            doc.spans["sc"] = entities
+        else:
+            raise ValueError(f"Invalid spacy style: {spacy_style}")

@@ -8,7 +8,7 @@ from spacy.tokens import Doc, Span
 from spacy.language import Language
 from spacy.matcher import Matcher
 
-from ..helpers import convert_spacy_to_entity
+from ..helpers import convert_spacy_to_entity, detect_repeated_entities, get_doc_entity_spans, set_doc_entity_spans
 from ...constants import LANGUAGES
 from ...definitions import Entity
 from ...utils.colors import get_label_color
@@ -79,7 +79,7 @@ class PatternExtractor(ExtractorInterface):
         self.token_matchers = self._prepare_token_matchers()
         self.global_matchers = self._prepare_global_matchers()
 
-    def __call__(self, text: str, *args, **kwargs) -> Tuple[Doc, List[Entity]]:
+    def __call__(self, text: str, detect_repeats: bool = False, *args, **kwargs) -> Tuple[Doc, List[Entity]]:
         """Extract the entities from the text.
 
         Examples:
@@ -88,6 +88,7 @@ class PatternExtractor(ExtractorInterface):
 
         Args:
             text: The text to extract entities from.
+            detect_repeats: Whether to check text again for repeated entities.
 
         Returns:
             The spacy document.
@@ -99,7 +100,11 @@ class PatternExtractor(ExtractorInterface):
         self.token_matchers(doc) if self.token_matchers else None
         self.global_matchers(doc) if self.global_matchers else None
         anoni_entities, spacy_entities = self._prepare_entities(doc)
-        self._set_doc_entity_spans(doc, spacy_entities)
+        set_doc_entity_spans(self.spacy_style, doc, spacy_entities)
+
+        if (detect_repeats):
+            anoni_entities = detect_repeated_entities(anoni_entities, doc, self.spacy_style)
+
         return doc, anoni_entities
 
     def display(self, doc: Doc, page: bool = False, jupyter: bool = None) -> str:
@@ -196,14 +201,14 @@ class PatternExtractor(ExtractorInterface):
                         continue
                     entity._.score = 1.0
                     # add the entity to the previous entity list
-                    prev_entities = self._get_doc_entity_spans(doc)
+                    prev_entities = get_doc_entity_spans(self.spacy_style, doc)
                     if self.spacy_style == "ent":
                         prev_entities = util.filter_spans(prev_entities + (entity,))
                     elif self.spacy_style == "span":
                         prev_entities.append(entity)
                     else:
                         raise ValueError(f"Invalid spacy style: {self.spacy_style}")
-                    self._set_doc_entity_spans(doc, prev_entities)
+                    set_doc_entity_spans(self.spacy_style, doc, prev_entities)
 
         return global_matchers
 
@@ -222,7 +227,7 @@ class PatternExtractor(ExtractorInterface):
         # TODO: make this part more generic
         anoni_entities = []
         spacy_entities = []
-        for e in self._get_doc_entity_spans(doc):
+        for e in get_doc_entity_spans(self.spacy_style, doc):
             label = list(filter(lambda x: x["label"] == e.label_, self.labels))[0]
             anoni_entities.append(convert_spacy_to_entity(e, **label))
             spacy_entities.append(e)
@@ -247,48 +252,13 @@ class PatternExtractor(ExtractorInterface):
                 return
             entity._.score = 1.0
             # add the entity to the previous entity list
-            prev_entities = self._get_doc_entity_spans(doc)
+            prev_entities = get_doc_entity_spans(self.spacy_style, doc)
             if self.spacy_style == "ent":
                 prev_entities = util.filter_spans(prev_entities + (entity,))
             elif self.spacy_style == "span":
                 prev_entities.append(entity)
             else:
                 raise ValueError(f"Invalid spacy style: {self.spacy_style}")
-            self._set_doc_entity_spans(doc, prev_entities)
+            set_doc_entity_spans(self.spacy_style, doc, prev_entities)
 
         return add_event_ent
-
-    def _get_doc_entity_spans(self, doc: Doc) -> List[Span]:
-        """Get the spacy doc entity spans.
-
-        Args:
-            doc: The spacy doc to get the entity spans from.
-
-        Returns:
-            The list of entity spans.
-
-        """
-
-        if self.spacy_style == "ent":
-            return doc.ents
-        if self.spacy_style == "span":
-            if "sc" not in doc.spans:
-                doc.spans["sc"] = []
-            return doc.spans["sc"]
-        raise ValueError(f"Invalid spacy style: {self.spacy_style}")
-
-    def _set_doc_entity_spans(self, doc: Doc, entities: List[Span]) -> None:
-        """Set the spacy doc entity spans.
-
-        Args:
-            doc: The spacy doc to set the entity spans.
-            entities: The entity spans to assign the doc.
-
-        """
-
-        if self.spacy_style == "ent":
-            doc.ents = entities
-        elif self.spacy_style == "span":
-            doc.spans["sc"] = entities
-        else:
-            raise ValueError(f"Invalid spacy style: {self.spacy_style}")

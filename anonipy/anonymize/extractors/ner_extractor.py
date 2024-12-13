@@ -1,20 +1,22 @@
 import re
 import warnings
 import importlib
-from typing import List, Tuple
+import itertools
+from typing import List, Tuple, Iterable, Set
 
 import torch
 from spacy import displacy
 from spacy.tokens import Doc, Span
 from spacy.language import Language
 
-from ..helpers import convert_spacy_to_entity
+from ..helpers import convert_spacy_to_entity, detect_repeated_entities
 from ...utils.regex import regex_mapping
 from ...constants import LANGUAGES
 from ...definitions import Entity
 from ...utils.colors import get_label_color
 
 from .interface import ExtractorInterface
+
 
 # ===============================================
 # Extractor class
@@ -88,7 +90,7 @@ class NERExtractor(ExtractorInterface):
         self.labels = self._prepare_labels(labels)
         self.pipeline = self._prepare_pipeline()
 
-    def __call__(self, text: str, *args, **kwargs) -> Tuple[Doc, List[Entity]]:
+    def __call__(self, text: str, detect_repeats: bool = False, *args, **kwargs) -> Tuple[Doc, List[Entity]]:
         """Extract the entities from the text.
 
         Examples:
@@ -97,6 +99,7 @@ class NERExtractor(ExtractorInterface):
 
         Args:
             text: The text to extract entities from.
+            detect_repeats: Whether to check text again for repeated entities.
 
         Returns:
             The spacy document.
@@ -107,6 +110,10 @@ class NERExtractor(ExtractorInterface):
         doc = self.pipeline(text)
         anoni_entities, spacy_entities = self._prepare_entities(doc)
         self._set_spacy_fields(doc, spacy_entities)
+
+        if (detect_repeats):
+            anoni_entities = detect_repeated_entities(anoni_entities, doc, self.spacy_style)
+
         return doc, anoni_entities
 
     def display(self, doc: Doc, page: bool = False, jupyter: bool = None) -> str:
