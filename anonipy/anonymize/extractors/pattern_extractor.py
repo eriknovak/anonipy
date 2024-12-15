@@ -7,7 +7,7 @@ from spacy.tokens import Doc, Span
 from spacy.language import Language
 from spacy.matcher import Matcher
 
-from ..helpers import convert_spacy_to_entity, detect_repeated_entities, get_doc_entity_spans, set_doc_entity_spans
+from ..helpers import convert_spacy_to_entity, detect_repeated_entities, get_doc_entity_spans, set_doc_entity_spans, create_spacy_entities
 from ...constants import LANGUAGES
 from ...definitions import Entity
 from ...utils.colors import get_label_color
@@ -28,7 +28,7 @@ class PatternExtractor(ExtractorInterface):
         >>> from anonipy.anonymize.extractors import PatternExtractor
         >>> labels = [{"label": "PERSON", "type": "string", "regex": "([A-Z][a-z]+ [A-Z][a-z]+)"}]
         >>> extractor = PatternExtractor(labels, lang=LANGUAGES.ENGLISH)
-        >>> extractor(text="John Doe is a 19 year old software engineer.", detect_repeats=False)
+        >>> extractor("John Doe is a 19 year old software engineer.", detect_repeats=False)
         Doc, [Entity]
 
     Attributes:
@@ -82,7 +82,7 @@ class PatternExtractor(ExtractorInterface):
         """Extract the entities from the text.
 
         Examples:
-            >>> extractor(text="John Doe is a 19 year old software engineer.", detect_repeats=False)
+            >>> extractor("John Doe is a 19 year old software engineer.", detect_repeats=False)
             Doc, [Entity]
 
         Args:
@@ -99,10 +99,11 @@ class PatternExtractor(ExtractorInterface):
         self.token_matchers(doc) if self.token_matchers else None
         self.global_matchers(doc) if self.global_matchers else None
         anoni_entities, spacy_entities = self._prepare_entities(doc)
-        set_doc_entity_spans(self.spacy_style, doc, spacy_entities)
 
-        if (detect_repeats):
-            anoni_entities = detect_repeated_entities(anoni_entities, doc, self.spacy_style)
+        if detect_repeats:
+            anoni_entities = detect_repeated_entities(doc, anoni_entities, self.spacy_style)
+        
+        create_spacy_entities(doc, anoni_entities, self.spacy_style)
 
         return doc, anoni_entities
 
@@ -200,14 +201,14 @@ class PatternExtractor(ExtractorInterface):
                         continue
                     entity._.score = 1.0
                     # add the entity to the previous entity list
-                    prev_entities = get_doc_entity_spans(self.spacy_style, doc)
+                    prev_entities = get_doc_entity_spans(doc, self.spacy_style)
                     if self.spacy_style == "ent":
                         prev_entities = util.filter_spans(prev_entities + (entity,))
                     elif self.spacy_style == "span":
                         prev_entities.append(entity)
                     else:
                         raise ValueError(f"Invalid spacy style: {self.spacy_style}")
-                    set_doc_entity_spans(self.spacy_style, doc, prev_entities)
+                    set_doc_entity_spans(doc, prev_entities, self.spacy_style)
 
         return global_matchers
 
@@ -226,7 +227,7 @@ class PatternExtractor(ExtractorInterface):
         # TODO: make this part more generic
         anoni_entities = []
         spacy_entities = []
-        for e in get_doc_entity_spans(self.spacy_style, doc):
+        for e in get_doc_entity_spans(doc, self.spacy_style):
             label = list(filter(lambda x: x["label"] == e.label_, self.labels))[0]
             anoni_entities.append(convert_spacy_to_entity(e, **label))
             spacy_entities.append(e)
@@ -249,15 +250,8 @@ class PatternExtractor(ExtractorInterface):
             entity = Span(doc, start, end, label=label)
             if not entity:
                 return
-            entity._.score = 1.0
-            # add the entity to the previous entity list
-            prev_entities = get_doc_entity_spans(self.spacy_style, doc)
-            if self.spacy_style == "ent":
-                prev_entities = util.filter_spans(prev_entities + (entity,))
-            elif self.spacy_style == "span":
-                prev_entities.append(entity)
-            else:
-                raise ValueError(f"Invalid spacy style: {self.spacy_style}")
-            set_doc_entity_spans(self.spacy_style, doc, prev_entities)
+            entities = [convert_spacy_to_entity(entity)]
+            
+            create_spacy_entities(doc, entities, self.spacy_style)
 
         return add_event_ent

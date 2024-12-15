@@ -98,7 +98,7 @@ def merge_entities(extractor_outputs: List[Tuple[Doc, List[Entity]]]) -> List[En
         if len(extractor_outputs) == 1:
             return extractor_outputs[0][1]
 
-        joint_entities = _filter_entities(
+        joint_entities = filter_entities(
             list(
                 itertools.chain.from_iterable(
                     [entity[1] for entity in extractor_outputs]
@@ -107,7 +107,7 @@ def merge_entities(extractor_outputs: List[Tuple[Doc, List[Entity]]]) -> List[En
         )
         return joint_entities
 
-def _filter_entities(entities: Iterable[Entity]) -> List[Entity]:
+def filter_entities(entities: Iterable[Entity]) -> List[Entity]:
         """Filters the entities based on their start and end indices.
 
         Args:
@@ -138,12 +138,12 @@ def _filter_entities(entities: Iterable[Entity]) -> List[Entity]:
         result = sorted(result, key=lambda entity: entity.start_index)
         return result
 
-def detect_repeated_entities(entities: List[Entity], doc: Doc, spacy_style: str) -> List[Entity]:
+def detect_repeated_entities(doc: Doc, entities: List[Entity], spacy_style: str) -> List[Entity]:
         """Detects repeated entities in the text.
 
         Args:
-            entities: The entities to detect.
             doc: The spacy doc to detect entities in.
+            entities: The entities to detect.
             spacy_style: The style the entities should be stored in the spacy doc.
 
         Returns:
@@ -157,7 +157,7 @@ def detect_repeated_entities(entities: List[Entity], doc: Doc, spacy_style: str)
             matches = re.finditer(re.escape(entity.text), doc.text)
             for match in matches:
                 start_index, end_index = match.start(), match.end()
-                if (start_index == entity.start_index and end_index == entity.end_index):
+                if start_index == entity.start_index and end_index == entity.end_index:
                     continue
                 repeated_entities.append(
                     Entity(
@@ -171,10 +171,30 @@ def detect_repeated_entities(entities: List[Entity], doc: Doc, spacy_style: str)
                     )
                 )
         
-        filtered_entities = _filter_entities(entities + repeated_entities)
-        new_entities = [ent for ent in filtered_entities if ent not in entities]
-        updated_spans = get_doc_entity_spans(spacy_style, doc)
-        for entity in new_entities:
+        filtered_entities = filter_entities(entities + repeated_entities)
+        final_entities = sorted(filtered_entities, key=lambda e: e.start_index)
+
+        return final_entities
+
+
+# ====================================
+# Spacy helpers
+# ====================================
+
+
+def create_spacy_entities(doc: Doc, entities: List[Entity], spacy_style: str) -> None:
+        """Create spacy entities in the spacy doc.
+
+        Args:
+            doc: The spacy doc to create entities in.
+            entities: The entities to create.
+            spacy_style: The style the entities should be stored in the spacy doc.
+        
+        """
+
+        updated_spans = get_doc_entity_spans(doc, spacy_style)
+
+        for entity in entities:
             span = doc.char_span(entity.start_index, entity.end_index, label=entity.label)
             if not span:
                 continue
@@ -186,24 +206,15 @@ def detect_repeated_entities(entities: List[Entity], doc: Doc, spacy_style: str)
             else:
                 raise ValueError(f"Invalid spacy style: {spacy_style}")
 
-        set_doc_entity_spans(spacy_style, doc, updated_spans)
+        set_doc_entity_spans(doc, updated_spans, spacy_style)
 
-        final_entities = sorted(filtered_entities, key=lambda e: e.start_index)
-
-        return final_entities
-
-
-# ====================================
-# Spacy helpers
-# ====================================
-
-
-def get_doc_entity_spans(spacy_style: str, doc: Doc) -> List[Span]:
+       
+def get_doc_entity_spans(doc: Doc, spacy_style: str) -> List[Span]:
         """Get the spacy doc entity spans.
 
         Args:
-            spacy_style: The spacy style to use.
             doc: The spacy doc to get the entity spans from.
+            spacy_style: The spacy style to use.
 
         Returns:
             The list of entity spans.
@@ -218,13 +229,13 @@ def get_doc_entity_spans(spacy_style: str, doc: Doc) -> List[Span]:
             return doc.spans["sc"]
         raise ValueError(f"Invalid spacy style: {spacy_style}")
 
-def set_doc_entity_spans(spacy_style: str, doc: Doc, entities: List[Span]) -> None:
+def set_doc_entity_spans(doc: Doc, entities: List[Span], spacy_style: str) -> None:
         """Set the spacy doc entity spans.
 
         Args:
-            spacy_style: The spacy style to use.
             doc: The spacy doc to set the entity spans.
             entities: The entity spans to assign the doc.
+            spacy_style: The spacy style to use.
 
         """
 

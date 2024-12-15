@@ -7,7 +7,7 @@ from transformers import logging
 from anonipy.definitions import Entity
 from anonipy.anonymize.extractors import NERExtractor, PatternExtractor, MultiExtractor
 from anonipy.constants import LANGUAGES
-from anonipy.anonymize.helpers import _filter_entities
+from anonipy.anonymize.helpers import filter_entities
 
 # disable transformers logging
 logging.set_verbosity_error()
@@ -344,7 +344,7 @@ def test_multi_extractor_extract_default(multi_extractor):
     # check the performance of the joint entities generation
     for p_entity, t_entity in zip(
         joint_entities,
-        _filter_entities(TEST_NER_ENTITIES + TEST_PATTERN_ENTITIES),
+        filter_entities(TEST_NER_ENTITIES + TEST_PATTERN_ENTITIES),
     ):
         assert p_entity.text == t_entity.text
         assert p_entity.label == t_entity.label

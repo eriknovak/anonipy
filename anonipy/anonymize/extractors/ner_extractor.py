@@ -8,7 +8,7 @@ from spacy import displacy
 from spacy.tokens import Doc, Span
 from spacy.language import Language
 
-from ..helpers import convert_spacy_to_entity, detect_repeated_entities, get_doc_entity_spans, set_doc_entity_spans
+from ..helpers import convert_spacy_to_entity, detect_repeated_entities, get_doc_entity_spans, create_spacy_entities
 from ...utils.regex import regex_mapping
 from ...constants import LANGUAGES
 from ...definitions import Entity
@@ -30,7 +30,7 @@ class NERExtractor(ExtractorInterface):
         >>> from anonipy.anonymize.extractors import NERExtractor
         >>> labels = [{"label": "PERSON", "type": "string"}]
         >>> extractor = NERExtractor(labels, lang=LANGUAGES.ENGLISH)
-        >>> extractor(text="John Doe is a 19 year old software engineer.", detect_repeats=False)
+        >>> extractor("John Doe is a 19 year old software engineer.", detect_repeats=False)
         Doc, [Entity]
 
     Attributes:
@@ -97,7 +97,7 @@ class NERExtractor(ExtractorInterface):
         """Extract the entities from the text.
 
         Examples:
-            >>> extractor(text="John Doe is a 19 year old software engineer.", detect_repeats=False)
+            >>> extractor("John Doe is a 19 year old software engineer.", detect_repeats=False)
             Doc, [Entity]
 
         Args:
@@ -112,10 +112,11 @@ class NERExtractor(ExtractorInterface):
 
         doc = self.pipeline(text)
         anoni_entities, spacy_entities = self._prepare_entities(doc)
-        set_doc_entity_spans(self.spacy_style, doc, spacy_entities)
 
-        if (detect_repeats):
-            anoni_entities = detect_repeated_entities(anoni_entities, doc, self.spacy_style)
+        if detect_repeats:
+            anoni_entities = detect_repeated_entities(doc, anoni_entities, self.spacy_style)
+
+        create_spacy_entities(doc, anoni_entities, self.spacy_style)
 
         return doc, anoni_entities
 

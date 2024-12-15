@@ -27,7 +27,7 @@ class MultiExtractor:
         >>>     PatternExtractor(pattern_labels, lang=LANGUAGES.ENGLISH),
         >>> ]
         >>> extractor = MultiExtractor(extractors)
-        >>> extractor(text="John Doe is a 19 year old software engineer.", detect_repeats=False)
+        >>> extractor("John Doe is a 19 year old software engineer.", detect_repeats=False)
         [(Doc, [Entity]), (Doc, [Entity])], [Entity]
 
     Attributes:
@@ -72,7 +72,7 @@ class MultiExtractor:
         """Extract the entities fron the text using the provided extractors.
 
         Examples:
-            >>> extractor(text="John Doe is a 19 year old software engineer.", detect_repeats=False)
+            >>> extractor("John Doe is a 19 year old software engineer.", detect_repeats=False)
             [(Doc, [Entity]), (Doc, [Entity])], [Entity]
 
         Args:
