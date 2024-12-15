@@ -1,4 +1,4 @@
-from typing import List, Set, Tuple, Iterable
+from typing import List, Tuple
 import itertools
 
 from spacy import displacy
@@ -27,7 +27,7 @@ class MultiExtractor:
         >>>     PatternExtractor(pattern_labels, lang=LANGUAGES.ENGLISH),
         >>> ]
         >>> extractor = MultiExtractor(extractors)
-        >>> extractor("John Doe is a 19 year old software engineer.")
+        >>> extractor(text="John Doe is a 19 year old software engineer.", detect_repeats=False)
         [(Doc, [Entity]), (Doc, [Entity])], [Entity]
 
     Attributes:
@@ -68,7 +68,7 @@ class MultiExtractor:
         """Extract the entities fron the text using the provided extractors.
 
         Examples:
-            >>> extractor("John Doe is a 19 year old software engineer.")
+            >>> extractor(text="John Doe is a 19 year old software engineer.", detect_repeats=False)
             [(Doc, [Entity]), (Doc, [Entity])], [Entity]
 
         Args:
@@ -78,10 +78,10 @@ class MultiExtractor:
         Returns:
             The list of extractor outputs containing the tuple (spacy document, extracted entities).
             The list of joint entities.
+
         """
 
-        if (detect_repeats):
-            extractor_outputs = [e(text, detect_repeats) for e in self.extractors]  # A JE TO PROU
+        extractor_outputs = [e(text, detect_repeats) for e in self.extractors] 
         joint_entities = merge_entities(extractor_outputs)                          
 
         return extractor_outputs, joint_entities

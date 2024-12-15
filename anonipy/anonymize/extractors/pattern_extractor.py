@@ -1,5 +1,4 @@
 import re
-
 import importlib
 from typing import List, Tuple, Optional, Callable
 
@@ -29,7 +28,7 @@ class PatternExtractor(ExtractorInterface):
         >>> from anonipy.anonymize.extractors import PatternExtractor
         >>> labels = [{"label": "PERSON", "type": "string", "regex": "([A-Z][a-z]+ [A-Z][a-z]+)"}]
         >>> extractor = PatternExtractor(labels, lang=LANGUAGES.ENGLISH)
-        >>> extractor("John Doe is a 19 year old software engineer.")
+        >>> extractor(text="John Doe is a 19 year old software engineer.", detect_repeats=False)
         Doc, [Entity]
 
     Attributes:
@@ -83,7 +82,7 @@ class PatternExtractor(ExtractorInterface):
         """Extract the entities from the text.
 
         Examples:
-            >>> extractor("John Doe is a 19 year old software engineer.")
+            >>> extractor(text="John Doe is a 19 year old software engineer.", detect_repeats=False)
             Doc, [Entity]
 
         Args:

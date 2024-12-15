@@ -8,6 +8,7 @@ from spacy.tokens import Span, Doc
 from ..definitions import Entity, Replacement
 from ..constants import ENTITY_TYPES
 
+
 # =====================================
 # Entity converters
 # =====================================
@@ -137,14 +138,13 @@ def _filter_entities(entities: Iterable[Entity]) -> List[Entity]:
         result = sorted(result, key=lambda entity: entity.start_index)
         return result
 
-
 def detect_repeated_entities(entities: List[Entity], doc: Doc, spacy_style: str) -> List[Entity]:
         """Detects repeated entities in the text.
 
         Args:
             entities: The entities to detect.
             doc: The spacy doc to detect entities in.
-            spacy_style: The spacy style to use.
+            spacy_style: The style the entities should be stored in the spacy doc.
 
         Returns:
             The list of all entities.
@@ -155,46 +155,42 @@ def detect_repeated_entities(entities: List[Entity], doc: Doc, spacy_style: str)
 
         for entity in entities:
             matches = re.finditer(re.escape(entity.text), doc.text)
-        
             for match in matches:
                 start_index, end_index = match.start(), match.end()
-                if (start_index != entity.start_index and end_index != entity.end_index):
-                    repeated_entities.append(
-                        Entity(
-                            text = entity.text,
-                            label = entity.label,
-                            start_index = start_index,
-                            end_index = end_index,
-                            score = entity.score,
-                            type = entity.type,
-                            regex = entity.text
-                        )
+                if (start_index == entity.start_index and end_index == entity.end_index):
+                    continue
+                repeated_entities.append(
+                    Entity(
+                        text = entity.text,
+                        label = entity.label,
+                        start_index = start_index,
+                        end_index = end_index,
+                        score = entity.score,
+                        type = entity.type,
+                        regex = entity.text
                     )
+                )
         
         filtered_entities = _filter_entities(entities + repeated_entities)
         new_entities = [ent for ent in filtered_entities if ent not in entities]
         updated_spans = get_doc_entity_spans(spacy_style, doc)
         for entity in new_entities:
-             span = doc.char_span(entity.start_index, entity.end_index, label=entity.label)
-             if span:
-                  span._.score = entity.score
-                  if spacy_style == "ent":
-                      updated_spans = util.filter_spans(updated_spans + (span,))
-                  elif spacy_style == "span":
-                      updated_spans.append(span)
-                  else:
-                      raise ValueError(f"Invalid spacy style: {spacy_style}")
+            span = doc.char_span(entity.start_index, entity.end_index, label=entity.label)
+            if not span:
+                continue
+            span._.score = entity.score
+            if spacy_style == "ent":
+                updated_spans = util.filter_spans(updated_spans + (span,))
+            elif spacy_style == "span":
+                updated_spans.append(span)
+            else:
+                raise ValueError(f"Invalid spacy style: {spacy_style}")
 
         set_doc_entity_spans(spacy_style, doc, updated_spans)
 
         final_entities = sorted(filtered_entities, key=lambda e: e.start_index)
 
         return final_entities
-
-# Filtriramo entitete tako, da če se slučajno kje prekrivajo entiteti, vzamemo tisto, ki ima večji span. Mislim da imamo že eno metodo merge_entities (poglej v MultiExtractor)
-# Entity(text='John Doe', label='name', start_index=30, end_index=38, score=0.9963099360466003, type='string', regex='.*')
-# covert spacy to entities
-# pip install -e .[all]
 
 
 # ====================================
