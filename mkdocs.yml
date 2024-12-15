@@ -97,6 +97,7 @@ nav:
       - extractors: references/anonymize/extractors.md
       - generators: references/anonymize/generators.md
       - strategies: references/anonymize/strategies.md
+      - pipeline: references/anonymize/pipeline.md
     - utils:
       - references/utils/index.md
       - regex: references/utils/regex.md

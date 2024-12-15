@@ -7,7 +7,15 @@ from ...definitions import Entity
 
 
 class GeneratorInterface:
-    """The class representing the generator interface."""
+    """The class representing the generator interface.
+
+    All generators should inherit from this class.
+
+    Methods:
+        generate(entity):
+            Generate a substitute for the entity.
+
+    """
 
     def __init__(self, *args, **kwargs):
         pass

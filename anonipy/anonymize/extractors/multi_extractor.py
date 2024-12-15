@@ -59,6 +59,10 @@ class MultiExtractor:
             extractors: The list of extractors to use.
 
         """
+        if len(extractors) == 0:
+            raise ValueError("At least one extractor must be provided.")
+        if not all(isinstance(e, ExtractorInterface) for e in extractors):
+            raise ValueError("All extractors must be instances of ExtractorInterface.")
 
         self.extractors = extractors
 
@@ -111,7 +115,3 @@ class MultiExtractor:
         return displacy.render(
             doc, style="ent", options=options, page=page, jupyter=jupyter
         )
-
-    
-    
-

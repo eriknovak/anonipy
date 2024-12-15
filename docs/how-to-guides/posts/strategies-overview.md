@@ -119,11 +119,11 @@ The `RedactionStrategy` requires the following input parameters at initializatio
 
 ::: anonipy.anonymize.strategies.RedactionStrategy.__init__
     options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_docstring_examples: False
-      show_docstring_returns: False
-      show_source: False
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_docstring_returns: False
+        show_source: False
 
 Let us now initialize the redaction strategy.
 
@@ -135,11 +135,11 @@ To use the strategy, we can call the `anonymize` method to anonymize the text gi
 
 ::: anonipy.anonymize.strategies.RedactionStrategy.anonymize
     options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_docstring_examples: False
-      show_docstring_returns: False
-      show_source: False
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_docstring_returns: False
+        show_source: False
 
 Using the `RedactionStrategy`, we can now anonymize the text.
 
@@ -247,11 +247,11 @@ The `MaskingStrategy` requires the following input parameters at initialization:
 
 ::: anonipy.anonymize.strategies.MaskingStrategy.__init__
     options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_docstring_examples: False
-      show_docstring_returns: False
-      show_source: False
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_docstring_returns: False
+        show_source: False
 
 Let us now initialize the masking strategy.
 
@@ -263,11 +263,11 @@ To use the strategy, we can call the `anonymize` method to anonymize the text gi
 
 ::: anonipy.anonymize.strategies.MaskingStrategy.anonymize
     options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_docstring_examples: False
-      show_docstring_returns: False
-      show_source: False
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_docstring_returns: False
+        show_source: False
 
 Using the `MaskingStrategy`, we can now anonymize the text.
 
@@ -409,11 +409,11 @@ The `PseudonymizationStrategy` requires the following input parameters at initia
 
 ::: anonipy.anonymize.strategies.PseudonymizationStrategy.__init__
     options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_docstring_examples: False
-      show_docstring_returns: False
-      show_source: False
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_docstring_returns: False
+        show_source: False
 
 Let us now initialize the pseudonymization strategy.
 
@@ -427,11 +427,11 @@ To use the strategy, we can call the `anonymize` method to anonymize the text gi
 
 ::: anonipy.anonymize.strategies.PseudonymizationStrategy.anonymize
     options:
-      show_root_heading: False
-      show_docstring_description: False
-      show_docstring_examples: False
-      show_docstring_returns: False
-      show_source: False
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_docstring_returns: False
+        show_source: False
 
 Using the `PseudonymizationStrategy`, we can now anonymize the text.
 

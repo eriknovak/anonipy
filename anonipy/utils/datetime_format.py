@@ -1,5 +1,6 @@
 import re
 import datetime
+import warnings
 from typing import Tuple
 
 import dateparser
@@ -107,7 +108,7 @@ POSSIBLE_FORMATS = [
     "d MMM yyyy",
     "EEE, MMM d, yyyy HH:mm:ss",
     "EEE, MMM d, yyyy HH:mm",
-    "EEE, MMM d, yyyy"
+    "EEE, MMM d, yyyy",
 ]
 
 
@@ -128,24 +129,30 @@ def detect_datetime_format(datetime: str, lang: str) -> Tuple[datetime.datetime,
 
     """
 
-    datetime = _prepare_datetime(datetime, lang)
-    
+    fdatetime = _prepare_datetime(datetime, lang)
+
     try:
-        parsed_datetime = dateparser.parse(datetime, languages=[lang])
+        parsed_datetime = dateparser.parse(fdatetime, languages=[lang])
 
         for FMT in POSSIBLE_FORMATS:
             try:
-                formatted_date = format_datetime(parsed_datetime, format=FMT, locale=lang)
-                if formatted_date == datetime:
+                formatted_date = format_datetime(
+                    parsed_datetime, format=FMT, locale=lang
+                )
+                if formatted_date == fdatetime:
                     return parsed_datetime, FMT
             except ValueError:
                 continue
-           
-        return parsed_datetime, ValueError("Unknown Format")
+
+        warnings.warn(
+            f"Could not detect the datetime format for `{datetime}`. Defaulting to `yyyy-MM-dd`..."
+        )
+        return parsed_datetime, "yyyy-MM-dd"
 
     except dateparser.ParserError:
         return None, None
-    
+
+
 def _prepare_datetime(datetime: str, lang: str) -> str:
     """Preares the datetime string for formatting.
 
@@ -161,16 +168,16 @@ def _prepare_datetime(datetime: str, lang: str) -> str:
     if lang not in ["en", "de", "el"]:
         datetime = datetime.lower()
 
-    # Remove AM/PM 
+    # Remove AM/PM
     datetime = re.sub(r"[ ]?[APap][mM]", "", datetime).strip()
 
     # Language-specific cleaning
-    datetime = re.sub(r"\b1er\b", "1", datetime)    # French
-    datetime = re.sub(r"(\d+)η", r"\1", datetime)   # Greek
-    datetime = re.sub(r"\bτου\b", "", datetime)     # Greek
-    datetime = re.sub(r"1°", "1", datetime)         # Italian, Spanish
-    datetime = re.sub(r"\bроку\b", "", datetime)    # Ukrainian
-    
+    datetime = re.sub(r"\b1er\b", "1", datetime)  # French
+    datetime = re.sub(r"(\d+)η", r"\1", datetime)  # Greek
+    datetime = re.sub(r"\bτου\b", "", datetime)  # Greek
+    datetime = re.sub(r"°", "", datetime)  # Italian, Spanish
+    datetime = re.sub(r"\bроку\b", "", datetime)  # Ukrainian
+
     # Remove extra spaces
     datetime = re.sub(r"\s+", " ", datetime).strip()
 

@@ -134,11 +134,5 @@ dmypy.json
 
 .vscode
 
-data/*
-data/**/
-!data/README.md
-
 notebooks
 !docs/how-to-guides/notebooks
-
-scripts

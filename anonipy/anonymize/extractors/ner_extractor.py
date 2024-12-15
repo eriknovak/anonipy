@@ -87,7 +87,11 @@ class NERExtractor(ExtractorInterface):
         self.gliner_model = gliner_model
         self.spacy_style = spacy_style
         self.labels = self._prepare_labels(labels)
-        self.pipeline = self._prepare_pipeline()
+
+        with warnings.catch_warnings():
+            # TODO: remove once the GLiNER package includes the fix (inproper file closing)
+            warnings.filterwarnings("ignore", category=ResourceWarning)
+            self.pipeline = self._prepare_pipeline()
 
     def __call__(self, text: str, detect_repeats: bool = False, *args, **kwargs) -> Tuple[Doc, List[Entity]]:
         """Extract the entities from the text.

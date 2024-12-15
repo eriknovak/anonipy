@@ -1,7 +1,7 @@
 import re
-import unittest
 import warnings
 
+import pytest
 from transformers import logging
 
 from anonipy.definitions import Entity
@@ -93,7 +93,7 @@ DATETIME_STRS = [
 # =====================================
 
 
-original_text = """\
+TEST_ORIGINAL_TEXT = """\
 Medical Record
 
 Patient Name: John Doe
@@ -112,7 +112,7 @@ Next Examination Date:
 15-11-2024
 """
 
-test_entities = {
+TEST_ENTITIES = {
     "name": Entity(
         text="John Doe",
         label="name",
@@ -177,40 +177,42 @@ test_entities = {
 # =====================================
 
 
-class TestLLMLabelGenerator(unittest.TestCase):
+@pytest.fixture(scope="module")
+def llm_label_generator():
+    return LLMLabelGenerator()
 
-    @classmethod
-    def setUpClass(self):
-        self.generator = LLMLabelGenerator()
 
-    def test_has_methods(self):
-        self.assertEqual(hasattr(self.generator, "generate"), True)
+def test_llm_label_generator_has_methods(llm_label_generator):
+    assert hasattr(llm_label_generator, "generate")
 
-    def test_generate_default(self):
-        entity = test_entities["name"]
-        generated_text = self.generator.generate(entity)
-        regex = entity.get_regex_group() or entity.regex
-        match = re.match(regex, generated_text)
-        self.assertNotEqual(match, None)
-        self.assertEqual(match.group(0), generated_text)
 
-    def test_generate_custom(self):
-        entity = test_entities["name"]
-        generated_text = self.generator.generate(
-            entity, add_entity_attrs="Spanish", temperature=0.5
-        )
-        regex = entity.get_regex_group() or entity.regex
-        match = re.match(regex, generated_text)
-        self.assertNotEqual(match, None)
-        self.assertEqual(match.group(0), generated_text)
+def test_llm_label_generator_generate_default(llm_label_generator):
+    entity = TEST_ENTITIES["name"]
+    generated_text = llm_label_generator.generate(entity)
+    regex = entity.get_regex_group() or entity.regex
+    match = re.match(regex, generated_text)
+    assert match is not None
+    assert match.group(0) == generated_text
 
-    def test_generate_pattern(self):
-        entity = test_entities["name:pattern"]
-        generated_text = self.generator.generate(entity)
-        regex = entity.get_regex_group() or entity.regex
-        match = re.match(regex, generated_text)
-        self.assertNotEqual(match, None)
-        self.assertEqual(match.group(0), generated_text)
+
+def test_llm_label_generator_generate_custom(llm_label_generator):
+    entity = TEST_ENTITIES["name"]
+    generated_text = llm_label_generator.generate(
+        entity, add_entity_attrs="Spanish", temperature=0.5
+    )
+    regex = entity.get_regex_group() or entity.regex
+    match = re.match(regex, generated_text)
+    assert match is not None
+    assert match.group(0) == generated_text
+
+
+def test_llm_label_generator_generate_pattern(llm_label_generator):
+    entity = TEST_ENTITIES["name:pattern"]
+    generated_text = llm_label_generator.generate(entity)
+    regex = entity.get_regex_group() or entity.regex
+    match = re.match(regex, generated_text)
+    assert match is not None
+    assert match.group(0) == generated_text
 
 
 # =====================================
@@ -218,26 +220,28 @@ class TestLLMLabelGenerator(unittest.TestCase):
 # =====================================
 
 
-class TestMaskLabelGenerator(unittest.TestCase):
+@pytest.fixture(scope="module")
+def mask_label_generator():
+    return MaskLabelGenerator()
 
-    @classmethod
-    def setUpClass(self):
-        self.generator = MaskLabelGenerator()
 
-    def setUp(self):
-        warnings.filterwarnings("ignore", category=ImportWarning)
-        warnings.filterwarnings("ignore", category=UserWarning)
-        warnings.filterwarnings("ignore", category=FutureWarning)
+@pytest.fixture(autouse=True)
+def suppress_warnings():
+    warnings.filterwarnings("ignore", category=ImportWarning)
+    warnings.filterwarnings("ignore", category=UserWarning)
+    warnings.filterwarnings("ignore", category=FutureWarning)
 
-    def test_has_methods(self):
-        self.assertEqual(hasattr(self.generator, "generate"), True)
 
-    def test_generate_default(self):
-        entity = test_entities["name"]
-        generated_text = self.generator.generate(entity, text=original_text)
-        match = re.match(entity.regex, generated_text)
-        self.assertNotEqual(match, None)
-        self.assertEqual(match.group(0), generated_text)
+def test_mask_label_generator_has_methods(mask_label_generator):
+    assert hasattr(mask_label_generator, "generate")
+
+
+def test_mask_label_generator_generate_default(mask_label_generator):
+    entity = TEST_ENTITIES["name"]
+    generated_text = mask_label_generator.generate(entity, text=TEST_ORIGINAL_TEXT)
+    match = re.match(entity.regex, generated_text)
+    assert match is not None
+    assert match.group(0) == generated_text
 
 
 # =====================================
@@ -245,88 +249,89 @@ class TestMaskLabelGenerator(unittest.TestCase):
 # =====================================
 
 
-class TestDateGenerator(unittest.TestCase):
+@pytest.fixture(scope="module")
+def date_generator():
+    return DateGenerator(lang="en")
 
-    @classmethod
-    def setUpClass(self):
-        self.generator = DateGenerator()
 
-    def test_has_methods(self):
-        self.assertEqual(hasattr(self.generator, "generate"), True)
+def test_date_generator_has_methods(date_generator):
+    assert hasattr(date_generator, "generate")
 
-    def test_generate_default(self):
-        entity = test_entities["date"][0]
-        generated_text = self.generator.generate(entity)
-        match = re.match(entity.regex, generated_text)
-        self.assertNotEqual(match, None)
-        self.assertEqual(match.group(0), generated_text)
 
-    def test_generate_custom_date_format(self):
-        entity = test_entities["date"][0]
-        generator = DateGenerator(date_format="%d-%m-%Y")
-        generated_text = generator.generate(entity)
-        match = re.match(entity.regex, generated_text)
-        self.assertNotEqual(match, None)
-        self.assertEqual(match.group(0), generated_text)
+def test_date_generator_generate_default(date_generator):
+    entity = TEST_ENTITIES["date"][0]
+    generated_text = date_generator.generate(entity)
+    match = re.match(entity.regex, generated_text)
+    assert match is not None
+    assert match.group(0) == generated_text
 
-    def text_generate_uncorrect_date_format(self):
-        entity = test_entities["date"][0]
-        generator = DateGenerator(date_format="%Y-%m-%d")
+
+def test_date_generator_generate_custom_date_format():
+    entity = TEST_ENTITIES["date"][0]
+    generator = DateGenerator(date_format="dd-MM-yyyy")
+    generated_text = generator.generate(entity)
+    match = re.match(entity.regex, generated_text)
+    assert match is not None
+    assert match.group(0) == generated_text
+
+
+def test_date_generator_generate_non_matching_date_format():
+    entity = TEST_ENTITIES["date"][0]
+    generator = DateGenerator(date_format="yyyy-MM-dd")
+    custom_date = generator.generate(entity, sub_variant="FIRST_DAY_OF_THE_MONTH")
+    assert custom_date == "2024-05-01"
+
+
+def test_date_generator_generate_first_day_of_the_month(date_generator):
+    entity = TEST_ENTITIES["date"][0]
+    generated_text = date_generator.generate(
+        entity, sub_variant="FIRST_DAY_OF_THE_MONTH"
+    )
+    assert generated_text == "01-05-2024"
+
+
+def test_date_generator_generate_last_day_of_the_month(date_generator):
+    entity = TEST_ENTITIES["date"][0]
+    generated_text = date_generator.generate(
+        entity, sub_variant="LAST_DAY_OF_THE_MONTH"
+    )
+    assert generated_text == "31-05-2024"
+
+
+def test_date_generator_generate_middle_of_the_month(date_generator):
+    entity = TEST_ENTITIES["date"][0]
+    generated_text = date_generator.generate(entity, sub_variant="MIDDLE_OF_THE_MONTH")
+    assert generated_text == "15-05-2024"
+
+
+def test_date_generator_generate_middle_of_the_year(date_generator):
+    entity = TEST_ENTITIES["date"][0]
+    generated_text = date_generator.generate(entity, sub_variant="MIDDLE_OF_THE_YEAR")
+    assert generated_text == "01-07-2024"
+
+
+def test_date_generator_generate_random(date_generator):
+    entity = TEST_ENTITIES["date"][0]
+    generated_text = date_generator.generate(entity, sub_variant="RANDOM")
+    match = re.match(entity.regex, generated_text)
+    assert match is not None
+    assert match.group(0) == generated_text
+
+
+def test_date_generator_generate_uncorrect_type(date_generator):
+    entity = TEST_ENTITIES["name"]
+    with pytest.raises(ValueError):
+        date_generator.generate(entity)
+
+
+def test_date_generator_process_different_formats(date_generator):
+    for entity in TEST_ENTITIES["date"]:
         try:
-            generator.generate(entity)
-        except Exception as e:
-            self.assertRaises(TypeError, e)
-
-    def test_generate_first_day_of_the_month(self):
-        entity = test_entities["date"][0]
-        generated_text = self.generator.generate(
-            entity, sub_variant="FIRST_DAY_OF_THE_MONTH"
-        )
-        self.assertEqual(generated_text, "01-05-2024")
-
-    def test_generate_last_day_of_the_month(self):
-        entity = test_entities["date"][0]
-        generated_text = self.generator.generate(
-            entity, sub_variant="LAST_DAY_OF_THE_MONTH"
-        )
-        self.assertEqual(generated_text, "31-05-2024")
-
-    def test_generate_middle_of_the_month(self):
-        entity = test_entities["date"][0]
-        generated_text = self.generator.generate(
-            entity, sub_variant="MIDDLE_OF_THE_MONTH"
-        )
-        self.assertEqual(generated_text, "15-05-2024")
-
-    def test_generate_middle_of_the_year(self):
-        entity = test_entities["date"][0]
-        generated_text = self.generator.generate(
-            entity, sub_variant="MIDDLE_OF_THE_YEAR"
-        )
-        self.assertEqual(generated_text, "01-07-2024")
-
-    def test_generate_random(self):
-        entity = test_entities["date"][0]
-        generated_text = self.generator.generate(entity, sub_variant="RANDOM")
-        match = re.match(entity.regex, generated_text)
-        self.assertNotEqual(match, None)
-        self.assertEqual(match.group(0), generated_text)
-
-    def test_generate_uncorrect_type(self):
-        entity = test_entities["name"]
-        try:
-            self.generator.generate(entity)
-        except Exception as e:
-            self.assertEqual(type(e), ValueError)
-
-    def test_process_different_formats(self):
-        for entity in test_entities["date"]:
-            try:
-                self.generator.generate(entity, sub_variant="RANDOM")
-            except ValueError:
-                self.fail(
-                    f"self.generator.generate() raised ValueError unexpectedly for date: {entity.text}"
-                )
+            date_generator.generate(entity, sub_variant="RANDOM")
+        except ValueError:
+            pytest.fail(
+                f"date_generator.generate() raised ValueError unexpectedly for date: {entity.text}"
+            )
 
 
 # =====================================
@@ -334,43 +339,40 @@ class TestDateGenerator(unittest.TestCase):
 # =====================================
 
 
-class TestNumberGenerator(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(self):
-        self.generator = NumberGenerator()
-
-    def test_has_methods(self):
-        self.assertEqual(hasattr(self.generator, "generate"), True)
-
-    def test_generate_integer(self):
-        entity = test_entities["integer"]
-        generated_text = self.generator.generate(entity)
-        match = re.match(entity.regex, generated_text)
-        self.assertNotEqual(match, None)
-        self.assertEqual(match.group(0), generated_text)
-
-    def test_generate_float(self):
-        entity = test_entities["float"]
-        generated_text = self.generator.generate(entity)
-        match = re.match(entity.regex, generated_text)
-        self.assertNotEqual(match, None)
-        self.assertEqual(match.group(0), generated_text)
-
-    def test_generate_custom(self):
-        entity = test_entities["custom"]
-        generated_text = self.generator.generate(entity)
-        match = re.match(entity.regex, generated_text)
-        self.assertNotEqual(match, None)
-        self.assertEqual(match.group(0), generated_text)
-
-    def test_generate_uncorrect_type(self):
-        entity = test_entities["name"]
-        try:
-            self.generator.generate(entity)
-        except Exception as e:
-            self.assertEqual(type(e), ValueError)
+@pytest.fixture(scope="module")
+def number_generator():
+    return NumberGenerator()
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_number_generator_has_methods(number_generator):
+    assert hasattr(number_generator, "generate")
+
+
+def test_number_generator_generate_integer(number_generator):
+    entity = TEST_ENTITIES["integer"]
+    generated_text = number_generator.generate(entity)
+    match = re.match(entity.regex, generated_text)
+    assert match is not None
+    assert match.group(0) == generated_text
+
+
+def test_number_generator_generate_float(number_generator):
+    entity = TEST_ENTITIES["float"]
+    generated_text = number_generator.generate(entity)
+    match = re.match(entity.regex, generated_text)
+    assert match is not None
+    assert match.group(0) == generated_text
+
+
+def test_number_generator_generate_custom(number_generator):
+    entity = TEST_ENTITIES["custom"]
+    generated_text = number_generator.generate(entity)
+    match = re.match(entity.regex, generated_text)
+    assert match is not None
+    assert match.group(0) == generated_text
+
+
+def test_number_generator_generate_uncorrect_type(number_generator):
+    entity = TEST_ENTITIES["name"]
+    with pytest.raises(ValueError):
+        number_generator.generate(entity)

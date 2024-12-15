@@ -7,12 +7,12 @@ title: Development
 This section is for developers only. It describes the requirements, the setup process, how to run tests, and how to deploy.
 
 ## Requirements
+
 Before starting the project make sure these requirements are available:
 
-- [python][python]. The python programming language (v3.8, v3.9, v3.10, v3.11).
+- [python][python]. The python programming language (v3.9, v3.10, v3.11, v3.12).
 
 - [git][git]. For versioning your code.
-
 
 ## Setup
 
@@ -54,7 +54,7 @@ githooks
 To run existing tests, simply run:
 
 ```bash
-python -m unittest discover test
+pytest
 ```
 
 ## Documentation
@@ -71,7 +71,6 @@ When suggesting changes, please refer to the [Material for MkDocs] documentation
 
 Once the changes are accepted into the project, the GitHub Actions automatically
 deploy the documentation to the `gh-pages` branch.
-
 
 [python]: https://www.python.org/
 [git]: https://git-scm.com/

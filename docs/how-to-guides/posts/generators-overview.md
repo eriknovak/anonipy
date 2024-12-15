@@ -97,12 +97,12 @@ The initialization of `LLMLabelGenerator` will throw some warnings. Ignore them.
 To use the generator, we can call the `generate` method. The `generate` method receives the following parameters:
 
 ::: anonipy.anonymize.generators.LLMLabelGenerator.generate
-options:
-show_root_heading: False
-show_docstring_description: False
-show_docstring_examples: False
-show_docstring_returns: False
-show_source: False
+    options:
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_docstring_returns: False
+        show_source: False
 
 Let us generate the replacement for the first entity from `entities` using the default parameters.
 
@@ -156,12 +156,12 @@ from anonipy.anonymize.generators import MaskLabelGenerator
 The `MaskLabelGenerator` requires the following input parameters at initialization:
 
 ::: anonipy.anonymize.generators.MaskLabelGenerator.__init__
-options:
-show_root_heading: False
-show_docstring_description: False
-show_docstring_examples: False
-show_docstring_returns: False
-show_source: False
+    options:
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_docstring_returns: False
+        show_source: False
 
 Let us now initialize the mask label generator.
 
@@ -175,12 +175,12 @@ The initialization of `LLMLabelGenerator` will throw some warnings. Ignore them.
 To use the generator, we can call the `generate` method. The `generate` method receives the following parameters:
 
 ::: anonipy.anonymize.generators.MaskLabelGenerator.generate
-options:
-show_root_heading: False
-show_docstring_description: False
-show_docstring_examples: False
-show_docstring_returns: False
-show_source: False
+    options:
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_docstring_returns: False
+        show_source: False
 
 This generator will create a list of suggestions from which it will select one at random. Therefore, the generator will return different suggestions every time it is called.
 
@@ -216,12 +216,12 @@ number_generator = NumberGenerator()
 To use the generator, we can call the `generate` method. The `generate` method receives the following parameters:
 
 ::: anonipy.anonymize.generators.NumberGenerator.generate
-options:
-show_root_heading: False
-show_docstring_description: False
-show_docstring_examples: False
-show_docstring_returns: False
-show_source: False
+    options:
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_docstring_returns: False
+        show_source: False
 
 This generator will create a suggestion by replacing numeric values in the entity text at random. Therefore, the generator will return different suggestions every time it is called.
 
@@ -254,12 +254,12 @@ from anonipy.anonymize.generators import DateGenerator
 The `DateGenerator` requires the following input parameters at initialization:
 
 ::: anonipy.anonymize.generators.DateGenerator.__init__
-options:
-show_root_heading: False
-show_docstring_description: False
-show_docstring_examples: False
-show_docstring_returns: False
-show_source: False
+    options:
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_docstring_returns: False
+        show_source: False
 
 Let us now initialize the date generator.
 
@@ -270,13 +270,13 @@ date_generator = DateGenerator()
 To use the generator, we can call the `generate` method. The `generate` method receives the following parameters:
 
 ::: anonipy.anonymize.generators.DateGenerator.generate
-options:
-show_root_heading: False
-show_docstring_description: False
-show_docstring_examples: False
-show_docstring_returns: False
-show_docstring_raises: False
-show_source: False
+    options:
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_docstring_returns: False
+        show_docstring_raises: False
+        show_source: False
 
 Using the above parameters, this generator will create the appropriate date suggestions:
 

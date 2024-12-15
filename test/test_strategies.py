@@ -1,4 +1,4 @@
-import unittest
+import pytest
 
 from anonipy.definitions import Entity
 from anonipy.anonymize.strategies import (
@@ -11,8 +11,8 @@ from anonipy.anonymize.strategies import (
 # Helper functions
 # =====================================
 
-test_text = "Test this string, and this test too!"
-test_entities = [
+TEST_TEXT = "Test this string, and this test too!"
+TEST_ENTITIES = [
     Entity(text="Test", label="test", start_index=0, end_index=4),
     Entity(text="string", label="type", start_index=10, end_index=16),
     Entity(text="test", label="test", start_index=27, end_index=31),
@@ -27,36 +27,52 @@ def anonymization_mapping(text, entity):
     return "[REDACTED]"
 
 
+@pytest.fixture
+def redaction_strategy():
+    return RedactionStrategy()
+
+
+@pytest.fixture
+def masking_strategy():
+    return MaskingStrategy()
+
+
+@pytest.fixture
+def pseudonymization_strategy():
+    return PseudonymizationStrategy(mapping=anonymization_mapping)
+
+
 # =====================================
 # Test Redaction Strategy
 # =====================================
 
 
-class TestRedactionStrategy(unittest.TestCase):
-    def test_init(self):
-        strategy = RedactionStrategy()
-        self.assertEqual(strategy.__class__, RedactionStrategy)
+def test_redaction_strategy_init(redaction_strategy):
+    assert redaction_strategy.__class__ == RedactionStrategy
 
-    def test_has_methods(self):
-        strategy = RedactionStrategy()
-        self.assertEqual(hasattr(strategy, "anonymize"), True)
 
-    def test_default_inputs(self):
-        strategy = RedactionStrategy()
-        self.assertEqual(strategy.substitute_label, "[REDACTED]")
+def test_redaction_strategy_has_methods(redaction_strategy):
+    assert hasattr(redaction_strategy, "anonymize")
 
-    def test_custom_inputs(self):
-        strategy = RedactionStrategy(substitute_label="[TEST]")
-        self.assertEqual(strategy.substitute_label, "[TEST]")
 
-    def test_anonymize_default_inputs(self):
-        strategy = RedactionStrategy()
-        anonymized_text, replacements = strategy.anonymize(test_text, test_entities)
-        self.assertEqual(
-            anonymized_text, "[REDACTED] this [REDACTED], and this [REDACTED] too!"
-        )
-        self.assertEqual(
-            replacements,
+@pytest.mark.parametrize(
+    "substitute_label, expected_label",
+    [
+        (None, "[REDACTED]"),
+        ("[TEST]", "[TEST]"),
+    ],
+)
+def test_redaction_strategy_inputs(substitute_label, expected_label):
+    strategy = RedactionStrategy(substitute_label=substitute_label)
+    assert strategy.substitute_label == expected_label
+
+
+@pytest.mark.parametrize(
+    "substitute_label, expected_text, expected_replacements",
+    [
+        (
+            None,
+            "[REDACTED] this [REDACTED], and this [REDACTED] too!",
             [
                 {
                     "original_text": "Test",
@@ -80,14 +96,10 @@ class TestRedactionStrategy(unittest.TestCase):
                     "anonymized_text": "[REDACTED]",
                 },
             ],
-        )
-
-    def test_anonymize_custom_inputs(self):
-        strategy = RedactionStrategy(substitute_label="[TEST]")
-        anonymized_text, replacements = strategy.anonymize(test_text, test_entities)
-        self.assertEqual(anonymized_text, "[TEST] this [TEST], and this [TEST] too!")
-        self.assertEqual(
-            replacements,
+        ),
+        (
+            "[TEST]",
+            "[TEST] this [TEST], and this [TEST] too!",
             [
                 {
                     "original_text": "Test",
@@ -111,7 +123,16 @@ class TestRedactionStrategy(unittest.TestCase):
                     "anonymized_text": "[TEST]",
                 },
             ],
-        )
+        ),
+    ],
+)
+def test_redaction_strategy_anonymize(
+    substitute_label, expected_text, expected_replacements
+):
+    strategy = RedactionStrategy(substitute_label=substitute_label)
+    anonymized_text, replacements = strategy.anonymize(TEST_TEXT, TEST_ENTITIES)
+    assert anonymized_text == expected_text
+    assert replacements == expected_replacements
 
 
 # =====================================
@@ -119,29 +140,32 @@ class TestRedactionStrategy(unittest.TestCase):
 # =====================================
 
 
-class TestMaskingStrategy(unittest.TestCase):
-    def test_init(self):
-        strategy = MaskingStrategy()
-        self.assertEqual(strategy.__class__, MaskingStrategy)
+def test_masking_strategy_init(masking_strategy):
+    assert masking_strategy.__class__ == MaskingStrategy
 
-    def test_methods(self):
-        strategy = MaskingStrategy()
-        self.assertEqual(hasattr(strategy, "anonymize"), True)
 
-    def test_default_inputs(self):
-        strategy = MaskingStrategy()
-        self.assertEqual(strategy.substitute_label, "*")
+def test_masking_strategy_methods(masking_strategy):
+    assert hasattr(masking_strategy, "anonymize")
 
-    def test_custom_inputs(self):
-        strategy = MaskingStrategy(substitute_label="A")
-        self.assertEqual(strategy.substitute_label, "A")
 
-    def test_anonymize_default_inputs(self):
-        strategy = MaskingStrategy()
-        anonymized_text, replacements = strategy.anonymize(test_text, test_entities)
-        self.assertEqual(anonymized_text, "**** this ******, and this **** too!")
-        self.assertEqual(
-            replacements,
+@pytest.mark.parametrize(
+    "substitute_label, expected_label",
+    [
+        (None, "*"),
+        ("A", "A"),
+    ],
+)
+def test_masking_strategy_inputs(substitute_label, expected_label):
+    strategy = MaskingStrategy(substitute_label=substitute_label)
+    assert strategy.substitute_label == expected_label
+
+
+@pytest.mark.parametrize(
+    "substitute_label, expected_text, expected_replacements",
+    [
+        (
+            None,
+            "**** this ******, and this **** too!",
             [
                 {
                     "original_text": "Test",
@@ -165,14 +189,10 @@ class TestMaskingStrategy(unittest.TestCase):
                     "anonymized_text": "****",
                 },
             ],
-        )
-
-    def test_anonymize_custom_inputs(self):
-        strategy = MaskingStrategy(substitute_label="A")
-        anonymized_text, replacements = strategy.anonymize(test_text, test_entities)
-        self.assertEqual(anonymized_text, "AAAA this AAAAAA, and this AAAA too!")
-        self.assertEqual(
-            replacements,
+        ),
+        (
+            "A",
+            "AAAA this AAAAAA, and this AAAA too!",
             [
                 {
                     "original_text": "Test",
@@ -196,7 +216,16 @@ class TestMaskingStrategy(unittest.TestCase):
                     "anonymized_text": "AAAA",
                 },
             ],
-        )
+        ),
+    ],
+)
+def test_masking_strategy_anonymize(
+    substitute_label, expected_text, expected_replacements
+):
+    strategy = MaskingStrategy(substitute_label=substitute_label)
+    anonymized_text, replacements = strategy.anonymize(TEST_TEXT, TEST_ENTITIES)
+    assert anonymized_text == expected_text
+    assert replacements == expected_replacements
 
 
 # =====================================
@@ -204,52 +233,44 @@ class TestMaskingStrategy(unittest.TestCase):
 # =====================================
 
 
-class TestPseudonymizationStrategy(unittest.TestCase):
-    def test_init(self):
-        try:
-            PseudonymizationStrategy()
-        except Exception as e:
-            self.assertRaises(TypeError, e)
-
-    def test_init_inputs(self):
-        strategy = PseudonymizationStrategy(mapping=anonymization_mapping)
-        self.assertEqual(strategy.__class__, PseudonymizationStrategy)
-
-    def test_methods(self):
-        strategy = PseudonymizationStrategy(mapping=anonymization_mapping)
-        self.assertEqual(hasattr(strategy, "anonymize"), True)
-
-    def test_anonymize_inputs(self):
-        strategy = PseudonymizationStrategy(mapping=anonymization_mapping)
-        anonymized_text, replacements = strategy.anonymize(test_text, test_entities)
-        self.assertEqual(anonymized_text, "[TEST] this [TYPE], and this [TEST] too!")
-        self.assertEqual(
-            replacements,
-            [
-                {
-                    "original_text": "Test",
-                    "label": "test",
-                    "start_index": 0,
-                    "end_index": 4,
-                    "anonymized_text": "[TEST]",
-                },
-                {
-                    "original_text": "string",
-                    "label": "type",
-                    "start_index": 10,
-                    "end_index": 16,
-                    "anonymized_text": "[TYPE]",
-                },
-                {
-                    "original_text": "test",
-                    "label": "test",
-                    "start_index": 27,
-                    "end_index": 31,
-                    "anonymized_text": "[TEST]",
-                },
-            ],
-        )
+def test_pseudonymization_strategy_init():
+    with pytest.raises(TypeError):
+        PseudonymizationStrategy()
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_pseudonymization_strategy_init_inputs(pseudonymization_strategy):
+    assert pseudonymization_strategy.__class__ == PseudonymizationStrategy
+
+
+def test_pseudonymization_strategy_methods(pseudonymization_strategy):
+    assert hasattr(pseudonymization_strategy, "anonymize")
+
+
+def test_pseudonymization_strategy_anonymize_inputs(pseudonymization_strategy):
+    anonymized_text, replacements = pseudonymization_strategy.anonymize(
+        TEST_TEXT, TEST_ENTITIES
+    )
+    assert anonymized_text == "[TEST] this [TYPE], and this [TEST] too!"
+    assert replacements == [
+        {
+            "original_text": "Test",
+            "label": "test",
+            "start_index": 0,
+            "end_index": 4,
+            "anonymized_text": "[TEST]",
+        },
+        {
+            "original_text": "string",
+            "label": "type",
+            "start_index": 10,
+            "end_index": 16,
+            "anonymized_text": "[TYPE]",
+        },
+        {
+            "original_text": "test",
+            "label": "test",
+            "start_index": 27,
+            "end_index": 31,
+            "anonymized_text": "[TEST]",
+        },
+    ]

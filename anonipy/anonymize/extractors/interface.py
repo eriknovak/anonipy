@@ -5,7 +5,15 @@ from ...definitions import Entity
 
 
 class ExtractorInterface:
-    """The class representing the extractor interface."""
+    """The class representing the extractor interface.
+
+    All extractors should inherit from this class.
+
+    Methods:
+        __call__(text):
+            Extract entities from the text.
+
+    """
 
     def __init__(self, labels: List[dict], *args, **kwargs):
         pass

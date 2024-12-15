@@ -5,7 +5,10 @@ build-backend = 'setuptools.build_meta'
 [project]
 name = "anonipy"
 description = "The data anonymization package"
-authors=[{ name = "Erik Novak" }]
+authors=[
+    { name = "Erik Novak" },
+    { name = "Nina Kokalj" }
+]
 maintainers = [{ name = "Erik Novak" }]
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -36,8 +39,8 @@ dev = [
     "mkdocstrings[python]",
 ]
 test = [
-    "coverage",
-    "nbmake",
+    "pytest",
+    "pytest-cov",
 ]
 all = ["anonipy[dev,test]"]
 

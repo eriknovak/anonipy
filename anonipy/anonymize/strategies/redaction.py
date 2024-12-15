@@ -39,7 +39,7 @@ class RedactionStrategy(StrategyInterface):
         """
 
         super().__init__(*args, **kwargs)
-        self.substitute_label = substitute_label
+        self.substitute_label = substitute_label or "[REDACTED]"
 
     def anonymize(
         self, text: str, entities: List[Entity], *args, **kwargs
