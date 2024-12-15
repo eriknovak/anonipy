@@ -96,7 +96,7 @@ def merge_entities(extractor_outputs: List[Tuple[Doc, List[Entity]]]) -> List[En
         if len(extractor_outputs) == 0:
             return []
         if len(extractor_outputs) == 1:
-            return extractor_outputs[1]
+            return extractor_outputs[0][1]
 
         joint_entities = _filter_entities(
             list(
