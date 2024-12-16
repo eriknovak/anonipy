@@ -167,7 +167,7 @@ def detect_repeated_entities(doc: Doc, entities: List[Entity], spacy_style: str)
                         end_index = end_index,
                         score = entity.score,
                         type = entity.type,
-                        regex = entity.text
+                        regex = entity.regex
                     )
                 )
         
@@ -196,7 +196,7 @@ def create_spacy_entities(doc: Doc, entities: List[Entity], spacy_style: str) ->
 
         for entity in entities:
             span = doc.char_span(entity.start_index, entity.end_index, label=entity.label)
-            if not span:
+            if not span or span in updated_spans:
                 continue
             span._.score = entity.score
             if spacy_style == "ent":

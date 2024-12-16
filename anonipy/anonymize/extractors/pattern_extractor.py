@@ -102,7 +102,7 @@ class PatternExtractor(ExtractorInterface):
 
         if detect_repeats:
             anoni_entities = detect_repeated_entities(doc, anoni_entities, self.spacy_style)
-        
+
         create_spacy_entities(doc, anoni_entities, self.spacy_style)
 
         return doc, anoni_entities
