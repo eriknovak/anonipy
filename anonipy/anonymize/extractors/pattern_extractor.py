@@ -200,15 +200,9 @@ class PatternExtractor(ExtractorInterface):
                     if not entity:
                         continue
                     entity._.score = 1.0
+                    entities = [convert_spacy_to_entity(entity)]
                     # add the entity to the previous entity list
-                    prev_entities = get_doc_entity_spans(doc, self.spacy_style)
-                    if self.spacy_style == "ent":
-                        prev_entities = util.filter_spans(prev_entities + (entity,))
-                    elif self.spacy_style == "span":
-                        prev_entities.append(entity)
-                    else:
-                        raise ValueError(f"Invalid spacy style: {self.spacy_style}")
-                    set_doc_entity_spans(doc, prev_entities, self.spacy_style)
+                    create_spacy_entities(doc, entities, self.spacy_style)
 
         return global_matchers
 
@@ -250,8 +244,8 @@ class PatternExtractor(ExtractorInterface):
             entity = Span(doc, start, end, label=label)
             if not entity:
                 return
+            entity._.score = 1.0
             entities = [convert_spacy_to_entity(entity)]
-            
             create_spacy_entities(doc, entities, self.spacy_style)
 
         return add_event_ent
