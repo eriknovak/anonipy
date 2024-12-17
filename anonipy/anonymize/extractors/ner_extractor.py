@@ -8,7 +8,7 @@ from spacy import displacy
 from spacy.tokens import Doc, Span
 from spacy.language import Language
 
-from ..helpers import convert_spacy_to_entity, detect_repeated_entities, get_doc_entity_spans, create_spacy_entities, set_doc_entity_spans
+from ..helpers import convert_spacy_to_entity, detect_repeated_entities, get_doc_entity_spans, create_spacy_entities
 from ...utils.regex import regex_mapping
 from ...constants import LANGUAGES
 from ...definitions import Entity
@@ -117,6 +117,7 @@ class NERExtractor(ExtractorInterface):
             anoni_entities = detect_repeated_entities(doc, anoni_entities, self.spacy_style)
 
         create_spacy_entities(doc, anoni_entities, self.spacy_style)
+        
         return doc, anoni_entities
 
     def display(self, doc: Doc, page: bool = False, jupyter: bool = None) -> str:
