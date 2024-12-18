@@ -8,13 +8,14 @@ from spacy import displacy
 from spacy.tokens import Doc, Span
 from spacy.language import Language
 
-from ..helpers import convert_spacy_to_entity
+from ..helpers import convert_spacy_to_entity, detect_repeated_entities, get_doc_entity_spans, create_spacy_entities
 from ...utils.regex import regex_mapping
 from ...constants import LANGUAGES
 from ...definitions import Entity
 from ...utils.colors import get_label_color
 
 from .interface import ExtractorInterface
+
 
 # ===============================================
 # Extractor class
@@ -29,7 +30,7 @@ class NERExtractor(ExtractorInterface):
         >>> from anonipy.anonymize.extractors import NERExtractor
         >>> labels = [{"label": "PERSON", "type": "string"}]
         >>> extractor = NERExtractor(labels, lang=LANGUAGES.ENGLISH)
-        >>> extractor("John Doe is a 19 year old software engineer.")
+        >>> extractor("John Doe is a 19 year old software engineer.", detect_repeats=False)
         Doc, [Entity]
 
     Attributes:
@@ -92,15 +93,16 @@ class NERExtractor(ExtractorInterface):
             warnings.filterwarnings("ignore", category=ResourceWarning)
             self.pipeline = self._prepare_pipeline()
 
-    def __call__(self, text: str, *args, **kwargs) -> Tuple[Doc, List[Entity]]:
+    def __call__(self, text: str, detect_repeats: bool = False, *args, **kwargs) -> Tuple[Doc, List[Entity]]:
         """Extract the entities from the text.
 
         Examples:
-            >>> extractor("John Doe is a 19 year old software engineer.")
+            >>> extractor("John Doe is a 19 year old software engineer.", detect_repeats=False)
             Doc, [Entity]
 
         Args:
             text: The text to extract entities from.
+            detect_repeats: Whether to check text again for repeated entities.
 
         Returns:
             The spacy document.
@@ -110,7 +112,12 @@ class NERExtractor(ExtractorInterface):
 
         doc = self.pipeline(text)
         anoni_entities, spacy_entities = self._prepare_entities(doc)
-        self._set_spacy_fields(doc, spacy_entities)
+        
+        if detect_repeats:
+            anoni_entities = detect_repeated_entities(doc, anoni_entities, self.spacy_style)
+
+        create_spacy_entities(doc, anoni_entities, self.spacy_style)
+        
         return doc, anoni_entities
 
     def display(self, doc: Doc, page: bool = False, jupyter: bool = None) -> str:
@@ -226,46 +233,9 @@ class NERExtractor(ExtractorInterface):
         # TODO: make this part more generic
         anoni_entities = []
         spacy_entities = []
-        for s in self._get_spacy_fields(doc):
+        for s in get_doc_entity_spans(doc, self.spacy_style):
             label = list(filter(lambda x: x["label"] == s.label_, self.labels))[0]
             if re.match(label["regex"], s.text):
                 anoni_entities.append(convert_spacy_to_entity(s, **label))
                 spacy_entities.append(s)
         return anoni_entities, spacy_entities
-
-    def _get_spacy_fields(self, doc: Doc) -> List[Span]:
-        """Get the spacy doc entity spans.
-
-        args:
-            doc: The spacy doc to get the entity spans from.
-
-        Returns:
-            The list of Spans from the spacy doc.
-
-        """
-
-        if self.spacy_style == "ent":
-            return doc.ents
-        elif self.spacy_style == "span":
-            return doc.spans["sc"]
-        else:
-            raise ValueError(f"Invalid spacy style: {self.spacy_style}")
-
-    def _set_spacy_fields(self, doc: Doc, entities: List[Span]) -> None:
-        """Set the spacy doc entity spans.
-
-        Args:
-            doc: The spacy doc to set the entity spans.
-            entities: The entity spans to set.
-
-        Returns:
-            None
-
-        """
-
-        if self.spacy_style == "ent":
-            doc.ents = entities
-        elif self.spacy_style == "span":
-            doc.spans["sc"] = entities
-        else:
-            raise ValueError(f"Invalid spacy style: {self.spacy_style}")
