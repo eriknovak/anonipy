@@ -1,3 +1,11 @@
+### anonipy-0.4.0 (2024-12-11)
+
+**New Features:**
+
+- Add `add_generation_prompt` to `apply_chat_template` in `LLMLabelGenerator`
+- Add function to detect repeated entities
+- Add support for generator model quantization in `LLMLabelGenerator`
+
 ### anonipy-0.3.0 (2024-12-11)
 
 **New Features:**
