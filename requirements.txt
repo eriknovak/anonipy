@@ -1,6 +1,6 @@
 # NLP and LLMs
 spacy==3.8.2
-gliner==0.2.13
+gliner==0.2.16
 gliner-spacy==0.0.10
 transformers==4.45.2
 accelerate>=0.26.0

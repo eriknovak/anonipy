@@ -171,7 +171,7 @@ TEST_PATTERN_DETECT_REPEATS = [
         start_index=86,
         end_index=96,
         type="date",
-        regex=r"Date of Examination: (.*)"
+        regex=r"Date of Examination: (.*)",
     ),
     # Repeated entity
     Entity(
@@ -180,7 +180,7 @@ TEST_PATTERN_DETECT_REPEATS = [
         start_index=759,
         end_index=769,
         type="date",
-        regex=r"Date of Examination: (.*)"
+        regex=r"Date of Examination: (.*)",
     ),
 ]
 TEST_MULTI_REPEATS = [
@@ -223,6 +223,7 @@ TEST_MULTI_REPEATS = [
         type="string",
     ),
 ]
+
 
 @pytest.fixture(autouse=True)
 def suppress_warnings():
@@ -270,7 +271,7 @@ def pattern_extractor():
                     {"SHAPE": "dddd"},
                 ]
             ],
-        }
+        },
     ]
     return PatternExtractor(labels=labels, lang=LANGUAGES.ENGLISH)
 
@@ -412,6 +413,7 @@ def test_pattern_extractor_extract_default(pattern_extractor):
         assert p_entity.regex == t_entity.regex
         assert p_entity.score == 1.0
 
+
 def test_pattern_extractor_detect_repeats_false():
     extractor = PatternExtractor(
         labels=[
@@ -434,6 +436,7 @@ def test_pattern_extractor_detect_repeats_false():
     assert excepted_entity.regex == entities[0].regex
     assert excepted_entity.score >= 0.5
 
+
 def test_pattern_extractor_detect_repeats_true():
     extractor = PatternExtractor(
         labels=[
@@ -454,6 +457,7 @@ def test_pattern_extractor_detect_repeats_true():
         assert p_entity.type == t_entity.type
         assert p_entity.regex == t_entity.regex
         assert p_entity.score >= 0.5
+
 
 def test_multi_extractor_init():
     with pytest.raises(TypeError):
@@ -568,16 +572,21 @@ def test_multi_extractor_extract_single_extractor_pattern(multi_extractor):
 
 def test_multi_extractor_detect_repeats_false():
     extractors = [
-        NERExtractor(labels=[
-            {"label": "name", "type": "string"},
-        ]), 
-        PatternExtractor(labels=[
-            {
-                "label": "date",
-                "type": "date",
-                "regex": r"Date of Examination: (.*)",
-            },
-        ])]
+        NERExtractor(
+            labels=[
+                {"label": "name", "type": "string"},
+            ]
+        ),
+        PatternExtractor(
+            labels=[
+                {
+                    "label": "date",
+                    "type": "date",
+                    "regex": r"Date of Examination: (.*)",
+                },
+            ]
+        ),
+    ]
     extractor = MultiExtractor(extractors)
     _, joint_entities = extractor(TEST_ORIGINAL_TEXT, detect_repeats=False)
     for p_entity, t_entity in zip(joint_entities, TEST_MULTI_REPEATS[:3]):
@@ -592,16 +601,21 @@ def test_multi_extractor_detect_repeats_false():
 
 def test_multi_extractor_detect_repeats_true():
     extractors = [
-        NERExtractor(labels=[
-            {"label": "name", "type": "string"},
-        ]), 
-        PatternExtractor(labels=[
-            {
-                "label": "date",
-                "type": "date",
-                "regex": r"Date of Examination: (.*)",
-            },
-        ])]
+        NERExtractor(
+            labels=[
+                {"label": "name", "type": "string"},
+            ]
+        ),
+        PatternExtractor(
+            labels=[
+                {
+                    "label": "date",
+                    "type": "date",
+                    "regex": r"Date of Examination: (.*)",
+                },
+            ]
+        ),
+    ]
     extractor = MultiExtractor(extractors)
     _, joint_entities = extractor(TEST_ORIGINAL_TEXT, detect_repeats=True)
     for p_entity, t_entity in zip(joint_entities, TEST_MULTI_REPEATS):

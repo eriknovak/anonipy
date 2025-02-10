@@ -83,7 +83,15 @@ The [LLMLabelGenerator][anonipy.anonymize.generators.LLMLabelGenerator] is a one
 from anonipy.anonymize.generators import LLMLabelGenerator
 ```
 
-The `LLMLabelGenerator` currently does not require any input parameters at initialization.
+The `LLMLabelGenerator` requires the following input parameters at initialization:
+
+::: anonipy.anonymize.generators.LLMLabelGenerator.__init__
+    options:
+        show_root_heading: False
+        show_docstring_description: False
+        show_docstring_examples: False
+        show_docstring_returns: False
+        show_source: False
 
 Let us now initialize the LLM label generator.
 
@@ -92,7 +100,7 @@ llm_generator = LLMLabelGenerator()
 ```
 
 !!! info "Initialization warnings"
-The initialization of `LLMLabelGenerator` will throw some warnings. Ignore them. These are expected due to the use of package dependencies.
+    The initialization of `LLMLabelGenerator` will throw some warnings. Ignore them. These are expected due to the use of package dependencies.
 
 To use the generator, we can call the `generate` method. The `generate` method receives the following parameters:
 
