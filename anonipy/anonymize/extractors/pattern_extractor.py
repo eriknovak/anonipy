@@ -7,7 +7,13 @@ from spacy.tokens import Doc, Span
 from spacy.language import Language
 from spacy.matcher import Matcher
 
-from ..helpers import convert_spacy_to_entity, detect_repeated_entities, get_doc_entity_spans, set_doc_entity_spans, create_spacy_entities
+from ..helpers import (
+    convert_spacy_to_entity,
+    detect_repeated_entities,
+    get_doc_entity_spans,
+    set_doc_entity_spans,
+    create_spacy_entities,
+)
 from ...constants import LANGUAGES
 from ...definitions import Entity
 from ...utils.colors import get_label_color
@@ -78,7 +84,9 @@ class PatternExtractor(ExtractorInterface):
         self.token_matchers = self._prepare_token_matchers()
         self.global_matchers = self._prepare_global_matchers()
 
-    def __call__(self, text: str, detect_repeats: bool = False, *args, **kwargs) -> Tuple[Doc, List[Entity]]:
+    def __call__(
+        self, text: str, detect_repeats: bool = False, *args, **kwargs
+    ) -> Tuple[Doc, List[Entity]]:
         """Extract the entities from the text.
 
         Examples:
@@ -101,7 +109,9 @@ class PatternExtractor(ExtractorInterface):
         anoni_entities, spacy_entities = self._prepare_entities(doc)
 
         if detect_repeats:
-            anoni_entities = detect_repeated_entities(doc, anoni_entities, self.spacy_style)
+            anoni_entities = detect_repeated_entities(
+                doc, anoni_entities, self.spacy_style
+            )
 
         create_spacy_entities(doc, anoni_entities, self.spacy_style)
 

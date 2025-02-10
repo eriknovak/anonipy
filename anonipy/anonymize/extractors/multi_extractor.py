@@ -85,8 +85,8 @@ class MultiExtractor:
 
         """
 
-        extractor_outputs = [e(text, detect_repeats) for e in self.extractors] 
-        joint_entities = merge_entities(extractor_outputs)                          
+        extractor_outputs = [e(text, detect_repeats) for e in self.extractors]
+        joint_entities = merge_entities(extractor_outputs)
 
         return extractor_outputs, joint_entities
 

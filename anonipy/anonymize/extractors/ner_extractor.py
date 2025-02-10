@@ -8,7 +8,12 @@ from spacy import displacy
 from spacy.tokens import Doc, Span
 from spacy.language import Language
 
-from ..helpers import convert_spacy_to_entity, detect_repeated_entities, get_doc_entity_spans, create_spacy_entities
+from ..helpers import (
+    convert_spacy_to_entity,
+    detect_repeated_entities,
+    get_doc_entity_spans,
+    create_spacy_entities,
+)
 from ...utils.regex import regex_mapping
 from ...constants import LANGUAGES
 from ...definitions import Entity
@@ -93,7 +98,9 @@ class NERExtractor(ExtractorInterface):
             warnings.filterwarnings("ignore", category=ResourceWarning)
             self.pipeline = self._prepare_pipeline()
 
-    def __call__(self, text: str, detect_repeats: bool = False, *args, **kwargs) -> Tuple[Doc, List[Entity]]:
+    def __call__(
+        self, text: str, detect_repeats: bool = False, *args, **kwargs
+    ) -> Tuple[Doc, List[Entity]]:
         """Extract the entities from the text.
 
         Examples:
@@ -112,12 +119,14 @@ class NERExtractor(ExtractorInterface):
 
         doc = self.pipeline(text)
         anoni_entities, spacy_entities = self._prepare_entities(doc)
-        
+
         if detect_repeats:
-            anoni_entities = detect_repeated_entities(doc, anoni_entities, self.spacy_style)
+            anoni_entities = detect_repeated_entities(
+                doc, anoni_entities, self.spacy_style
+            )
 
         create_spacy_entities(doc, anoni_entities, self.spacy_style)
-        
+
         return doc, anoni_entities
 
     def display(self, doc: Doc, page: bool = False, jupyter: bool = None) -> str:
