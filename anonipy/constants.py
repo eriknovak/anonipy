@@ -24,7 +24,7 @@ class LANGUAGES:
         GERMAN (Tuple[Literal["de"], Literal["German"]]): The German language.
         GREEK (Tuple[Literal["el"], Literal["Greek"]]): The Greek language.
         ITALIAN (Tuple[Literal["it"], Literal["Italian"]]): The Italian language.
-        SLOVENE (Tuple[Literal["sl"], Literal["Slovene"]]): The Slovene language.
+        SLOVENE (Tuple[Literal["sl"], Literal["Slovenian"]]): The Slovene language.
         SPANISH (Tuple[Literal["es"], Literal["Spanish"]]): The Spanish language.
         UKRAINIAN (Tuple[Literal["uk"], Literal["Ukrainian"]]): The Ukrainian language.
 
@@ -40,7 +40,7 @@ class LANGUAGES:
     GERMAN = ("de", "German")
     GREEK = ("el", "Greek")
     ITALIAN = ("it", "Italian")
-    SLOVENE = ("sl", "Slovene")
+    SLOVENE = ("sl", "Slovenian")
     SPANISH = ("es", "Spanish")
     UKRAINIAN = ("uk", "Ukrainian")
 
