@@ -61,6 +61,14 @@ class Entity:
         p_match = re.match(r"^.*?\((.*)\).*$", self.regex)
         return p_match.group(1) if p_match else self.regex
 
+    def __str__(self) -> str:
+        """String representation of the entity.
+
+        Returns:
+            The string representation of the entity.
+
+        """
+        return f"Entity(text='{self.text}', label='{self.label}', start_index={self.start_index}, end_index={self.end_index}, type='{self.type}')"
 
 class Replacement(TypedDict):
     """The class representing the anonipy Replacement object.

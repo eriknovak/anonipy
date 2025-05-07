@@ -499,7 +499,7 @@ def test_multi_extractor_extract_default(multi_extractor):
     # check the performance of the joint entities generation
     for p_entity, t_entity in zip(
         joint_entities,
-        filter_entities(TEST_NER_ENTITIES + TEST_PATTERN_ENTITIES),
+        filter_entities(TEST_NER_ENTITIES + TEST_REPEATS_ENTITIES + TEST_PATTERN_ENTITIES),
     ):
         assert p_entity.text == t_entity.text
         assert p_entity.label == t_entity.label

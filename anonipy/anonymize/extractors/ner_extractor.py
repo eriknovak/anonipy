@@ -62,7 +62,7 @@ class NERExtractor(ExtractorInterface):
         lang: LANGUAGES = LANGUAGES.ENGLISH,
         score_th: float = 0.5,
         use_gpu: bool = False,
-        gliner_model: str = "urchade/gliner_multi_pii-v1",
+        gliner_model: str = "E3-JSI/gliner-multi-pii-domains-v1",
         spacy_style: str = "ent",
         **kwargs,
     ):
