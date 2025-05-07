@@ -103,4 +103,6 @@ class LanguageDetector:
         language = self.detector.detect_language_of(text)
         iso_code = getattr(language, output_standard).name.lower()
         full_name = language.name.lower().title()
+        # use the correct name for Slovenian
+        full_name = "Slovenian" if full_name == "Slovene" else full_name
         return iso_code, full_name
