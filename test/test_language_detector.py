@@ -39,11 +39,11 @@ def test_detect_english(language_detector):
     assert language == LANGUAGES.ENGLISH
 
 
-def test_detect_slovene(language_detector):
+def test_detect_slovenian(language_detector):
     language = language_detector.detect("Ta test preverja, ali metoda dela pravilno")
     assert language[0] == "sl"
-    assert language[1] == "Slovene"
-    assert language == LANGUAGES.SLOVENE
+    assert language[1] == "Slovenian"
+    assert language == LANGUAGES.SLOVENIAN
 
 
 def test_detect_german(language_detector):
