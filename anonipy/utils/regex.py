@@ -82,7 +82,7 @@ REGEX_DATE = (
     r"(\d{1,2}°?[ ](gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic)[\.]?[ ]\d{4}(?:[ ]?\d{2}:\d{2}(?::\d{2})?)?)|"
     r"([A-Za-zÀ-ÿ]+,?[ ]\d{1,2}°?[ ](gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre),?[ ]\d{4}(?:[ ]?\d{2}:\d{2}(?::\d{2})?)?)|"
     r"([A-Za-zÀ-ÿ]+,?[ ](gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre)[ ]\d{1,2}°?,?[ ]\d{4}(?:[ ]?\d{2}:\d{2}(?::\d{2})?)?)|"
-    # Slovene dates
+    # Slovenian dates
     r"(\d{1,2}[\.]?[ ](januar|februar|marec|april|maj|junij|julij|avgust|september|oktober|november|december)[ ]\d{4}(?:[ ]?\d{2}:\d{2}(?::\d{2})?)?)|"
     r"(\d{1,2}[\.]?[ ](januarja|februarja|marca|aprila|maja|junija|julija|avgusta|septembra|oktobra|novembra|decembra)[ ]\d{4}(?:[ ]?\d{2}:\d{2}(?::\d{2})?)?)|"
     r"(\d{1,2}[\.]?[ ](jan|feb|mar|apr|maj|jun|jul|avg|sep|okt|nov|dec)[\.]?[ ]\d{4}(?:[ ]?\d{2}:\d{2}(?::\d{2})?)?)|"
