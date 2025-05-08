@@ -1,3 +1,15 @@
+### anonipy-0.5.0 (2025-05-08)
+
+**New Features:**
+
+- Replace `urchade/gliner_multi_pii-v1` with `E3-JSI/gliner-multi-pii-domains-v1` as the main GLiNER extraction model in `NERExtractor`
+
+**Bug Fixes:**
+
+- Fix `LANGUAGE.SLOVENE` to `LANGUAGE.SLOVENIAN`
+- Fix `LanguageDetector` when handling `LANGUAGE.SLOVENIAN`
+- Fix unit tests
+
 ### anonipy-0.4.0 (2024-12-11)
 
 **New Features:**
