@@ -77,6 +77,8 @@ class LLMLabelGenerator(GeneratorInterface):
         add_entity_attrs: str = "",
         temperature: float = 1.0,
         top_p: float = 0.95,
+        system_prompt: str = "You are a helpful AI assistant for generating replacements for text entities.",
+        user_prompt: str = "What is a random {add_entity_attrs} {entity.label} replacement for {entity.text}? Respond only with the replacement.",
         **kwargs,
     ) -> str:
         """Generate the substitute for the entity based on it's attributes.
@@ -89,9 +91,11 @@ class LLMLabelGenerator(GeneratorInterface):
 
         Args:
             entity: The entity to generate the label from.
-            add_entity_attrs: Additional entity attribute description to add to the generation.
+            add_entity_attrs (str, optional): Additional entity attribute description to add to the generation.
             temperature: The temperature to use for the generation.
             top_p: The top p to use for the generation.
+            system_prompt (str, optional): The system prompt to use for the generation.
+            user_prompt (str, optional): The user prompt to use for the generation.
 
         Returns:
             The generated entity label substitute.
@@ -101,11 +105,13 @@ class LLMLabelGenerator(GeneratorInterface):
         message = [
             {
                 "role": "system",
-                "content": "You are a helpful AI assistant for generating replacements for text entities.",
+                "content": system_prompt,
             },
             {
                 "role": "user",
-                "content": f"What is a random {add_entity_attrs} {entity.label} replacement for {entity.text}? Respond only with the replacement.",
+                "content": user_prompt.format(
+                    add_entity_attrs=add_entity_attrs, entity=entity
+                ),
             },
         ]
         return self._generate_response(message, temperature, top_p)

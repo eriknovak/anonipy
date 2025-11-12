@@ -15,6 +15,7 @@ license = { file = "LICENSE" }
 dynamic = ["dependencies", "version"]
 keywords = ["python", "machine learning", "natural language processing", "anonymization"]
 classifiers = [
+    "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -22,7 +23,8 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence"
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Text Processing :: Linguistic",
 ]
 requires-python = ">=3.9"
 
@@ -54,3 +56,18 @@ include = ["anonipy*"]
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
 version = { attr = "anonipy.__version__" }
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "--verbose --strict-markers --tb=short"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+]
+filterwarnings = [
+    "ignore:builtin type SwigPy.*:DeprecationWarning",
+    "ignore:builtin type swigvarlink.*:DeprecationWarning",
+]

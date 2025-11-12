@@ -459,6 +459,129 @@ def test_pattern_extractor_detect_repeats_true():
         assert p_entity.score >= 0.5
 
 
+def test_pattern_extractor_numbers_ssn_regex():
+    """Test PatternExtractor for identifying Social Security Numbers using regex"""
+    extractor = PatternExtractor(
+        labels=[
+            {
+                "label": "social security number",
+                "type": "custom",
+                "regex": r"([0-9]{3}-[0-9]{2}-[0-9]{4})",
+            }
+        ],
+        lang=LANGUAGES.ENGLISH,
+    )
+    _, entities = extractor(TEST_ORIGINAL_TEXT)
+    assert len(entities) == 1
+    assert entities[0].text == "123-45-6789"
+    assert entities[0].label == "social security number"
+    assert entities[0].start_index == 121
+    assert entities[0].end_index == 132
+    assert entities[0].type == "custom"
+    assert entities[0].score == 1.0
+
+
+def test_pattern_extractor_numbers_dosage():
+    """Test PatternExtractor for identifying numeric dosages using patterns"""
+    extractor = PatternExtractor(
+        labels=[
+            {
+                "label": "dosage",
+                "type": "string",
+                "pattern": [[{"LIKE_NUM": True}, {"LOWER": "mg"}]],
+            }
+        ],
+        lang=LANGUAGES.ENGLISH,
+    )
+    _, entities = extractor(TEST_ORIGINAL_TEXT)
+    # Should find "200 mg" and "10 mg" (appears twice each in the text)
+    assert len(entities) >= 2
+    dosages = [entity.text for entity in entities]
+    assert "200 mg" in dosages
+    assert "10 mg" in dosages
+    for entity in entities:
+        assert entity.label == "dosage"
+        assert entity.type == "string"
+        assert entity.score == 1.0
+
+
+def test_pattern_extractor_numbers_phone():
+    """Test PatternExtractor for identifying phone numbers using regex"""
+    test_text = "Contact: 555-123-4567 or call (555) 987-6543 for more info."
+    extractor = PatternExtractor(
+        labels=[
+            {
+                "label": "phone",
+                "type": "custom",
+                "regex": r"(\d{3}-\d{3}-\d{4})",
+            }
+        ],
+        lang=LANGUAGES.ENGLISH,
+    )
+    _, entities = extractor(test_text)
+    assert len(entities) == 1
+    assert entities[0].text == "555-123-4567"
+    assert entities[0].label == "phone"
+    assert entities[0].type == "custom"
+    assert entities[0].score == 1.0
+
+
+def test_pattern_extractor_numbers_general():
+    """Test PatternExtractor for identifying general numeric values"""
+    test_text = "The patient weighs 150 pounds and is 72 inches tall."
+    extractor = PatternExtractor(
+        labels=[
+            {
+                "label": "measurement",
+                "type": "string",
+                "pattern": [[{"LIKE_NUM": True}, {"IS_ALPHA": True}]],
+            }
+        ],
+        lang=LANGUAGES.ENGLISH,
+    )
+    _, entities = extractor(test_text)
+    assert len(entities) == 2
+    measurements = [entity.text for entity in entities]
+    assert "150 pounds" in measurements
+    assert "72 inches" in measurements
+    for entity in entities:
+        assert entity.label == "measurement"
+        assert entity.type == "string"
+        assert entity.score == 1.0
+
+
+def test_pattern_extractor_numbers_mixed_formats():
+    """Test PatternExtractor for identifying numbers in various formats"""
+    test_text = "Account: 12345, Balance: $1,234.56, Code: ABC-123"
+    extractor = PatternExtractor(
+        labels=[
+            {
+                "label": "account_number",
+                "type": "custom",
+                "regex": r"Account: (\d+)",
+            },
+            {
+                "label": "amount",
+                "type": "custom",
+                "regex": r"Balance: (\$[\d,]+\.?\d*)",
+            },
+        ],
+        lang=LANGUAGES.ENGLISH,
+    )
+    _, entities = extractor(test_text)
+    assert len(entities) == 2
+
+    # Check account number
+    account_entity = [e for e in entities if e.label == "account_number"][0]
+    assert account_entity.text == "12345"
+    assert account_entity.type == "custom"
+
+    # Check amount
+    amount_entity = [e for e in entities if e.label == "amount"][0]
+    assert amount_entity.text == "$1,234.56"
+    assert amount_entity.type == "custom"
+
+
 def test_multi_extractor_init():
     with pytest.raises(TypeError):
         MultiExtractor()
