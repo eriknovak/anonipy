@@ -2,10 +2,11 @@
 spacy>=3.8.8
 gliner>=0.2.22
 gliner-spacy>=0.0.11
-transformers>=4.45.2
+# maximum version of transformers that gliner supports
+transformers==4.45.2
 sentencepiece>=0.2.1
 accelerate>=0.26.0
-lingua-language-detector==1.3.5
+lingua-language-detector>=2.1.1
 python-dateutil>=2.9.0
 babel>=2.13.0
 dateparser>=1.1.8
