@@ -1,3 +1,18 @@
+### anonipy-0.6.0 (2025-11-13)
+
+**Breaking Changes:**
+
+- Change Python support between v3.10 and v3.13.
+
+**New Features:**
+
+- Add `system_prompt` and `user_prompt` as optional input parameters to the `LLMLabelGenerator`
+- Add unit tests for `PatternExtractor` and new inputs in `LLMLabelGenerator`
+
+**Bug Fixes:**
+
+- Fix deprecations and triggered warnings
+
 ### anonipy-0.5.0 (2025-05-08)
 
 **New Features:**
