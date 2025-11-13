@@ -10,7 +10,7 @@ This section is for developers only. It describes the requirements, the setup pr
 
 Before starting the project make sure these requirements are available:
 
-- [python][python]. The python programming language (v3.9, v3.10, v3.11, v3.12).
+- [python][python]. The python programming language (v3.10, v3.11, v3.12, v3.13).
 
 - [git][git]. For versioning your code.
 
@@ -62,7 +62,7 @@ pytest
 To start live-reloading the documentation, run:
 
 ```bash
-mkdocs serve
+mkdocs serve -a localhost:9999
 ```
 
 When suggesting changes, please refer to the [Material for MkDocs] documentation.

@@ -63,6 +63,10 @@ plugins:
             show_root_toc_entry: False
             members_order: "source"
             heading_level: 3
+  - git-revision-date-localized:  # Add last update dates
+      enable_creation_date: true
+  - minify:  # Minify HTML for faster loading
+      minify_html: true
 
 # Markdown Extensions
 markdown_extensions:
