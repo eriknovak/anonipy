@@ -6,7 +6,6 @@ from typing import Tuple
 import dateparser
 from babel.dates import format_datetime, format_datetime
 
-
 # =====================================
 # Constants
 # =====================================
@@ -132,7 +131,10 @@ def detect_datetime_format(datetime: str, lang: str) -> Tuple[datetime.datetime,
     fdatetime = _prepare_datetime(datetime, lang)
 
     try:
-        parsed_datetime = dateparser.parse(fdatetime, languages=[lang])
+        # Suppress all DeprecationWarnings from dateparser's internal strptime usage
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=DeprecationWarning)
+            parsed_datetime = dateparser.parse(fdatetime, languages=[lang])
 
         for FMT in POSSIBLE_FORMATS:
             try:

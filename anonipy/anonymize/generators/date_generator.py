@@ -188,12 +188,18 @@ class DateGenerator(GeneratorInterface):
                 f"The sub_variant must be one of {', '.join(DATE_TRANSFORM_VARIANTS.values())} to generate dates."
             )
 
-        # detect the date format
-        if self.date_format == "auto":
-            entity_date, date_format = detect_datetime_format(entity.text, self.lang)
-        else:
-            entity_date = dateparser.parse(entity.text, languages=[self.lang])
-            date_format = self.date_format
+        # Suppress all DeprecationWarnings from dateparser's internal strptime usage
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=DeprecationWarning)
+
+            # detect the date format
+            if self.date_format == "auto":
+                entity_date, date_format = detect_datetime_format(
+                    entity.text, self.lang
+                )
+            else:
+                entity_date = dateparser.parse(entity.text, languages=[self.lang])
+                date_format = self.date_format
 
         # validate the input values
         if entity_date is None:

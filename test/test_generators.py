@@ -205,6 +205,22 @@ def test_llm_label_generator_generate_custom(llm_label_generator):
     assert match is not None
     assert match.group(0) == generated_text
 
+def test_llm_label_generator_generate_custom_user_prompt(llm_label_generator):
+    entity = TEST_ENTITIES["name"]
+    generated_text = llm_label_generator.generate(
+        entity, add_entity_attrs="Spanish", temperature=0.5, user_prompt="Respond with the text 'TEST' only."
+    )
+    assert "TEST" in generated_text
+
+def test_llm_label_generator_generate_custom_system_prompt(llm_label_generator):
+    entity = TEST_ENTITIES["name"]
+    generated_text = llm_label_generator.generate(
+        entity, add_entity_attrs="Spanish", temperature=0.5, system_prompt="You are a helpful AI assistant for replying 'TEST'."
+    )
+    regex = entity.get_regex_group() or entity.regex
+    match = re.match(regex, generated_text)
+    assert match is not None
+    assert match.group(0) == generated_text
 
 def test_llm_label_generator_generate_pattern(llm_label_generator):
     entity = TEST_ENTITIES["name:pattern"]

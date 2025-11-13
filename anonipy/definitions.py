@@ -70,6 +70,7 @@ class Entity:
         """
         return f"Entity(text='{self.text}', label='{self.label}', start_index={self.start_index}, end_index={self.end_index}, type='{self.type}')"
 
+
 class Replacement(TypedDict):
     """The class representing the anonipy Replacement object.
 

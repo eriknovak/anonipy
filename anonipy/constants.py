@@ -45,14 +45,25 @@ class LANGUAGES:
     UKRAINIAN = ("uk", "Ukrainian")
 
     @classmethod
-    def supported_languages(self) -> List[str]:
+    def supported_languages(cls) -> List[str]:
         """Return a list of supported languages.
 
         Returns:
             The list of supported languages.
 
         """
-        return [lang[0] for lang in self.__dict__.values() if isinstance(lang, tuple)]
+        languages = [
+            cls.DUTCH[0],
+            cls.ENGLISH[0],
+            cls.FRENCH[0],
+            cls.GERMAN[0],
+            cls.GREEK[0],
+            cls.ITALIAN[0],
+            cls.SLOVENIAN[0],
+            cls.SPANISH[0],
+            cls.UKRAINIAN[0],
+        ]
+        return languages
 
 
 class ENTITY_TYPES:
@@ -105,7 +116,7 @@ class DATE_TRANSFORM_VARIANTS:
     RANDOM = "RANDOM"
 
     @classmethod
-    def values(self) -> List[str]:
+    def values(cls) -> List[str]:
         """Return a list of all possible date transform variants.
 
         Returns:
@@ -113,15 +124,15 @@ class DATE_TRANSFORM_VARIANTS:
 
         """
         return [
-            self.FIRST_DAY_OF_THE_MONTH,
-            self.LAST_DAY_OF_THE_MONTH,
-            self.MIDDLE_OF_THE_MONTH,
-            self.MIDDLE_OF_THE_YEAR,
-            self.RANDOM,
+            cls.FIRST_DAY_OF_THE_MONTH,
+            cls.LAST_DAY_OF_THE_MONTH,
+            cls.MIDDLE_OF_THE_MONTH,
+            cls.MIDDLE_OF_THE_YEAR,
+            cls.RANDOM,
         ]
 
     @classmethod
-    def is_valid(self, value: str) -> bool:
+    def is_valid(cls, value: str) -> bool:
         """Check if the value is a valid date variant.
 
         Args:
@@ -131,4 +142,4 @@ class DATE_TRANSFORM_VARIANTS:
             `True` if the value is a valid date variant, `False` otherwise.
 
         """
-        return value in self.values()
+        return value in cls.values()

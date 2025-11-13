@@ -25,13 +25,13 @@ from ..constants import ENTITY_TYPES
 # Regex definitions
 # =====================================
 
-REGEX_STRING = ".*"
+REGEX_STRING = r".*"
 """The regex definition for string."""
 
-REGEX_INTEGER = "\d+"
+REGEX_INTEGER = r"\d+"
 """The regex definition for integer."""
 
-REGEX_FLOAT = "[\d\.,]+"
+REGEX_FLOAT = r"[\d\.,]+"
 """The regex definition for float."""
 
 REGEX_DATE = (
@@ -113,16 +113,16 @@ REGEX_DATE = (
 """The regex definition for dates."""
 
 REGEX_EMAIL_ADDRESS = (
-    "[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*"
+    r"[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*"
 )
 """The regex definition for email addresses."""
 
 REGEX_PHONE_NUMBER = (
-    "[(]?[\+]?[(]?[0-9]{1,3}[)]?[-\s\.]?([0-9]{2,}[-\s\.]?){2,}([0-9]{3,})"
+    r"[(]?[\+]?[(]?[0-9]{1,3}[)]?[-\s\.]?([0-9]{2,}[-\s\.]?){2,}([0-9]{3,})"
 )
 """The regex definition for phone numbers."""
 
-REGEX_WEBSITE_URL = "((https?|ftp|smtp):\/\/)?(www.)?([a-zA-Z0-9]+\.)+[a-z]{2,}(\/[a-zA-Z0-9#\?\_\.\=\-\&]+|\/?)*"
+REGEX_WEBSITE_URL = r"((https?|ftp|smtp):\/\/)?(www.)?([a-zA-Z0-9]+\.)+[a-z]{2,}(\/[a-zA-Z0-9#\?\_\.\=\-\&]+|\/?)*"
 """The regex definition for website URLs."""
 
 
