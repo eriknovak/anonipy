@@ -3,7 +3,7 @@ spacy>=3.8.8
 gliner>=0.2.22
 gliner-spacy>=0.0.11
 # maximum version of transformers that gliner supports
-transformers==4.45.2
+transformers==4.57.3
 sentencepiece>=0.2.1
 accelerate>=0.26.0
 lingua-language-detector>=2.1.1
