@@ -205,7 +205,7 @@ class PatternExtractor(ExtractorInterface):
             for label in relevant_labels:
                 for match in re.finditer(label["regex"], doc.text):
                     # define the entity span
-                    start, end = match.span(1)
+                    start, end = match.span(1) if match.lastindex else match.span(0)
                     entity = doc.char_span(start, end, label=label["label"])
                     if not entity:
                         continue

@@ -526,6 +526,27 @@ def test_pattern_extractor_numbers_phone():
     assert entities[0].score == 1.0
 
 
+def test_pattern_extractor_regex_without_capture_group():
+    """Test PatternExtractor with regex that has no capture group."""
+    test_text = "Contact: 555-123-4567 or call (555) 987-6543 for more info."
+    extractor = PatternExtractor(
+        labels=[
+            {
+                "label": "phone",
+                "type": "custom",
+                "regex": r"\d{3}-\d{3}-\d{4}",
+            }
+        ],
+        lang=LANGUAGES.ENGLISH,
+    )
+    _, entities = extractor(test_text)
+    assert len(entities) == 1
+    assert entities[0].text == "555-123-4567"
+    assert entities[0].label == "phone"
+    assert entities[0].type == "custom"
+    assert entities[0].score == 1.0
+
+
 def test_pattern_extractor_numbers_general():
     """Test PatternExtractor for identifying general numeric values"""
     test_text = "The patient weighs 150 pounds and is 72 inches tall."
