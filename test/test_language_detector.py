@@ -1,3 +1,5 @@
+"""Tests for anonipy.utils.language_detector."""
+
 import warnings
 
 import pytest
@@ -23,14 +25,27 @@ def language_detector():
 
 
 def test_init(language_detector):
+    """Test LanguageDetector instantiation."""
     assert isinstance(language_detector, LanguageDetector)
 
 
 def test_has_methods(language_detector):
+    """Test that detect method exists."""
     assert hasattr(language_detector, "detect")
 
 
+def test_detect_via_call(language_detector):
+    """Test language detection via __call__."""
+    language = language_detector(
+        "This test verifies that the method is working correctly"
+    )
+    assert language[0] == "en"
+    assert language[1] == "English"
+
+
+
 def test_detect_english(language_detector):
+    """Test detection of English text."""
     language = language_detector.detect(
         "This test verifies that the method is working correctly"
     )
@@ -40,6 +55,7 @@ def test_detect_english(language_detector):
 
 
 def test_detect_slovenian(language_detector):
+    """Test detection of Slovenian text."""
     language = language_detector.detect("Ta test preverja, ali metoda dela pravilno")
     assert language[0] == "sl"
     assert language[1] == "Slovenian"
@@ -47,6 +63,7 @@ def test_detect_slovenian(language_detector):
 
 
 def test_detect_german(language_detector):
+    """Test detection of German text."""
     language = language_detector.detect(
         "Dieser Test überprüft, ob die Methode ordnungsgemäß funktioniert"
     )
@@ -56,6 +73,7 @@ def test_detect_german(language_detector):
 
 
 def test_detect_dutch(language_detector):
+    """Test detection of Dutch text."""
     language = language_detector.detect(
         "Deze test verifieert dat de methode correct werkt"
     )
@@ -65,6 +83,7 @@ def test_detect_dutch(language_detector):
 
 
 def test_detect_spanish(language_detector):
+    """Test detection of Spanish text."""
     language = language_detector.detect(
         "Esta prueba verifica que el método está funcionando correctamente"
     )
@@ -74,6 +93,7 @@ def test_detect_spanish(language_detector):
 
 
 def test_detect_greek(language_detector):
+    """Test detection of Greek text."""
     language = language_detector.detect(
         "Αυτή η δοκιμή επαληθεύει ότι η μέθοδος λειτουργεί σωστά"
     )
@@ -83,6 +103,7 @@ def test_detect_greek(language_detector):
 
 
 def test_detect_italian(language_detector):
+    """Test detection of Italian text."""
     language = language_detector.detect(
         "Questo test verifica che il metodo funzioni correttamente"
     )
@@ -92,6 +113,7 @@ def test_detect_italian(language_detector):
 
 
 def test_detect_french(language_detector):
+    """Test detection of French text."""
     language = language_detector.detect(
         "Ce test vérifie que la méthode fonctionne correctement"
     )
@@ -101,6 +123,7 @@ def test_detect_french(language_detector):
 
 
 def test_detect_ukrainian(language_detector):
+    """Test detection of Ukrainian text."""
     language = language_detector.detect("Цей тест перевіряє, чи метод працює правильно")
     assert language[0] == "uk"
     assert language[1] == "Ukrainian"

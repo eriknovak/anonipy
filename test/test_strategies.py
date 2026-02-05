@@ -1,3 +1,5 @@
+"""Tests for anonipy.anonymize.strategies."""
+
 import pytest
 
 from anonipy.definitions import Entity
@@ -8,7 +10,7 @@ from anonipy.anonymize.strategies import (
 )
 
 # =====================================
-# Helper functions
+# Test Data
 # =====================================
 
 TEST_TEXT = "Test this string, and this test too!"
@@ -48,10 +50,12 @@ def pseudonymization_strategy():
 
 
 def test_redaction_strategy_init(redaction_strategy):
+    """Test RedactionStrategy instantiation."""
     assert redaction_strategy.__class__ == RedactionStrategy
 
 
 def test_redaction_strategy_has_methods(redaction_strategy):
+    """Test that anonymize method exists."""
     assert hasattr(redaction_strategy, "anonymize")
 
 
@@ -63,6 +67,7 @@ def test_redaction_strategy_has_methods(redaction_strategy):
     ],
 )
 def test_redaction_strategy_inputs(substitute_label, expected_label):
+    """Test RedactionStrategy with different substitute labels."""
     strategy = RedactionStrategy(substitute_label=substitute_label)
     assert strategy.substitute_label == expected_label
 
@@ -129,10 +134,18 @@ def test_redaction_strategy_inputs(substitute_label, expected_label):
 def test_redaction_strategy_anonymize(
     substitute_label, expected_text, expected_replacements
 ):
+    """Test RedactionStrategy anonymization output."""
     strategy = RedactionStrategy(substitute_label=substitute_label)
     anonymized_text, replacements = strategy.anonymize(TEST_TEXT, TEST_ENTITIES)
     assert anonymized_text == expected_text
     assert replacements == expected_replacements
+
+
+def test_redaction_strategy_empty_entities(redaction_strategy):
+    """Test RedactionStrategy with no entities."""
+    anonymized_text, replacements = redaction_strategy.anonymize(TEST_TEXT, [])
+    assert anonymized_text == TEST_TEXT
+    assert replacements == []
 
 
 # =====================================
@@ -141,10 +154,12 @@ def test_redaction_strategy_anonymize(
 
 
 def test_masking_strategy_init(masking_strategy):
+    """Test MaskingStrategy instantiation."""
     assert masking_strategy.__class__ == MaskingStrategy
 
 
 def test_masking_strategy_methods(masking_strategy):
+    """Test that anonymize method exists."""
     assert hasattr(masking_strategy, "anonymize")
 
 
@@ -156,6 +171,7 @@ def test_masking_strategy_methods(masking_strategy):
     ],
 )
 def test_masking_strategy_inputs(substitute_label, expected_label):
+    """Test MaskingStrategy with different substitute labels."""
     strategy = MaskingStrategy(substitute_label=substitute_label)
     assert strategy.substitute_label == expected_label
 
@@ -222,10 +238,18 @@ def test_masking_strategy_inputs(substitute_label, expected_label):
 def test_masking_strategy_anonymize(
     substitute_label, expected_text, expected_replacements
 ):
+    """Test MaskingStrategy anonymization output."""
     strategy = MaskingStrategy(substitute_label=substitute_label)
     anonymized_text, replacements = strategy.anonymize(TEST_TEXT, TEST_ENTITIES)
     assert anonymized_text == expected_text
     assert replacements == expected_replacements
+
+
+def test_masking_strategy_empty_entities(masking_strategy):
+    """Test MaskingStrategy with no entities."""
+    anonymized_text, replacements = masking_strategy.anonymize(TEST_TEXT, [])
+    assert anonymized_text == TEST_TEXT
+    assert replacements == []
 
 
 # =====================================
@@ -234,19 +258,23 @@ def test_masking_strategy_anonymize(
 
 
 def test_pseudonymization_strategy_init():
+    """Test PseudonymizationStrategy requires mapping arg."""
     with pytest.raises(TypeError):
         PseudonymizationStrategy()
 
 
 def test_pseudonymization_strategy_init_inputs(pseudonymization_strategy):
+    """Test PseudonymizationStrategy instantiation with mapping."""
     assert pseudonymization_strategy.__class__ == PseudonymizationStrategy
 
 
 def test_pseudonymization_strategy_methods(pseudonymization_strategy):
+    """Test that anonymize method exists."""
     assert hasattr(pseudonymization_strategy, "anonymize")
 
 
 def test_pseudonymization_strategy_anonymize_inputs(pseudonymization_strategy):
+    """Test PseudonymizationStrategy anonymization output."""
     anonymized_text, replacements = pseudonymization_strategy.anonymize(
         TEST_TEXT, TEST_ENTITIES
     )
@@ -274,3 +302,12 @@ def test_pseudonymization_strategy_anonymize_inputs(pseudonymization_strategy):
             "anonymized_text": "[TEST]",
         },
     ]
+
+
+def test_pseudonymization_strategy_empty_entities(pseudonymization_strategy):
+    """Test PseudonymizationStrategy with no entities."""
+    anonymized_text, replacements = pseudonymization_strategy.anonymize(
+        TEST_TEXT, []
+    )
+    assert anonymized_text == TEST_TEXT
+    assert replacements == []

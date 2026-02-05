@@ -1,3 +1,5 @@
+"""Tests for anonipy.anonymize.extractors."""
+
 import warnings
 
 import pytest
@@ -8,12 +10,13 @@ from anonipy.definitions import Entity
 from anonipy.anonymize.extractors import NERExtractor, PatternExtractor, MultiExtractor
 from anonipy.constants import LANGUAGES
 from anonipy.anonymize.helpers import filter_entities
+from test.conftest import HAS_GPU
 
 # disable transformers logging
 logging.set_verbosity_error()
 
 # =====================================
-# Helper functions
+# Test Data
 # =====================================
 
 TEST_ORIGINAL_TEXT = """\
@@ -89,6 +92,7 @@ TEST_NER_ENTITIES = [
         type="date",
     ),
 ]
+
 TEST_REPEATS_ENTITIES = [
     Entity(
         text="John Doe",
@@ -98,6 +102,7 @@ TEST_REPEATS_ENTITIES = [
         type="string",
     ),
 ]
+
 TEST_PATTERN_ENTITIES = [
     Entity(
         text="15-01-1985",
@@ -164,6 +169,7 @@ TEST_PATTERN_ENTITIES = [
         type="string",
     ),
 ]
+
 TEST_PATTERN_DETECT_REPEATS = [
     Entity(
         text="20-05-2024",
@@ -183,6 +189,7 @@ TEST_PATTERN_DETECT_REPEATS = [
         regex=r"Date of Examination: (.*)",
     ),
 ]
+
 TEST_MULTI_REPEATS = [
     Entity(
         text="John Doe",
@@ -223,6 +230,10 @@ TEST_MULTI_REPEATS = [
         type="string",
     ),
 ]
+
+# =====================================
+# Fixtures
+# =====================================
 
 
 @pytest.fixture(autouse=True)
@@ -281,35 +292,49 @@ def multi_extractor(ner_extractor, pattern_extractor):
     return MultiExtractor([ner_extractor, pattern_extractor])
 
 
+# =====================================
+# Test NER Extractor
+# =====================================
+
+
 def test_ner_extractor_init():
+    """Test that NERExtractor requires arguments."""
     with pytest.raises(TypeError):
         NERExtractor()
 
 
+@pytest.mark.slow
 def test_ner_extractor_init_inputs(ner_extractor):
+    """Test NERExtractor instantiation with custom inputs."""
     extractor = NERExtractor(
         labels=ner_extractor.labels, lang=LANGUAGES.ENGLISH, score_th=0.5
     )
     assert isinstance(extractor, NERExtractor)
 
 
+@pytest.mark.skipif(not HAS_GPU, reason="GPU not available")
+@pytest.mark.slow
 def test_ner_extractor_init_gpu(ner_extractor):
-    if torch.cuda.is_available():
-        extractor = NERExtractor(
-            labels=ner_extractor.labels,
-            lang=LANGUAGES.ENGLISH,
-            score_th=0.5,
-            use_gpu=True,
-        )
-        assert isinstance(extractor, NERExtractor)
+    """Test NERExtractor instantiation with GPU."""
+    extractor = NERExtractor(
+        labels=ner_extractor.labels,
+        lang=LANGUAGES.ENGLISH,
+        score_th=0.5,
+        use_gpu=True,
+    )
+    assert isinstance(extractor, NERExtractor)
 
 
+@pytest.mark.slow
 def test_ner_extractor_methods(ner_extractor):
+    """Test that NERExtractor has required methods."""
     assert hasattr(ner_extractor, "__call__")
     assert hasattr(ner_extractor, "display")
 
 
+@pytest.mark.slow
 def test_ner_extractor_extract_default_params(ner_extractor):
+    """Test NER extraction with default parameters."""
     _, entities = ner_extractor(TEST_ORIGINAL_TEXT)
     for p_entity, t_entity in zip(entities, TEST_NER_ENTITIES):
         assert p_entity.text == t_entity.text
@@ -321,7 +346,9 @@ def test_ner_extractor_extract_default_params(ner_extractor):
         assert p_entity.score >= 0.5
 
 
+@pytest.mark.slow
 def test_ner_extractor_extract_default_params_input():
+    """Test NER extraction with explicit default model."""
     extractor = NERExtractor(
         labels=[
             {"label": "name", "type": "string"},
@@ -348,7 +375,9 @@ def test_ner_extractor_extract_default_params_input():
         assert p_entity.score >= 0.5
 
 
+@pytest.mark.slow
 def test_ner_extractor_extract_custom_params_input():
+    """Test NER extraction with custom GLiNER model."""
     extractor = NERExtractor(
         labels=[
             {"label": "name", "type": "string"},
@@ -375,7 +404,9 @@ def test_ner_extractor_extract_custom_params_input():
         assert p_entity.score >= 0.5
 
 
+@pytest.mark.slow
 def test_ner_extractor_detect_repeats_true(ner_extractor):
+    """Test NER extraction with repeat detection enabled."""
     _, entities = ner_extractor(TEST_ORIGINAL_TEXT, detect_repeats=True)
     expected_entities = TEST_NER_ENTITIES + TEST_REPEATS_ENTITIES
     for p_entity, t_entity in zip(entities, expected_entities):
@@ -388,21 +419,30 @@ def test_ner_extractor_detect_repeats_true(ner_extractor):
         assert p_entity.score >= 0.5
 
 
+# =====================================
+# Test Pattern Extractor
+# =====================================
+
+
 def test_pattern_extractor_init():
+    """Test that PatternExtractor requires arguments."""
     with pytest.raises(TypeError):
         PatternExtractor()
 
 
 def test_pattern_extractor_init_inputs(pattern_extractor):
+    """Test PatternExtractor instantiation."""
     assert isinstance(pattern_extractor, PatternExtractor)
 
 
 def test_pattern_extractor_methods(pattern_extractor):
+    """Test that PatternExtractor has required methods."""
     assert hasattr(pattern_extractor, "__call__")
     assert hasattr(pattern_extractor, "display")
 
 
 def test_pattern_extractor_extract_default(pattern_extractor):
+    """Test pattern extraction with default parameters."""
     doc, entities = pattern_extractor(TEST_ORIGINAL_TEXT)
     for p_entity, t_entity in zip(entities, TEST_PATTERN_ENTITIES):
         assert p_entity.text == t_entity.text
@@ -415,6 +455,7 @@ def test_pattern_extractor_extract_default(pattern_extractor):
 
 
 def test_pattern_extractor_detect_repeats_false():
+    """Test pattern extraction with repeat detection disabled."""
     extractor = PatternExtractor(
         labels=[
             {
@@ -438,6 +479,7 @@ def test_pattern_extractor_detect_repeats_false():
 
 
 def test_pattern_extractor_detect_repeats_true():
+    """Test pattern extraction with repeat detection enabled."""
     extractor = PatternExtractor(
         labels=[
             {
@@ -460,7 +502,7 @@ def test_pattern_extractor_detect_repeats_true():
 
 
 def test_pattern_extractor_numbers_ssn_regex():
-    """Test PatternExtractor for identifying Social Security Numbers using regex"""
+    """Test PatternExtractor for identifying Social Security Numbers using regex."""
     extractor = PatternExtractor(
         labels=[
             {
@@ -482,7 +524,7 @@ def test_pattern_extractor_numbers_ssn_regex():
 
 
 def test_pattern_extractor_numbers_dosage():
-    """Test PatternExtractor for identifying numeric dosages using patterns"""
+    """Test PatternExtractor for identifying numeric dosages using patterns."""
     extractor = PatternExtractor(
         labels=[
             {
@@ -506,7 +548,7 @@ def test_pattern_extractor_numbers_dosage():
 
 
 def test_pattern_extractor_numbers_phone():
-    """Test PatternExtractor for identifying phone numbers using regex"""
+    """Test PatternExtractor for identifying phone numbers using regex."""
     test_text = "Contact: 555-123-4567 or call (555) 987-6543 for more info."
     extractor = PatternExtractor(
         labels=[
@@ -548,7 +590,7 @@ def test_pattern_extractor_regex_without_capture_group():
 
 
 def test_pattern_extractor_numbers_general():
-    """Test PatternExtractor for identifying general numeric values"""
+    """Test PatternExtractor for identifying general numeric values."""
     test_text = "The patient weighs 150 pounds and is 72 inches tall."
     extractor = PatternExtractor(
         labels=[
@@ -572,7 +614,7 @@ def test_pattern_extractor_numbers_general():
 
 
 def test_pattern_extractor_numbers_mixed_formats():
-    """Test PatternExtractor for identifying numbers in various formats"""
+    """Test PatternExtractor for identifying numbers in various formats."""
     test_text = "Account: 12345, Balance: $1,234.56, Code: ABC-123"
     extractor = PatternExtractor(
         labels=[
@@ -603,21 +645,34 @@ def test_pattern_extractor_numbers_mixed_formats():
     assert amount_entity.type == "custom"
 
 
+# =====================================
+# Test Multi Extractor
+# =====================================
+
+
 def test_multi_extractor_init():
+    """Test that MultiExtractor requires arguments."""
     with pytest.raises(TypeError):
         MultiExtractor()
 
 
+@pytest.mark.slow
 def test_multi_extractor_init_inputs(multi_extractor):
+    """Test MultiExtractor instantiation."""
     assert isinstance(multi_extractor, MultiExtractor)
 
 
+@pytest.mark.slow
 def test_multi_extractor_methods(multi_extractor):
+    """Test that MultiExtractor has required methods."""
     assert hasattr(multi_extractor, "__call__")
     assert hasattr(multi_extractor, "display")
 
 
+@pytest.mark.slow
+@pytest.mark.integration
 def test_multi_extractor_extract_default(multi_extractor):
+    """Test MultiExtractor extraction with default parameters."""
     extractor_outputs, joint_entities = multi_extractor(TEST_ORIGINAL_TEXT)
 
     # check the performance of the first extractor
@@ -655,16 +710,22 @@ def test_multi_extractor_extract_default(multi_extractor):
 
 
 def test_multi_extractor_extract_empty_extractor_list():
+    """Test that empty extractor list raises ValueError."""
     with pytest.raises(ValueError):
         MultiExtractor([])
 
 
+@pytest.mark.slow
 def test_multi_extractor_extract_invalid_extractor_list():
+    """Test that invalid extractor in list raises ValueError."""
     with pytest.raises(ValueError):
         MultiExtractor([NERExtractor(labels=[], lang=LANGUAGES.ENGLISH), "invalid"])
 
 
+@pytest.mark.slow
+@pytest.mark.integration
 def test_multi_extractor_extract_single_extractor_ner(multi_extractor):
+    """Test MultiExtractor with single NER extractor."""
     extractor = MultiExtractor([multi_extractor.extractors[0]])
     extractor_outputs, joint_entities = extractor(TEST_ORIGINAL_TEXT)
 
@@ -689,7 +750,10 @@ def test_multi_extractor_extract_single_extractor_ner(multi_extractor):
         assert p_entity.score >= 0.5
 
 
+@pytest.mark.slow
+@pytest.mark.integration
 def test_multi_extractor_extract_single_extractor_pattern(multi_extractor):
+    """Test MultiExtractor with single pattern extractor."""
     extractor = MultiExtractor([multi_extractor.extractors[1]])
     extractor_outputs, joint_entities = extractor(TEST_ORIGINAL_TEXT)
 
@@ -714,7 +778,10 @@ def test_multi_extractor_extract_single_extractor_pattern(multi_extractor):
         assert p_entity.score >= 0.5
 
 
+@pytest.mark.slow
+@pytest.mark.integration
 def test_multi_extractor_detect_repeats_false():
+    """Test MultiExtractor with repeat detection disabled."""
     extractors = [
         NERExtractor(
             labels=[
@@ -743,7 +810,10 @@ def test_multi_extractor_detect_repeats_false():
         assert p_entity.score >= 0.5
 
 
+@pytest.mark.slow
+@pytest.mark.integration
 def test_multi_extractor_detect_repeats_true():
+    """Test MultiExtractor with repeat detection enabled."""
     extractors = [
         NERExtractor(
             labels=[

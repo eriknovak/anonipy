@@ -1,3 +1,5 @@
+"""Tests for anonipy.anonymize.generators."""
+
 import re
 import warnings
 
@@ -89,9 +91,8 @@ DATETIME_STRS = [
 ]
 
 # =====================================
-# Helper functions
+# Test Data
 # =====================================
-
 
 TEST_ORIGINAL_TEXT = """\
 Medical Record
@@ -182,11 +183,15 @@ def llm_label_generator():
     return LLMLabelGenerator()
 
 
+@pytest.mark.slow
 def test_llm_label_generator_has_methods(llm_label_generator):
+    """Test that LLMLabelGenerator has generate method."""
     assert hasattr(llm_label_generator, "generate")
 
 
+@pytest.mark.slow
 def test_llm_label_generator_generate_default(llm_label_generator):
+    """Test LLM generation with default parameters."""
     entity = TEST_ENTITIES["name"]
     generated_text = llm_label_generator.generate(entity)
     regex = entity.get_regex_group() or entity.regex
@@ -195,7 +200,9 @@ def test_llm_label_generator_generate_default(llm_label_generator):
     assert match.group(0) == generated_text
 
 
+@pytest.mark.slow
 def test_llm_label_generator_generate_custom(llm_label_generator):
+    """Test LLM generation with custom entity attributes."""
     entity = TEST_ENTITIES["name"]
     generated_text = llm_label_generator.generate(
         entity, add_entity_attrs="Spanish", temperature=0.5
@@ -205,14 +212,20 @@ def test_llm_label_generator_generate_custom(llm_label_generator):
     assert match is not None
     assert match.group(0) == generated_text
 
+
+@pytest.mark.slow
 def test_llm_label_generator_generate_custom_user_prompt(llm_label_generator):
+    """Test LLM generation with custom user prompt."""
     entity = TEST_ENTITIES["name"]
     generated_text = llm_label_generator.generate(
         entity, add_entity_attrs="Spanish", temperature=0.5, user_prompt="Respond with the text 'TEST' only."
     )
     assert "TEST" in generated_text
 
+
+@pytest.mark.slow
 def test_llm_label_generator_generate_custom_system_prompt(llm_label_generator):
+    """Test LLM generation with custom system prompt."""
     entity = TEST_ENTITIES["name"]
     generated_text = llm_label_generator.generate(
         entity, add_entity_attrs="Spanish", temperature=0.5, system_prompt="You are a helpful AI assistant for replying 'TEST'."
@@ -222,7 +235,10 @@ def test_llm_label_generator_generate_custom_system_prompt(llm_label_generator):
     assert match is not None
     assert match.group(0) == generated_text
 
+
+@pytest.mark.slow
 def test_llm_label_generator_generate_pattern(llm_label_generator):
+    """Test LLM generation with pattern-based entity."""
     entity = TEST_ENTITIES["name:pattern"]
     generated_text = llm_label_generator.generate(entity)
     regex = entity.get_regex_group() or entity.regex
@@ -248,11 +264,15 @@ def suppress_warnings():
     warnings.filterwarnings("ignore", category=FutureWarning)
 
 
+@pytest.mark.slow
 def test_mask_label_generator_has_methods(mask_label_generator):
+    """Test that MaskLabelGenerator has generate method."""
     assert hasattr(mask_label_generator, "generate")
 
 
+@pytest.mark.slow
 def test_mask_label_generator_generate_default(mask_label_generator):
+    """Test mask generation with default parameters."""
     entity = TEST_ENTITIES["name"]
     generated_text = mask_label_generator.generate(entity, text=TEST_ORIGINAL_TEXT)
     match = re.match(entity.regex, generated_text)
@@ -271,10 +291,12 @@ def date_generator():
 
 
 def test_date_generator_has_methods(date_generator):
+    """Test that DateGenerator has generate method."""
     assert hasattr(date_generator, "generate")
 
 
 def test_date_generator_generate_default(date_generator):
+    """Test date generation with default parameters."""
     entity = TEST_ENTITIES["date"][0]
     generated_text = date_generator.generate(entity)
     match = re.match(entity.regex, generated_text)
@@ -283,6 +305,7 @@ def test_date_generator_generate_default(date_generator):
 
 
 def test_date_generator_generate_custom_date_format():
+    """Test date generation with custom format."""
     entity = TEST_ENTITIES["date"][0]
     generator = DateGenerator(date_format="dd-MM-yyyy")
     generated_text = generator.generate(entity)
@@ -292,6 +315,7 @@ def test_date_generator_generate_custom_date_format():
 
 
 def test_date_generator_generate_non_matching_date_format():
+    """Test date generation with non-matching format."""
     entity = TEST_ENTITIES["date"][0]
     generator = DateGenerator(date_format="yyyy-MM-dd")
     custom_date = generator.generate(entity, sub_variant="FIRST_DAY_OF_THE_MONTH")
@@ -299,6 +323,7 @@ def test_date_generator_generate_non_matching_date_format():
 
 
 def test_date_generator_generate_first_day_of_the_month(date_generator):
+    """Test date generation for first day of the month."""
     entity = TEST_ENTITIES["date"][0]
     generated_text = date_generator.generate(
         entity, sub_variant="FIRST_DAY_OF_THE_MONTH"
@@ -307,6 +332,7 @@ def test_date_generator_generate_first_day_of_the_month(date_generator):
 
 
 def test_date_generator_generate_last_day_of_the_month(date_generator):
+    """Test date generation for last day of the month."""
     entity = TEST_ENTITIES["date"][0]
     generated_text = date_generator.generate(
         entity, sub_variant="LAST_DAY_OF_THE_MONTH"
@@ -315,18 +341,21 @@ def test_date_generator_generate_last_day_of_the_month(date_generator):
 
 
 def test_date_generator_generate_middle_of_the_month(date_generator):
+    """Test date generation for middle of the month."""
     entity = TEST_ENTITIES["date"][0]
     generated_text = date_generator.generate(entity, sub_variant="MIDDLE_OF_THE_MONTH")
     assert generated_text == "15-05-2024"
 
 
 def test_date_generator_generate_middle_of_the_year(date_generator):
+    """Test date generation for middle of the year."""
     entity = TEST_ENTITIES["date"][0]
     generated_text = date_generator.generate(entity, sub_variant="MIDDLE_OF_THE_YEAR")
     assert generated_text == "01-07-2024"
 
 
 def test_date_generator_generate_random(date_generator):
+    """Test date generation with random variant."""
     entity = TEST_ENTITIES["date"][0]
     generated_text = date_generator.generate(entity, sub_variant="RANDOM")
     match = re.match(entity.regex, generated_text)
@@ -335,12 +364,14 @@ def test_date_generator_generate_random(date_generator):
 
 
 def test_date_generator_generate_uncorrect_type(date_generator):
+    """Test that non-date entity raises ValueError."""
     entity = TEST_ENTITIES["name"]
     with pytest.raises(ValueError):
         date_generator.generate(entity)
 
 
 def test_date_generator_process_different_formats(date_generator):
+    """Test date generation across all supported formats."""
     for entity in TEST_ENTITIES["date"]:
         try:
             date_generator.generate(entity, sub_variant="RANDOM")
@@ -361,10 +392,12 @@ def number_generator():
 
 
 def test_number_generator_has_methods(number_generator):
+    """Test that NumberGenerator has generate method."""
     assert hasattr(number_generator, "generate")
 
 
 def test_number_generator_generate_integer(number_generator):
+    """Test number generation for integer type."""
     entity = TEST_ENTITIES["integer"]
     generated_text = number_generator.generate(entity)
     match = re.match(entity.regex, generated_text)
@@ -373,6 +406,7 @@ def test_number_generator_generate_integer(number_generator):
 
 
 def test_number_generator_generate_float(number_generator):
+    """Test number generation for float type."""
     entity = TEST_ENTITIES["float"]
     generated_text = number_generator.generate(entity)
     match = re.match(entity.regex, generated_text)
@@ -381,6 +415,7 @@ def test_number_generator_generate_float(number_generator):
 
 
 def test_number_generator_generate_custom(number_generator):
+    """Test number generation for custom regex type."""
     entity = TEST_ENTITIES["custom"]
     generated_text = number_generator.generate(entity)
     match = re.match(entity.regex, generated_text)
@@ -389,6 +424,7 @@ def test_number_generator_generate_custom(number_generator):
 
 
 def test_number_generator_generate_uncorrect_type(number_generator):
+    """Test that non-numeric entity raises ValueError."""
     entity = TEST_ENTITIES["name"]
     with pytest.raises(ValueError):
         number_generator.generate(entity)

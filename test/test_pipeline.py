@@ -1,3 +1,5 @@
+"""Tests for anonipy.anonymize.pipeline."""
+
 import os
 import shutil
 import warnings
@@ -41,35 +43,51 @@ def setup():
 
 
 def test_init():
+    """Test that Pipeline requires arguments."""
     with pytest.raises(TypeError):
         Pipeline()
 
 
+@pytest.mark.slow
+@pytest.mark.integration
 def test_init_extractor_single(setup):
+    """Test Pipeline initialization with a single extractor."""
     extractors, _, strategy, _, _ = setup
     pipeline = Pipeline(extractors[0], strategy)
     assert isinstance(pipeline, Pipeline)
 
 
+@pytest.mark.slow
+@pytest.mark.integration
 def test_init_extractor_list(setup):
+    """Test Pipeline initialization with a list of extractors."""
     extractors, _, strategy, _, _ = setup
     pipeline = Pipeline(extractors, strategy)
     assert isinstance(pipeline, Pipeline)
 
 
+@pytest.mark.slow
+@pytest.mark.integration
 def test_init_extractor_multi(setup):
+    """Test Pipeline initialization with MultiExtractor."""
     _, multi_extractor, strategy, _, _ = setup
     pipeline = Pipeline(multi_extractor, strategy)
     assert isinstance(pipeline, Pipeline)
 
 
+@pytest.mark.slow
+@pytest.mark.integration
 def test_methods(setup):
+    """Test that Pipeline has anonymize method."""
     _, multi_extractor, strategy, _, _ = setup
     pipeline = Pipeline(multi_extractor, strategy)
     assert hasattr(pipeline, "anonymize")
 
 
+@pytest.mark.slow
+@pytest.mark.integration
 def test_anonymize(setup):
+    """Test Pipeline anonymization of files."""
     _, multi_extractor, strategy, input_dir, output_dir = setup
     pipeline = Pipeline(multi_extractor, strategy)
     pipeline.anonymize(input_dir, output_dir)
@@ -81,7 +99,10 @@ def test_anonymize(setup):
                 assert f.read()
 
 
+@pytest.mark.slow
+@pytest.mark.integration
 def test_anonymize_flatten(setup):
+    """Test Pipeline anonymization with flatten option."""
     _, multi_extractor, strategy, input_dir, output_dir = setup
     pipeline = Pipeline(multi_extractor, strategy)
     pipeline.anonymize(input_dir, output_dir, flatten=True)
@@ -93,14 +114,20 @@ def test_anonymize_flatten(setup):
                 assert f.read()
 
 
+@pytest.mark.slow
+@pytest.mark.integration
 def test_anonymize_invalid_input_dir(setup):
+    """Test Pipeline with invalid input directory."""
     _, multi_extractor, strategy, _, output_dir = setup
     pipeline = Pipeline(multi_extractor, strategy)
     with pytest.raises(ValueError):
         pipeline.anonymize("invalid", output_dir)
 
 
+@pytest.mark.slow
+@pytest.mark.integration
 def test_anonymize_invalid_output_dir(setup):
+    """Test Pipeline with input dir as output dir."""
     _, multi_extractor, strategy, input_dir, _ = setup
     pipeline = Pipeline(multi_extractor, strategy)
     with pytest.raises(ValueError):

@@ -1,3 +1,5 @@
+"""Tests for anonipy.utils.regex."""
+
 import pytest
 
 from anonipy.utils.regex import (
@@ -46,16 +48,23 @@ TEST_CASES = [
 ]
 
 # =====================================
-# Test Entity
+# Test Regex Mapping
 # =====================================
 
 
 def test_init():
+    """Test that regex_mapping is a RegexMapping instance."""
     assert isinstance(regex_mapping, RegexMapping)
     assert hasattr(regex_mapping, "regex_mapping")
 
 
 @pytest.mark.parametrize("test_case", TEST_CASES)
 def test_regex_mapping(test_case):
+    """Test that entity types map to the correct regex."""
     assert regex_mapping[test_case["entity"]] == test_case["regex"]
     assert regex_mapping[test_case["value"]] == regex_mapping[test_case["entity"]]
+
+
+def test_unknown_type_returns_default():
+    """Test that an unknown type returns the default '.*' regex."""
+    assert regex_mapping["nonexistent_type_xyz"] == ".*"
