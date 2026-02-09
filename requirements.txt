@@ -14,4 +14,4 @@ dateparser>=1.2.2
 pypdf>=4.2.0
 python-docx>=1.1.2
 # Monitoring
-tqdm==4.67.1
+tqdm==4.67.3
