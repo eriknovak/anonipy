@@ -225,13 +225,13 @@ def write_file(text: str, file_path: str, encode: Union[str, bool] = True) -> No
     if not isinstance(file_path, str):
         raise TypeError("file_path must be a string")
 
+    if not isinstance(encode, str) and not isinstance(encode, bool):
+        raise TypeError("encode must be a string or a boolean")
+
     if not os.path.exists(os.path.dirname(file_path)):
         raise FileNotFoundError(
             f"The directory does not exist: {os.path.dirname(file_path)}"
         )
-
-    if not isinstance(encode, str) and not isinstance(encode, bool):
-        raise TypeError("encode must be a string or a boolean")
 
     encoding = None
     if isinstance(encode, str):
