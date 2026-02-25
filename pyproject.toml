@@ -72,4 +72,6 @@ markers = [
 filterwarnings = [
     "ignore:builtin type SwigPy.*:DeprecationWarning",
     "ignore:builtin type swigvarlink.*:DeprecationWarning",
+    "ignore:`torch.jit.script` is deprecated:DeprecationWarning",
+    "ignore:The `resume_download` argument is deprecated:UserWarning",
 ]
