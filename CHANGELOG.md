@@ -1,3 +1,14 @@
+### anonipy-0.6.1 (2026-02-25)
+
+**Bug Fixes:**
+
+- Replace `gliner-spacy` with a local spacy component implementation to fix model loading errors with transformers v5
+- Add `protobuf` dependency and relax version constraints
+- Fix regex without capture groups in `PatternExtractor`
+- Add transformers v5 compatibility for `LLMLabelGenerator`
+- Expand test suite and add slow/integration markers
+- Suppress third-party deprecation warnings in pytest
+
 ### anonipy-0.6.0 (2025-11-13)
 
 **Breaking Changes:**
