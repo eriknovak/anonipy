@@ -8,7 +8,6 @@ from spacy.tokens import Span, Doc
 from ..definitions import Entity, Replacement
 from ..constants import ENTITY_TYPES
 
-
 # =====================================
 # Entity converters
 # =====================================

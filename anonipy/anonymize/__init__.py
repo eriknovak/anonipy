@@ -23,5 +23,4 @@ from . import strategies
 from . import pipeline
 from .helpers import anonymize
 
-
 __all__ = ["extractors", "generators", "strategies", "anonymize", "pipeline"]

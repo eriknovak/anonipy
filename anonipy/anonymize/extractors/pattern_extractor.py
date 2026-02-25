@@ -20,7 +20,6 @@ from ...utils.colors import get_label_color
 
 from .interface import ExtractorInterface
 
-
 # ===============================================
 # Extractor class
 # ===============================================

@@ -15,5 +15,4 @@ from .multi_extractor import MultiExtractor
 from .ner_extractor import NERExtractor
 from .pattern_extractor import PatternExtractor
 
-
 __all__ = ["ExtractorInterface", "MultiExtractor", "NERExtractor", "PatternExtractor"]

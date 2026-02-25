@@ -16,7 +16,6 @@ from .extractors import ExtractorInterface, MultiExtractor
 from .strategies import StrategyInterface
 from ..utils.file_system import open_file, write_file
 
-
 # =====================================
 # Pipeline class
 # =====================================

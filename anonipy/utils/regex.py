@@ -20,7 +20,6 @@ from collections import defaultdict
 
 from ..constants import ENTITY_TYPES
 
-
 # =====================================
 # Regex definitions
 # =====================================

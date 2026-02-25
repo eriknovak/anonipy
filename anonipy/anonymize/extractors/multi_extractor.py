@@ -10,7 +10,6 @@ from ..helpers import merge_entities
 
 from .interface import ExtractorInterface
 
-
 # ===============================================
 # Extractor class
 # ===============================================

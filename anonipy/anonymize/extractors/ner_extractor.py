@@ -15,12 +15,12 @@ from ..helpers import (
     create_spacy_entities,
 )
 from ...utils.regex import regex_mapping
+from ...utils import gliner_spacy as _gliner_spacy  # noqa: F401 — registers factory
 from ...constants import LANGUAGES
 from ...definitions import Entity
 from ...utils.colors import get_label_color
 
 from .interface import ExtractorInterface
-
 
 # ===============================================
 # Extractor class
@@ -93,10 +93,7 @@ class NERExtractor(ExtractorInterface):
         self.spacy_style = spacy_style
         self.labels = self._prepare_labels(labels)
 
-        with warnings.catch_warnings():
-            # TODO: remove once the GLiNER package includes the fix (inproper file closing)
-            warnings.filterwarnings("ignore", category=ResourceWarning)
-            self.pipeline = self._prepare_pipeline()
+        self.pipeline = self._prepare_pipeline()
 
     def __call__(
         self, text: str, detect_repeats: bool = False, *args, **kwargs

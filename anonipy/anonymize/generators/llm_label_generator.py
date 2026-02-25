@@ -215,12 +215,20 @@ class LLMLabelGenerator(GeneratorInterface):
         """
 
         # tokenize the message
-        input_ids = self.tokenizer.apply_chat_template(
+        tokenized = self.tokenizer.apply_chat_template(
             message, tokenize=True, return_tensors="pt", add_generation_prompt=True
-        ).to(self.model.device)
+        )
 
-        # create attention mask (1 for all tokens)
-        attention_mask = torch.ones_like(input_ids)
+        # handle both tensor (transformers <5) and BatchEncoding (transformers >=5)
+        if isinstance(tokenized, torch.Tensor):
+            input_ids = tokenized.to(self.model.device)
+            attention_mask = torch.ones_like(input_ids)
+        else:
+            input_ids = tokenized["input_ids"].to(self.model.device)
+            if "attention_mask" in tokenized:
+                attention_mask = tokenized["attention_mask"].to(self.model.device)
+            else:
+                attention_mask = torch.ones_like(input_ids)
 
         # set pad token id if not set
         if self.tokenizer.pad_token_id is None:

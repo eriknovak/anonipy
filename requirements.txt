@@ -1,8 +1,7 @@
 # NLP and LLMs
 spacy>=3.8.8
 gliner>=0.2.25
-gliner-spacy>=0.0.11
-transformers>=4.45.2
+transformers>=4.51.3,<5.2.0
 sentencepiece>=0.2.1
 protobuf>=3.20.0
 accelerate>=0.26.0

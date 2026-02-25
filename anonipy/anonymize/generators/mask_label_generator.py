@@ -11,7 +11,6 @@ from transformers import AutoModelForMaskedLM, AutoTokenizer, pipeline
 from .interface import GeneratorInterface
 from ...definitions import Entity
 
-
 STOPWORDS = [".", ",", ":", ";", "-", "<s>", "</s>"]
 
 

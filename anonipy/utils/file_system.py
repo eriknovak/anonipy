@@ -22,7 +22,6 @@ from typing import Union
 from docx import Document
 from pypdf import PdfReader
 
-
 # Define namespaces
 WORD_NAMESPACES = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
 
