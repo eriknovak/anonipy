@@ -1,5 +1,5 @@
 # NLP and LLMs
-spacy>=3.8.8
+spacy>=3.8.14
 gliner>=0.2.25
 transformers>=4.51.3,<5.2.0
 sentencepiece>=0.2.1
