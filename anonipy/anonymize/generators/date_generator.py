@@ -118,7 +118,7 @@ class DateGenerator(GeneratorInterface):
         day_sigma (int): The range of the random date in days.
 
     Methods:
-        generate(entity, output_gen):
+        generate(entity, sub_variant):
             Generate the date substitute based on the input parameters.
 
     """

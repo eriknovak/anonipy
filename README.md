@@ -120,9 +120,9 @@ def anonymization_mapping(text, entity):
     if entity.type == "string":
         return llm_generator.generate(entity, temperature=0.7)
     if entity.label == "date":
-        return date_generator.generate(entity, output_gen="MIDDLE_OF_THE_MONTH")
+        return date_generator.generate(entity, sub_variant="MIDDLE_OF_THE_MONTH")
     if entity.label == "date of birth":
-        return date_generator.generate(entity, output_gen="MIDDLE_OF_THE_YEAR")
+        return date_generator.generate(entity, sub_variant="MIDDLE_OF_THE_YEAR")
     if entity.label == "social security number":
         return number_generator.generate(entity)
     return "[REDACTED]"
