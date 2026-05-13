@@ -17,7 +17,7 @@ dependencies = [
     # NLP and LLMs
     "spacy>=3.8.14",
     "gliner>=0.2.26",
-    "transformers>=4.51.3,<5.7.0",
+    "transformers>=4.51.3,<5.9.0",
     "sentencepiece>=0.2.1",
     "protobuf>=7.34.1",
     "accelerate>=1.13.0",
