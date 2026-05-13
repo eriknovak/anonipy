@@ -12,7 +12,25 @@ authors=[
 maintainers = [{ name = "Erik Novak" }]
 readme = "README.md"
 license = { file = "LICENSE" }
-dynamic = ["dependencies", "version"]
+dynamic = ["version"]
+dependencies = [
+    # NLP and LLMs
+    "spacy>=3.8.14",
+    "gliner>=0.2.26",
+    "transformers>=4.51.3,<5.7.0",
+    "sentencepiece>=0.2.1",
+    "protobuf>=7.34.1",
+    "accelerate>=1.13.0",
+    "lingua-language-detector>=2.1.1",
+    "python-dateutil>=2.9.0",
+    "babel>=2.18.0",
+    "dateparser>=1.4.0",
+    # File readers
+    "pypdf>=6.11.0",
+    "python-docx>=1.2.0",
+    # Monitoring
+    "tqdm>=4.67.3",
+]
 keywords = ["python", "machine learning", "natural language processing", "anonymization"]
 classifiers = [
     "Intended Audience :: Developers",
@@ -56,7 +74,6 @@ where = ["."]
 include = ["anonipy*"]
 
 [tool.setuptools.dynamic]
-dependencies = { file = ["requirements.txt"] }
 version = { attr = "anonipy.__version__" }
 
 [tool.pytest.ini_options]
