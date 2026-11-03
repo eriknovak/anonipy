@@ -9,12 +9,13 @@ Classes:
 """
 
 import re
-from typing import Union, TypedDict
-from typing_extensions import NotRequired
 from dataclasses import dataclass
+from typing import TypedDict
 
-from .utils.regex import regex_mapping
+from typing_extensions import NotRequired
+
 from .constants import ENTITY_TYPES
+from .utils.regex import regex_mapping
 
 # ================================================
 # Entity Definitions
@@ -42,7 +43,7 @@ class Entity:
     end_index: int
     score: float = 1.0
     type: ENTITY_TYPES = None
-    regex: Union[str, re.Pattern] = None
+    regex: str | re.Pattern = None
 
     def __post_init__(self):
         if self.regex is None:
@@ -50,7 +51,7 @@ class Entity:
                 raise ValueError("Custom entities require a regex.")
             self.regex = regex_mapping[self.type]
 
-    def get_regex_group(self) -> Union[str, None]:
+    def get_regex_group(self) -> str | None:
         """Get the regex group.
 
         Returns:

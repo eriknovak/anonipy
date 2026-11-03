@@ -8,8 +8,6 @@ Classes:
 
 """
 
-from typing import Tuple
-
 from lingua import LanguageDetectorBuilder
 
 # =====================================
@@ -51,16 +49,10 @@ class LanguageDetector:
 
         # Prepare the language detector for all languages
         builder = LanguageDetectorBuilder.from_all_languages()
-        builder = (
-            builder.with_low_accuracy_mode()
-            if low_accuracy
-            else builder.with_preloaded_language_models()
-        )
+        builder = builder.with_low_accuracy_mode() if low_accuracy else builder.with_preloaded_language_models()
         self.detector = builder.build()
 
-    def __call__(
-        self, text: str, output_standard: str = "iso_code_639_1"
-    ) -> Tuple[str, str]:
+    def __call__(self, text: str, output_standard: str = "iso_code_639_1") -> tuple[str, str]:
         """Detects the language of a text by calling the `detect` method.
 
         Examples:
@@ -80,9 +72,7 @@ class LanguageDetector:
 
         return self.detect(text, output_standard)
 
-    def detect(
-        self, text: str, output_standard: str = "iso_code_639_1"
-    ) -> Tuple[str, str]:
+    def detect(self, text: str, output_standard: str = "iso_code_639_1") -> tuple[str, str]:
         """Detects the language of a text.
 
         Examples:

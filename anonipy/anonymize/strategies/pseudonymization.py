@@ -1,8 +1,8 @@
-from typing import List, Tuple, Callable
+from collections.abc import Callable
 
-from .interface import StrategyInterface
 from ...definitions import Entity, Replacement
 from ..helpers import anonymize
+from .interface import StrategyInterface
 
 # =====================================
 # Main class
@@ -41,9 +41,7 @@ class PseudonymizationStrategy(StrategyInterface):
         super().__init__(*args, **kwargs)
         self.mapping = mapping
 
-    def anonymize(
-        self, text: str, entities: List[Entity], *args, **kwargs
-    ) -> Tuple[str, List[Replacement]]:
+    def anonymize(self, text: str, entities: list[Entity], *args, **kwargs) -> tuple[str, list[Replacement]]:
         """Anonymize the text using the pseudonymization strategy.
 
         Examples:
@@ -72,9 +70,7 @@ class PseudonymizationStrategy(StrategyInterface):
     # Private methods
     # ===========================================
 
-    def _create_replacement(
-        self, entity: Entity, text: str, replacements: List[dict]
-    ) -> Replacement:
+    def _create_replacement(self, entity: Entity, text: str, replacements: list[dict]) -> Replacement:
         """Creates a replacement for the entity.
 
         Args:
@@ -90,9 +86,7 @@ class PseudonymizationStrategy(StrategyInterface):
         # check if the replacement already exists
         anonymized_text = self._check_replacement(entity, replacements)
         # create a new replacement if it doesn't exist
-        anonymized_text = (
-            self.mapping(text, entity) if not anonymized_text else anonymized_text
-        )
+        anonymized_text = self.mapping(text, entity) if not anonymized_text else anonymized_text
         return {
             "original_text": entity.text,
             "label": entity.label,
@@ -101,9 +95,7 @@ class PseudonymizationStrategy(StrategyInterface):
             "anonymized_text": anonymized_text,
         }
 
-    def _check_replacement(
-        self, entity: Entity, replacements: List[Replacement]
-    ) -> str:
+    def _check_replacement(self, entity: Entity, replacements: list[Replacement]) -> str:
         """Checks if a suitable replacement already exists.
 
         Args:
@@ -114,11 +106,5 @@ class PseudonymizationStrategy(StrategyInterface):
             The anonymized text if the replacement already exists, None otherwise.
 
         """
-        existing_replacement = list(
-            filter(lambda x: x["original_text"] == entity.text, replacements)
-        )
-        return (
-            existing_replacement[0]["anonymized_text"]
-            if len(existing_replacement) > 0
-            else None
-        )
+        existing_replacement = list(filter(lambda x: x["original_text"] == entity.text, replacements))
+        return existing_replacement[0]["anonymized_text"] if len(existing_replacement) > 0 else None

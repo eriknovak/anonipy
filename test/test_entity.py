@@ -79,9 +79,7 @@ def test_default_score():
 
 def test_custom_score():
     """Test entity with a custom score value."""
-    entity = Entity(
-        text="x", label="y", start_index=0, end_index=1, score=0.75
-    )
+    entity = Entity(text="x", label="y", start_index=0, end_index=1, score=0.75)
     assert entity.score == 0.75
 
 

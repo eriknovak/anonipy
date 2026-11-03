@@ -1,8 +1,7 @@
 from importlib.metadata import requires
-from typing import Union
 
 
-def is_installed_with(extra: Union[str, list[str]]) -> bool:
+def is_installed_with(extra: str | list[str]) -> bool:
     """Check if anonipy was installed with specific optional dependencies.
 
     Args:

@@ -11,8 +11,6 @@ Classes:
 
 """
 
-from typing import List
-
 
 class LANGUAGES:
     """The main anonipy supported languages.
@@ -45,7 +43,7 @@ class LANGUAGES:
     UKRAINIAN = ("uk", "Ukrainian")
 
     @classmethod
-    def supported_languages(cls) -> List[str]:
+    def supported_languages(cls) -> list[str]:
         """Return a list of supported languages.
 
         Returns:
@@ -116,7 +114,7 @@ class DATE_TRANSFORM_VARIANTS:
     RANDOM = "RANDOM"
 
     @classmethod
-    def values(cls) -> List[str]:
+    def values(cls) -> list[str]:
         """Return a list of all possible date transform variants.
 
         Returns:

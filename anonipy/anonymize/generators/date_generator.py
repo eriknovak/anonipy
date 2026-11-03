@@ -1,15 +1,13 @@
+import datetime
 import random
 import warnings
-import datetime
-from typing import Union
 
 import dateparser
 from babel.dates import format_datetime
 
+from ...constants import DATE_TRANSFORM_VARIANTS, LANGUAGES
 from ...definitions import Entity
 from ...utils.datetime_format import detect_datetime_format
-from ...constants import DATE_TRANSFORM_VARIANTS, LANGUAGES
-
 from .interface import GeneratorInterface
 
 # =====================================
@@ -72,9 +70,7 @@ def middle_of_the_year(day: datetime.datetime, *args, **kwargs) -> datetime.date
     return day.replace(month=7, day=1)
 
 
-def random_date(
-    day: datetime.datetime, sigma: int = 30, *args, **kwargs
-) -> datetime.datetime:
+def random_date(day: datetime.datetime, sigma: int = 30, *args, **kwargs) -> datetime.datetime:
     """Returns a random date within the given date range.
 
     The function returns a date within the range [day - sigma, day + sigma].
@@ -126,7 +122,7 @@ class DateGenerator(GeneratorInterface):
     def __init__(
         self,
         *args,
-        lang: Union[str, LANGUAGES] = "en",
+        lang: str | LANGUAGES = "en",
         date_format: str = "auto",
         day_sigma: int = 30,
         **kwargs,
@@ -178,7 +174,7 @@ class DateGenerator(GeneratorInterface):
 
         if entity.type in ["custom"]:
             warnings.warn(
-                "The entity type is `custom`. Make sure the generator is returning appropriate values."
+                "The entity type is `custom`. Make sure the generator is returning appropriate values.", stacklevel=2
             )
         elif entity.type not in ["date"]:
             raise ValueError("The entity type must be `date` to generate dates.")
@@ -194,9 +190,7 @@ class DateGenerator(GeneratorInterface):
 
             # detect the date format
             if self.date_format == "auto":
-                entity_date, date_format = detect_datetime_format(
-                    entity.text, self.lang
-                )
+                entity_date, date_format = detect_datetime_format(entity.text, self.lang)
             else:
                 entity_date = dateparser.parse(entity.text, languages=[self.lang])
                 date_format = self.date_format

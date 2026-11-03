@@ -1,12 +1,12 @@
-import re
-from typing import List, Union, Tuple, Iterable, Set
 import itertools
+import re
+from collections.abc import Iterable
 
 from spacy import util
-from spacy.tokens import Span, Doc
+from spacy.tokens import Doc, Span
 
-from ..definitions import Entity, Replacement
 from ..constants import ENTITY_TYPES
+from ..definitions import Entity, Replacement
 
 # =====================================
 # Entity converters
@@ -16,7 +16,7 @@ from ..constants import ENTITY_TYPES
 def convert_spacy_to_entity(
     entity: Span,
     type: ENTITY_TYPES = None,
-    regex: Union[str, re.Pattern] = None,
+    regex: str | re.Pattern = None,
     *args,
     **kwargs,
 ) -> Entity:
@@ -48,7 +48,7 @@ def convert_spacy_to_entity(
 # =====================================
 
 
-def anonymize(text: str, replacements: List[Replacement]) -> str:
+def anonymize(text: str, replacements: list[Replacement]) -> str:
     """Anonymize a text based on a list of replacements.
 
     Examples:
@@ -81,7 +81,7 @@ def anonymize(text: str, replacements: List[Replacement]) -> str:
 # =====================================
 
 
-def merge_entities(extractor_outputs: List[Tuple[Doc, List[Entity]]]) -> List[Entity]:
+def merge_entities(extractor_outputs: list[tuple[Doc, list[Entity]]]) -> list[Entity]:
     """Merges the entities returned by the extractors.
 
     Args:
@@ -97,13 +97,11 @@ def merge_entities(extractor_outputs: List[Tuple[Doc, List[Entity]]]) -> List[En
     if len(extractor_outputs) == 1:
         return extractor_outputs[0][1]
 
-    joint_entities = filter_entities(
-        list(itertools.chain.from_iterable([entity[1] for entity in extractor_outputs]))
-    )
+    joint_entities = filter_entities(list(itertools.chain.from_iterable([entity[1] for entity in extractor_outputs])))
     return joint_entities
 
 
-def filter_entities(entities: Iterable[Entity]) -> List[Entity]:
+def filter_entities(entities: Iterable[Entity]) -> list[Entity]:
     """Filters the entities based on their start and end indices.
 
     Args:
@@ -122,22 +120,17 @@ def filter_entities(entities: Iterable[Entity]) -> List[Entity]:
 
     sorted_entities = sorted(entities, key=get_sort_key, reverse=True)
     result = []
-    seen_tokens: Set[int] = set()
+    seen_tokens: set[int] = set()
     for entity in sorted_entities:
         # Check for end - 1 here because boundaries are inclusive
-        if (
-            entity.start_index not in seen_tokens
-            and entity.end_index - 1 not in seen_tokens
-        ):
+        if entity.start_index not in seen_tokens and entity.end_index - 1 not in seen_tokens:
             result.append(entity)
             seen_tokens.update(range(entity.start_index, entity.end_index))
     result = sorted(result, key=lambda entity: entity.start_index)
     return result
 
 
-def detect_repeated_entities(
-    doc: Doc, entities: List[Entity], spacy_style: str
-) -> List[Entity]:
+def detect_repeated_entities(doc: Doc, entities: list[Entity], spacy_style: str) -> list[Entity]:
     """Detects repeated entities in the text.
 
     Args:
@@ -181,7 +174,7 @@ def detect_repeated_entities(
 # ====================================
 
 
-def create_spacy_entities(doc: Doc, entities: List[Entity], spacy_style: str) -> None:
+def create_spacy_entities(doc: Doc, entities: list[Entity], spacy_style: str) -> None:
     """Create spacy entities in the spacy doc.
 
     Args:
@@ -208,7 +201,7 @@ def create_spacy_entities(doc: Doc, entities: List[Entity], spacy_style: str) ->
     set_doc_entity_spans(doc, updated_spans, spacy_style)
 
 
-def get_doc_entity_spans(doc: Doc, spacy_style: str) -> List[Span]:
+def get_doc_entity_spans(doc: Doc, spacy_style: str) -> list[Span]:
     """Get the spacy doc entity spans.
 
     Args:
@@ -229,7 +222,7 @@ def get_doc_entity_spans(doc: Doc, spacy_style: str) -> List[Span]:
     raise ValueError(f"Invalid spacy style: {spacy_style}")
 
 
-def set_doc_entity_spans(doc: Doc, entities: List[Span], spacy_style: str) -> None:
+def set_doc_entity_spans(doc: Doc, entities: list[Span], spacy_style: str) -> None:
     """Set the spacy doc entity spans.
 
     Args:

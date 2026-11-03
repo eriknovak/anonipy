@@ -15,7 +15,6 @@ Modules:
 
 __version__ = "0.6.1"
 
-from . import anonymize
-from . import utils
-from . import definitions
-from . import constants
+from . import anonymize, constants, definitions, utils
+
+__all__ = ["anonymize", "constants", "definitions", "utils"]

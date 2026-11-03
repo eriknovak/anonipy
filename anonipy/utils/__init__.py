@@ -10,7 +10,6 @@ Modules:
 """
 
 from ..utils import regex
-from . import file_system
-from . import language_detector
+from . import file_system, language_detector
 
 __all__ = ["regex", "file_system", "language_detector"]

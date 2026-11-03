@@ -1,12 +1,11 @@
 import warnings
-from typing import Tuple, List
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
+from ...definitions import Entity
 from ...utils.package import is_installed_with
 from .interface import GeneratorInterface
-from ...definitions import Entity
 
 # =====================================
 # Main class
@@ -56,19 +55,18 @@ class LLMLabelGenerator(GeneratorInterface):
 
         if use_gpu and not torch.cuda.is_available():
             warnings.warn(
-                "The use_gpu=True flag requires GPU/CUDA, but it is not available. Setting use_gpu=False."
+                "The use_gpu=True flag requires GPU/CUDA, but it is not available. Setting use_gpu=False.", stacklevel=2
             )
             use_gpu = False
 
         if use_quant and not is_installed_with(["quant", "all"]):
             warnings.warn(
-                "The use_quant=True flag requires the 'quant' extra dependencies, but they are not installed. Setting use_quant=False."
+                "The use_quant=True flag requires the 'quant' extra dependencies, but they are not installed. Setting use_quant=False.",
+                stacklevel=2,
             )
             use_quant = False
 
-        self.model, self.tokenizer = self._prepare_model_and_tokenizer(
-            model_name, use_gpu, use_quant
-        )
+        self.model, self.tokenizer = self._prepare_model_and_tokenizer(model_name, use_gpu, use_quant)
 
     def generate(
         self,
@@ -109,9 +107,7 @@ class LLMLabelGenerator(GeneratorInterface):
             },
             {
                 "role": "user",
-                "content": user_prompt.format(
-                    add_entity_attrs=add_entity_attrs, entity=entity
-                ),
+                "content": user_prompt.format(add_entity_attrs=add_entity_attrs, entity=entity),
             },
         ]
         return self._generate_response(message, temperature, top_p)
@@ -122,7 +118,7 @@ class LLMLabelGenerator(GeneratorInterface):
 
     def _prepare_model_and_tokenizer(
         self, model_name: str, use_gpu: bool, use_quant: bool
-    ) -> Tuple[AutoModelForCausalLM, AutoTokenizer]:
+    ) -> tuple[AutoModelForCausalLM, AutoTokenizer]:
         """Prepares the model and tokenizer.
 
         Args:
@@ -135,9 +131,7 @@ class LLMLabelGenerator(GeneratorInterface):
         """
 
         # prepare the model
-        device = torch.device(
-            "cuda" if use_gpu and torch.cuda.is_available() else "cpu"
-        )
+        device = torch.device("cuda" if use_gpu and torch.cuda.is_available() else "cpu")
         dtype = torch.float32 if device.type == "cpu" else torch.float16
 
         model = self._load_model(model_name, device, dtype, use_quant, use_gpu)
@@ -167,9 +161,7 @@ class LLMLabelGenerator(GeneratorInterface):
 
         """
         if use_quant and use_gpu:
-            quant_config = BitsAndBytesConfig(
-                load_in_8bit=True, bnb_4bit_compute_dtype=dtype
-            )
+            quant_config = BitsAndBytesConfig(load_in_8bit=True, bnb_4bit_compute_dtype=dtype)
             return AutoModelForCausalLM.from_pretrained(
                 model_name,
                 device_map=device,
@@ -179,12 +171,11 @@ class LLMLabelGenerator(GeneratorInterface):
 
         if use_quant:
             warnings.warn(
-                "Quantization is only supported on GPU, but use_gpu=False. Loading model without quantization."
+                "Quantization is only supported on GPU, but use_gpu=False. Loading model without quantization.",
+                stacklevel=2,
             )
 
-        return AutoModelForCausalLM.from_pretrained(
-            model_name, device_map=device, torch_dtype=dtype
-        )
+        return AutoModelForCausalLM.from_pretrained(model_name, device_map=device, torch_dtype=dtype)
 
     def _load_tokenizer(self, model_name: str) -> AutoTokenizer:
         """Load the tokenizer with appropriate configuration.
@@ -195,13 +186,9 @@ class LLMLabelGenerator(GeneratorInterface):
         Returns:
             The huggingface tokenizer.
         """
-        return AutoTokenizer.from_pretrained(
-            model_name, padding_side="right", use_fast=False
-        )
+        return AutoTokenizer.from_pretrained(model_name, padding_side="right", use_fast=False)
 
-    def _generate_response(
-        self, message: List[dict], temperature: float, top_p: float
-    ) -> str:
+    def _generate_response(self, message: list[dict], temperature: float, top_p: float) -> str:
         """Generate the response from the LLM.
 
         Args:
@@ -250,7 +237,5 @@ class LLMLabelGenerator(GeneratorInterface):
                 )
 
         # decode the response
-        response = self.tokenizer.decode(
-            output_ids[0][len(input_ids[0]) :], skip_special_tokens=True
-        )
+        response = self.tokenizer.decode(output_ids[0][len(input_ids[0]) :], skip_special_tokens=True)
         return response

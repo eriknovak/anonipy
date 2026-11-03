@@ -52,8 +52,7 @@ Docs = "https://eriknovak.github.io/anonipy"
 
 [project.optional-dependencies]
 dev = [
-    "black",
-    "flake8",
+    "ruff==0.17.3",
     "python-githooks",
     "mkdocs-material",
     "mkdocstrings[python]",
@@ -69,6 +68,28 @@ quant = [
 ]
 all = ["anonipy[dev,test,quant]"]
 
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "UP", # pyupgrade
+    "B",  # flake8-bugbear
+]
+ignore = [
+    "E501", # line length is owned by the formatter
+    "B905", # zip(strict=...) would change runtime behaviour
+]
+
+[tool.ruff.format]
+# doc snippets are wrapped by hand for the narrow docs page
+exclude = ["*.md"]
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["anonipy*"]
@@ -81,14 +102,15 @@ testpaths = ["test"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
-addopts = "--verbose --strict-markers --tb=short"
+addopts = "--verbose --strict-markers --tb=short -m 'not slow and not integration'"
 markers = [
-    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-    "integration: marks tests as integration tests",
+    "slow: loads real models; skipped by default (run with '-m \"slow or integration\"')",
+    "integration: runs several components on real models; skipped by default",
 ]
 filterwarnings = [
     "ignore:builtin type SwigPy.*:DeprecationWarning",
     "ignore:builtin type swigvarlink.*:DeprecationWarning",
     "ignore:`torch.jit.script` is deprecated:DeprecationWarning",
+    "ignore:`torch.jit.script` is deprecated:FutureWarning",
     "ignore:The `resume_download` argument is deprecated:UserWarning",
 ]

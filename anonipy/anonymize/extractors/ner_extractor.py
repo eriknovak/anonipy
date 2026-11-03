@@ -1,25 +1,23 @@
+import importlib
 import re
 import warnings
-import importlib
-from typing import List, Tuple
 
 import torch
 from spacy import displacy
-from spacy.tokens import Doc, Span
 from spacy.language import Language
+from spacy.tokens import Doc, Span
 
-from ..helpers import (
-    convert_spacy_to_entity,
-    detect_repeated_entities,
-    get_doc_entity_spans,
-    create_spacy_entities,
-)
-from ...utils.regex import regex_mapping
-from ...utils import gliner_spacy as _gliner_spacy  # noqa: F401 — registers factory
 from ...constants import LANGUAGES
 from ...definitions import Entity
+from ...utils import gliner_spacy as _gliner_spacy  # noqa: F401 — registers factory
 from ...utils.colors import get_label_color
-
+from ...utils.regex import regex_mapping
+from ..helpers import (
+    convert_spacy_to_entity,
+    create_spacy_entities,
+    detect_repeated_entities,
+    get_doc_entity_spans,
+)
 from .interface import ExtractorInterface
 
 # ===============================================
@@ -57,7 +55,7 @@ class NERExtractor(ExtractorInterface):
 
     def __init__(
         self,
-        labels: List[dict],
+        labels: list[dict],
         *args,
         lang: LANGUAGES = LANGUAGES.ENGLISH,
         score_th: float = 0.5,
@@ -95,9 +93,7 @@ class NERExtractor(ExtractorInterface):
 
         self.pipeline = self._prepare_pipeline()
 
-    def __call__(
-        self, text: str, detect_repeats: bool = False, *args, **kwargs
-    ) -> Tuple[Doc, List[Entity]]:
+    def __call__(self, text: str, detect_repeats: bool = False, *args, **kwargs) -> tuple[Doc, list[Entity]]:
         """Extract the entities from the text.
 
         Examples:
@@ -118,9 +114,7 @@ class NERExtractor(ExtractorInterface):
         anoni_entities, spacy_entities = self._prepare_entities(doc)
 
         if detect_repeats:
-            anoni_entities = detect_repeated_entities(
-                doc, anoni_entities, self.spacy_style
-            )
+            anoni_entities = detect_repeated_entities(doc, anoni_entities, self.spacy_style)
 
         create_spacy_entities(doc, anoni_entities, self.spacy_style)
 
@@ -144,18 +138,14 @@ class NERExtractor(ExtractorInterface):
 
         """
 
-        options = {
-            "colors": {l["label"]: get_label_color(l["label"]) for l in self.labels}
-        }
-        return displacy.render(
-            doc, style=self.spacy_style, options=options, page=page, jupyter=jupyter
-        )
+        options = {"colors": {label["label"]: get_label_color(label["label"]) for label in self.labels}}
+        return displacy.render(doc, style=self.spacy_style, options=options, page=page, jupyter=jupyter)
 
     # ===========================================
     # Private methods
     # ===========================================
 
-    def _prepare_labels(self, labels: List[dict]) -> List[dict]:
+    def _prepare_labels(self, labels: list[dict]) -> list[dict]:
         """Prepare the labels for the extractor.
 
         The provided labels are enriched with the corresponding regex
@@ -168,12 +158,12 @@ class NERExtractor(ExtractorInterface):
             The enriched labels.
 
         """
-        for l in labels:
-            if "regex" in l:
+        for label in labels:
+            if "regex" in label:
                 continue
-            regex = regex_mapping[l["type"]]
+            regex = regex_mapping[label["type"]]
             if regex is not None:
-                l["regex"] = regex
+                label["regex"] = regex
         return labels
 
     def _create_gliner_config(self) -> dict:
@@ -187,7 +177,7 @@ class NERExtractor(ExtractorInterface):
         map_location = "cpu"
         if self.use_gpu and not torch.cuda.is_available():
             return warnings.warn(
-                "The user requested GPU use, but not available GPU was found. Reverting back to CPU use."
+                "The user requested GPU use, but not available GPU was found. Reverting back to CPU use.", stacklevel=2
             )
         if self.use_gpu and torch.cuda.is_available():
             map_location = "cuda"
@@ -195,7 +185,7 @@ class NERExtractor(ExtractorInterface):
         return {
             # the model is specialized for extracting PII data
             "gliner_model": self.gliner_model,
-            "labels": [l["label"] for l in self.labels],
+            "labels": [label["label"] for label in self.labels],
             "threshold": self.score_th,
             "chunk_size": 384,
             "style": self.spacy_style,
@@ -224,7 +214,7 @@ class NERExtractor(ExtractorInterface):
         nlp.add_pipe("gliner_spacy", config=gliner_config)
         return nlp
 
-    def _prepare_entities(self, doc: Doc) -> Tuple[List[Entity], List[Span]]:
+    def _prepare_entities(self, doc: Doc) -> tuple[list[Entity], list[Span]]:
         """Prepares the anonipy and spacy entities.
 
         Args:

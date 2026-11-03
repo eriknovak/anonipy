@@ -1,9 +1,8 @@
 import re
-from typing import List, Tuple
 
-from .interface import StrategyInterface
 from ...definitions import Entity, Replacement
 from ..helpers import anonymize
+from .interface import StrategyInterface
 
 # =====================================
 # Main class
@@ -42,9 +41,7 @@ class MaskingStrategy(StrategyInterface):
         super().__init__(*args, **kwargs)
         self.substitute_label = substitute_label or "*"
 
-    def anonymize(
-        self, text: str, entities: List[Entity], *args, **kwargs
-    ) -> Tuple[str, List[Replacement]]:
+    def anonymize(self, text: str, entities: list[Entity], *args, **kwargs) -> tuple[str, list[Replacement]]:
         """Anonymize the text using the masking strategy.
 
         Examples:
@@ -102,9 +99,4 @@ class MaskingStrategy(StrategyInterface):
         """
 
         # TODO: add random length substitution
-        return " ".join(
-            [
-                self.substitute_label * len(chunk)
-                for chunk in re.split(r"\s+", entity.text)
-            ]
-        )
+        return " ".join([self.substitute_label * len(chunk) for chunk in re.split(r"\s+", entity.text)])

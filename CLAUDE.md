@@ -11,23 +11,37 @@ uv venv && source .venv/bin/activate
 uv pip install -e ".[all]"
 ```
 
-## Testing
+## Linting
+
+Ruff lints and formats; config in `pyproject.toml`. CI and the pre-commit hook run both checks.
 
 ```bash
-# All tests
+ruff check --fix .
+ruff format .
+```
+
+## Testing
+
+`pytest` runs only the fast tests (`addopts` deselects `slow` and `integration`). They use fake models from `test/conftest.py` and `test/test_generators.py`, so model-backed code is tested without downloads.
+
+```bash
+# Fast tests (default)
 pytest
 
-# Skip slow/integration tests
-pytest -m "not slow and not integration"
+# Tests with real models (downloads several GB)
+pytest -m "slow or integration"
+
+# All tests
+pytest -m ""
 
 # Single test file
 pytest test/test_extractors.py
 
 # Single test
-pytest test/test_extractors.py::TestNERExtractor::test_ner_extractor_extract_default_params_input
+pytest test/test_extractors.py::test_ner_extractor_fake_returns_tagged_entities
 
-# With coverage (CI threshold: 70%)
-pytest --cov=anonipy --cov-report=term-missing --cov-fail-under=70
+# With coverage (CI threshold: 90%)
+pytest --cov=anonipy --cov-report=term-missing --cov-fail-under=90
 ```
 
 ## Agent skills
