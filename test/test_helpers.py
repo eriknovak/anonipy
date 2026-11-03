@@ -77,6 +77,16 @@ def test_create_spacy_entities_span_style_adds_spans(doc):
     assert [(span.text, span.label_) for span in doc.spans["sc"]] == [("John Doe", "name")]
 
 
+def test_create_spacy_entities_ent_style_adds_several_entities(doc):
+    """Test that several new entities are all stored as doc ents."""
+    entities = [
+        Entity(text="Patient", label="role", start_index=0, end_index=7),
+        Entity(text="John Doe", label="name", start_index=8, end_index=16),
+    ]
+    create_spacy_entities(doc, entities, "ent")
+    assert [(span.text, span.label_) for span in doc.ents] == [("Patient", "role"), ("John Doe", "name")]
+
+
 @pytest.mark.parametrize("helper", [get_doc_entity_spans, lambda doc, style: set_doc_entity_spans(doc, [], style)])
 def test_entity_span_helpers_reject_unknown_style(doc, helper):
     """Test that an unknown spaCy style raises ValueError."""

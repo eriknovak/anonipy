@@ -1,6 +1,7 @@
 """Tests for anonipy.anonymize.extractors."""
 
 import itertools
+import re
 import warnings
 
 import pytest
@@ -11,7 +12,7 @@ from anonipy.anonymize.extractors import MultiExtractor, NERExtractor, PatternEx
 from anonipy.anonymize.helpers import filter_entities
 from anonipy.constants import LANGUAGES
 from anonipy.definitions import Entity
-from test.conftest import FAKE_GLINER_SCORE, HAS_GPU
+from test.conftest import FAKE_GLINER_PHRASES, FAKE_GLINER_SCORE, HAS_GPU
 
 # disable transformers logging
 logging.set_verbosity_error()
@@ -437,6 +438,14 @@ def fake_ner_extractor(fake_gliner):
     return NERExtractor(labels=make_ner_labels(), lang=LANGUAGES.ENGLISH)
 
 
+def doc_span_keys(spans):
+    return sorted((span.start_char, span.end_char, span.label_) for span in spans)
+
+
+def entity_keys(entities):
+    return sorted((e.start_index, e.end_index, e.label) for e in entities)
+
+
 def test_ner_extractor_fake_returns_tagged_entities(fake_ner_extractor):
     """Test that each tagged phrase becomes an entity typed by its label."""
     _, entities = fake_ner_extractor(TEST_ORIGINAL_TEXT)
@@ -473,9 +482,75 @@ def test_ner_extractor_fake_span_style_stores_spans(fake_gliner):
     """Test that the span style stores the entities in the doc spans."""
     extractor = NERExtractor(labels=make_ner_labels(), lang=LANGUAGES.ENGLISH, spacy_style="span")
     doc, entities = extractor(TEST_ORIGINAL_TEXT)
-    span_starts = {span.start_char for span in doc.spans["sc"]}
-    assert {e.start_index for e in entities} <= span_starts
+    assert doc_span_keys(doc.spans["sc"]) == entity_keys(entities)
     assert doc.ents == ()
+
+
+def test_ner_extractor_fake_ent_style_doc_matches_entities(fake_ner_extractor):
+    """Test that the doc ents hold exactly the returned entities."""
+    doc, entities = fake_ner_extractor(TEST_ORIGINAL_TEXT)
+    assert doc_span_keys(doc.ents) == entity_keys(entities)
+
+
+def test_ner_extractor_fake_detect_repeats_doc_matches_entities(fake_ner_extractor):
+    """Test that repeats reach the doc and no rejected span does."""
+    doc, entities = fake_ner_extractor(TEST_ORIGINAL_TEXT, detect_repeats=True)
+    assert doc_span_keys(doc.ents) == entity_keys(entities)
+    assert "Medical Record" not in [span.text for span in doc.ents]
+
+
+@pytest.mark.parametrize("spacy_style", ["ent", "span"])
+def test_ner_extractor_fake_detect_repeats_stores_several_new_repeats(fake_gliner, spacy_style):
+    """Test that two or more untagged repeats all reach the doc."""
+    extractor = NERExtractor(labels=make_ner_labels(), lang=LANGUAGES.ENGLISH, spacy_style=spacy_style)
+    doc, entities = extractor("John Doe met John Doe and John Doe.", detect_repeats=True)
+    spans = doc.ents if spacy_style == "ent" else doc.spans["sc"]
+    assert doc_span_keys(spans) == entity_keys(entities) == [(0, 8, "name"), (13, 21, "name"), (26, 34, "name")]
+
+
+@pytest.mark.parametrize("spacy_style", ["ent", "span"])
+def test_ner_extractor_fake_detect_repeats_keeps_unaligned_repeat_out_of_doc(fake_gliner, spacy_style):
+    """Test that a repeat inside a longer word is returned but has no doc span."""
+    extractor = NERExtractor(labels=make_ner_labels(), lang=LANGUAGES.ENGLISH, spacy_style=spacy_style)
+    doc, entities = extractor("John Doe met John Does.", detect_repeats=True)
+    spans = doc.ents if spacy_style == "ent" else doc.spans["sc"]
+    assert entity_keys(entities) == [(0, 8, "name"), (13, 21, "name")]
+    assert doc_span_keys(spans) == [(0, 8, "name")]
+
+
+def test_ner_extractor_fake_span_style_detect_repeats_drops_overlapped_span(fake_gliner, monkeypatch):
+    """Test that a tagged span dropped by repeat filtering leaves the doc too."""
+    # the fake tags "Anna" inside the first "Anna Lee", so filtering keeps the longer span
+    monkeypatch.setitem(FAKE_GLINER_PHRASES, "Anna", "name")
+    monkeypatch.setitem(FAKE_GLINER_PHRASES, "Anna Lee", "name")
+    extractor = NERExtractor(labels=make_ner_labels(), lang=LANGUAGES.ENGLISH, spacy_style="span")
+    doc, entities = extractor("Anna Lee met Anna Lee.", detect_repeats=True)
+    assert doc_span_keys(doc.spans["sc"]) == entity_keys(entities) == [(0, 8, "name"), (13, 21, "name")]
+
+
+@pytest.mark.parametrize(
+    ("spacy_style", "entity_markup"),
+    [
+        ("ent", r"<mark[^>]*>\s*Medical"),
+        # the span style wraps each entity token in a bold inline span
+        ("span", r"<span style=\"font-weight: bold[^>]*>\s*Medical"),
+    ],
+)
+def test_ner_extractor_fake_display_omits_rejected_span(fake_gliner, spacy_style, entity_markup):
+    """Test that display renders no regex-rejected span as an entity."""
+    extractor = NERExtractor(labels=make_ner_labels(), lang=LANGUAGES.ENGLISH, spacy_style=spacy_style)
+    doc, _ = extractor(TEST_ORIGINAL_TEXT)
+    html = extractor.display(doc)
+    assert "Medical Record" in html
+    assert not re.search(entity_markup, html)
+
+
+def test_multi_extractor_fake_ner_doc_matches_entities(fake_ner_extractor):
+    """Test that the NER doc in MultiExtractor output holds only its entities."""
+    pattern_extractor = PatternExtractor(labels=[], lang=LANGUAGES.ENGLISH)
+    outputs, _ = MultiExtractor([fake_ner_extractor, pattern_extractor])(TEST_ORIGINAL_TEXT)
+    doc, entities = outputs[0]
+    assert doc_span_keys(doc.ents) == entity_keys(entities)
 
 
 def test_ner_extractor_fake_loads_configured_model_on_cpu(fake_gliner):
