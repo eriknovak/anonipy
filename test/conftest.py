@@ -1,7 +1,5 @@
 """Shared fixtures and configuration for the test suite."""
 
-import pytest
-
 try:
     import torch
 

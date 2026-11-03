@@ -1,8 +1,6 @@
-from typing import List, Tuple
-
-from .interface import StrategyInterface
 from ...definitions import Entity, Replacement
 from ..helpers import anonymize
+from .interface import StrategyInterface
 
 # =====================================
 # Main class
@@ -41,9 +39,7 @@ class RedactionStrategy(StrategyInterface):
         super().__init__(*args, **kwargs)
         self.substitute_label = substitute_label or "[REDACTED]"
 
-    def anonymize(
-        self, text: str, entities: List[Entity], *args, **kwargs
-    ) -> Tuple[str, List[Replacement]]:
+    def anonymize(self, text: str, entities: list[Entity], *args, **kwargs) -> tuple[str, list[Replacement]]:
         """Anonymize the text using the redaction strategy.
 
         Examples:

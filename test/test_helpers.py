@@ -1,7 +1,7 @@
 """Tests for anonipy.anonymize.helpers.filter_entities."""
 
-from anonipy.definitions import Entity
 from anonipy.anonymize.helpers import filter_entities
+from anonipy.definitions import Entity
 
 # =====================================
 # Test filter_entities

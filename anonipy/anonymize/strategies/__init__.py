@@ -12,8 +12,8 @@ Classes:
 
 from .interface import StrategyInterface
 from .masking import MaskingStrategy
-from .redaction import RedactionStrategy
 from .pseudonymization import PseudonymizationStrategy
+from .redaction import RedactionStrategy
 
 __all__ = [
     "StrategyInterface",

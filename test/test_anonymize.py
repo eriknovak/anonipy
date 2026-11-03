@@ -1,7 +1,5 @@
 """Tests for anonipy.anonymize."""
 
-import pytest
-
 from anonipy.anonymize import anonymize
 
 # =====================================

@@ -1,10 +1,9 @@
-import re
 import datetime
+import re
 import warnings
-from typing import Tuple
 
 import dateparser
-from babel.dates import format_datetime, format_datetime
+from babel.dates import format_datetime
 
 # =====================================
 # Constants
@@ -116,7 +115,7 @@ POSSIBLE_FORMATS = [
 # =====================================
 
 
-def detect_datetime_format(datetime: str, lang: str) -> Tuple[datetime.datetime, str]:
+def detect_datetime_format(datetime: str, lang: str) -> tuple[datetime.datetime, str]:
     """Detects the datetime format.
 
     Args:
@@ -138,16 +137,14 @@ def detect_datetime_format(datetime: str, lang: str) -> Tuple[datetime.datetime,
 
         for FMT in POSSIBLE_FORMATS:
             try:
-                formatted_date = format_datetime(
-                    parsed_datetime, format=FMT, locale=lang
-                )
+                formatted_date = format_datetime(parsed_datetime, format=FMT, locale=lang)
                 if formatted_date == fdatetime:
                     return parsed_datetime, FMT
             except ValueError:
                 continue
 
         warnings.warn(
-            f"Could not detect the datetime format for `{datetime}`. Defaulting to `yyyy-MM-dd`..."
+            f"Could not detect the datetime format for `{datetime}`. Defaulting to `yyyy-MM-dd`...", stacklevel=2
         )
         return parsed_datetime, "yyyy-MM-dd"
 

@@ -1,12 +1,12 @@
 """Tests for anonipy.utils.file_system."""
 
-import os
 import json
+import os
 
 import pytest
 
-from anonipy.utils.file_system import open_file, write_file, open_json, write_json
-from test.resources.example_outputs import WORD_TEXT, PDF_TEXT, TXT_TEXT
+from anonipy.utils.file_system import open_file, open_json, write_file, write_json
+from test.resources.example_outputs import PDF_TEXT, TXT_TEXT, WORD_TEXT
 
 # =====================================
 # Test Data
@@ -60,7 +60,7 @@ def test_write_file_basic(tmp_path):
     """Test basic file writing."""
     path = str(tmp_path / "out.txt")
     write_file("hello", path)
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         assert f.read() == "hello"
 
 
@@ -86,7 +86,7 @@ def test_write_file_encode_string(tmp_path):
     """Test writing with a string encoding parameter."""
     path = str(tmp_path / "out.txt")
     write_file("hello", path, encode="utf-8")
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         assert f.read() == "hello"
 
 
@@ -94,7 +94,7 @@ def test_write_file_encode_false(tmp_path):
     """Test writing with encode=False."""
     path = str(tmp_path / "out.txt")
     write_file("hello", path, encode=False)
-    with open(path, "r") as f:
+    with open(path) as f:
         assert f.read() == "hello"
 
 
@@ -135,7 +135,7 @@ def test_write_json(tmp_path):
     path = str(tmp_path / "output.json")
     data = {"key": "value"}
     write_json(data, path)
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         result = json.load(f)
     assert result == data
 
@@ -146,5 +146,5 @@ def test_write_json_creates_dir(tmp_path):
     data = {"nested": True}
     write_json(data, path)
     assert os.path.isfile(path)
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         assert json.load(f) == data

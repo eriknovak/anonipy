@@ -1,15 +1,13 @@
-import re
-import random
-import warnings
 import itertools
-
-from typing import List, Tuple
+import random
+import re
+import warnings
 
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer, pipeline
 
-from .interface import GeneratorInterface
 from ...definitions import Entity
+from .interface import GeneratorInterface
 
 STOPWORDS = [".", ",", ":", ";", "-", "<s>", "</s>"]
 
@@ -64,18 +62,14 @@ class MaskLabelGenerator(GeneratorInterface):
         self.context_window = context_window
         if use_gpu and not torch.cuda.is_available():
             warnings.warn(
-                "The use_gpu=True flag requires GPU/CUDA, but it is not available. Setting use_gpu=False."
+                "The use_gpu=True flag requires GPU/CUDA, but it is not available. Setting use_gpu=False.", stacklevel=2
             )
             use_gpu = False
 
         # prepare the fill-mask pipeline and store the mask token
-        model, tokenizer, device = self._prepare_model_and_tokenizer(
-            model_name, use_gpu
-        )
+        model, tokenizer, device = self._prepare_model_and_tokenizer(model_name, use_gpu)
         self.mask_token = tokenizer.mask_token
-        self.pipeline = pipeline(
-            "fill-mask", model=model, tokenizer=tokenizer, top_k=40, device=device
-        )
+        self.pipeline = pipeline("fill-mask", model=model, tokenizer=tokenizer, top_k=40, device=device)
 
     def generate(self, entity: Entity, text: str, *args, **kwargs) -> str:
         """Generate the substitute for the entity using the masking model.
@@ -106,7 +100,7 @@ class MaskLabelGenerator(GeneratorInterface):
 
     def _prepare_model_and_tokenizer(
         self, model_name: str, use_gpu: bool
-    ) -> Tuple[AutoModelForMaskedLM, AutoTokenizer]:
+    ) -> tuple[AutoModelForMaskedLM, AutoTokenizer]:
         """Prepares the model and tokenizer.
 
         Args:
@@ -121,16 +115,14 @@ class MaskLabelGenerator(GeneratorInterface):
         """
 
         # prepare the model
-        device = torch.device(
-            "cuda" if use_gpu and torch.cuda.is_available() else "cpu"
-        )
+        device = torch.device("cuda" if use_gpu and torch.cuda.is_available() else "cpu")
         model = AutoModelForMaskedLM.from_pretrained(model_name).to(device)
         # prepare the tokenizer
         tokenizer = AutoTokenizer.from_pretrained(model_name)
 
         return model, tokenizer, device
 
-    def _create_masks(self, entity: Entity) -> List[dict]:
+    def _create_masks(self, entity: Entity) -> list[dict]:
         """Creates the masks for the provided entity.
 
         Args:
@@ -147,9 +139,7 @@ class MaskLabelGenerator(GeneratorInterface):
             masks.append(
                 {
                     "true_text": chunks[idx],
-                    "mask_text": " ".join(
-                        chunks[0:idx] + [self.mask_token] + chunks[idx + 1 :]
-                    ),
+                    "mask_text": " ".join(chunks[0:idx] + [self.mask_token] + chunks[idx + 1 :]),
                     "start_index": entity.start_index,
                     "end_index": entity.end_index,
                 }
@@ -173,7 +163,7 @@ class MaskLabelGenerator(GeneratorInterface):
         max_index = min(end_index + self.context_window, len(text))
         return text[min_index:max_index]
 
-    def _prepare_generate_inputs(self, masks: List[dict], text: str) -> List[str]:
+    def _prepare_generate_inputs(self, masks: list[dict], text: str) -> list[str]:
         """Prepares the generate inputs.
 
         Args:
@@ -193,9 +183,7 @@ class MaskLabelGenerator(GeneratorInterface):
             for m in masks
         ]
 
-    def _create_substitute(
-        self, entity: Entity, masks: List[dict], suggestions: List[dict]
-    ) -> str:
+    def _create_substitute(self, entity: Entity, masks: list[dict], suggestions: list[dict]) -> str:
         """Create a substitute for the entity.
 
         Args:
@@ -210,12 +198,14 @@ class MaskLabelGenerator(GeneratorInterface):
 
         substitute_chunks = []
         for mask, suggestion in zip(masks, suggestions):
-            suggestion = suggestion if type(suggestion) == list else [suggestion]
+            suggestion = suggestion if isinstance(suggestion, list) else [suggestion]
             viable_suggestions = list(
                 filter(
-                    lambda x: x["token_str"] != mask["true_text"]
-                    and re.match(entity.regex, x["token_str"])
-                    and x["token_str"] not in STOPWORDS,
+                    lambda x: (
+                        x["token_str"] != mask["true_text"]
+                        and re.match(entity.regex, x["token_str"])
+                        and x["token_str"] not in STOPWORDS
+                    ),
                     suggestion,
                 )
             )

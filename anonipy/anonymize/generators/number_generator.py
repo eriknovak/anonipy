@@ -1,7 +1,8 @@
 import random
 import warnings
-from .interface import GeneratorInterface
+
 from ...definitions import Entity
+from .interface import GeneratorInterface
 
 # =====================================
 # Main class
@@ -55,12 +56,10 @@ class NumberGenerator(GeneratorInterface):
 
         if entity.type in ["custom"]:
             warnings.warn(
-                "The entity type is `custom`. Make sure the generator is returning appropriate values."
+                "The entity type is `custom`. Make sure the generator is returning appropriate values.", stacklevel=2
             )
         elif entity.type not in ["integer", "float", "phone_number"]:
             raise ValueError(
                 "The entity type must be `integer`, `float`, `phone_number` or `custom` to generate numbers."
             )
-        return "".join(
-            [str(random.randint(0, 9)) if d.isdigit() else d for d in entity.text]
-        )
+        return "".join([str(random.randint(0, 9)) if d.isdigit() else d for d in entity.text])

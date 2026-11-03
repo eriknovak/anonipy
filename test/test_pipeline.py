@@ -7,8 +7,8 @@ import warnings
 import pytest
 from transformers import logging
 
+from anonipy.anonymize.extractors import MultiExtractor, NERExtractor, PatternExtractor
 from anonipy.anonymize.pipeline import Pipeline
-from anonipy.anonymize.extractors import NERExtractor, PatternExtractor, MultiExtractor
 from anonipy.anonymize.strategies import RedactionStrategy
 from anonipy.constants import LANGUAGES
 
@@ -95,7 +95,7 @@ def test_anonymize(setup):
     assert os.path.exists(output_dir)
     for root, _, files in os.walk(output_dir):
         for file in files:
-            with open(os.path.join(root, file), "r") as f:
+            with open(os.path.join(root, file)) as f:
                 assert f.read()
 
 
@@ -110,7 +110,7 @@ def test_anonymize_flatten(setup):
     assert os.path.exists(output_dir)
     for root, _, files in os.walk(output_dir):
         for file in files:
-            with open(os.path.join(root, file), "r") as f:
+            with open(os.path.join(root, file)) as f:
                 assert f.read()
 
 

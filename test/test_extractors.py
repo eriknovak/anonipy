@@ -3,13 +3,12 @@
 import warnings
 
 import pytest
-import torch
 from transformers import logging
 
-from anonipy.definitions import Entity
-from anonipy.anonymize.extractors import NERExtractor, PatternExtractor, MultiExtractor
-from anonipy.constants import LANGUAGES
+from anonipy.anonymize.extractors import MultiExtractor, NERExtractor, PatternExtractor
 from anonipy.anonymize.helpers import filter_entities
+from anonipy.constants import LANGUAGES
+from anonipy.definitions import Entity
 from test.conftest import HAS_GPU
 
 # disable transformers logging
@@ -306,9 +305,7 @@ def test_ner_extractor_init():
 @pytest.mark.slow
 def test_ner_extractor_init_inputs(ner_extractor):
     """Test NERExtractor instantiation with custom inputs."""
-    extractor = NERExtractor(
-        labels=ner_extractor.labels, lang=LANGUAGES.ENGLISH, score_th=0.5
-    )
+    extractor = NERExtractor(labels=ner_extractor.labels, lang=LANGUAGES.ENGLISH, score_th=0.5)
     assert isinstance(extractor, NERExtractor)
 
 
@@ -328,7 +325,7 @@ def test_ner_extractor_init_gpu(ner_extractor):
 @pytest.mark.slow
 def test_ner_extractor_methods(ner_extractor):
     """Test that NERExtractor has required methods."""
-    assert hasattr(ner_extractor, "__call__")
+    assert callable(ner_extractor)
     assert hasattr(ner_extractor, "display")
 
 
@@ -437,7 +434,7 @@ def test_pattern_extractor_init_inputs(pattern_extractor):
 
 def test_pattern_extractor_methods(pattern_extractor):
     """Test that PatternExtractor has required methods."""
-    assert hasattr(pattern_extractor, "__call__")
+    assert callable(pattern_extractor)
     assert hasattr(pattern_extractor, "display")
 
 
@@ -665,7 +662,7 @@ def test_multi_extractor_init_inputs(multi_extractor):
 @pytest.mark.slow
 def test_multi_extractor_methods(multi_extractor):
     """Test that MultiExtractor has required methods."""
-    assert hasattr(multi_extractor, "__call__")
+    assert callable(multi_extractor)
     assert hasattr(multi_extractor, "display")
 
 

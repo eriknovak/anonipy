@@ -17,10 +17,7 @@ Methods:
 
 """
 
-from . import extractors
-from . import generators
-from . import strategies
-from . import pipeline
+from . import extractors, generators, pipeline, strategies
 from .helpers import anonymize
 
 __all__ = ["extractors", "generators", "strategies", "anonymize", "pipeline"]

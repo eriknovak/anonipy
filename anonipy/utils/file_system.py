@@ -14,10 +14,9 @@ Methods:
 
 """
 
+import json
 import os
 import re
-import json
-from typing import Union
 
 from docx import Document
 from pypdf import PdfReader
@@ -60,11 +59,7 @@ def _remove_page_numbers(text: str) -> str:
     """
 
     page_number_pattern = re.compile(r"^\s*\d+\s*$|\s*\d+\s*$")
-    filtered_lines = [
-        line.strip()
-        for line in text.splitlines()
-        if not page_number_pattern.match(line)
-    ]
+    filtered_lines = [line.strip() for line in text.splitlines() if not page_number_pattern.match(line)]
     return "\n".join(filtered_lines)
 
 
@@ -195,13 +190,13 @@ def open_file(file_path: str) -> str:
     elif file_extension.lower() in [".doc", ".docx"]:
         return _extract_text_from_word(file_path)
     elif file_extension.lower() == ".txt":
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             return f.read()
     else:
         raise ValueError(f"The file extension is not supported: {file_extension}")
 
 
-def write_file(text: str, file_path: str, encode: Union[str, bool] = True) -> None:
+def write_file(text: str, file_path: str, encode: str | bool = True) -> None:
     """Writes the text to a file.
 
     Examples:
@@ -229,9 +224,7 @@ def write_file(text: str, file_path: str, encode: Union[str, bool] = True) -> No
         raise TypeError("encode must be a string or a boolean")
 
     if not os.path.exists(os.path.dirname(file_path)):
-        raise FileNotFoundError(
-            f"The directory does not exist: {os.path.dirname(file_path)}"
-        )
+        raise FileNotFoundError(f"The directory does not exist: {os.path.dirname(file_path)}")
 
     encoding = None
     if isinstance(encode, str):
@@ -262,7 +255,7 @@ def open_json(file_path: str) -> dict:
     if not os.path.isfile(file_path):
         raise FileNotFoundError(f"The file does not exist: {file_path}")
 
-    with open(file_path, "r", encoding="utf-8") as f:
+    with open(file_path, encoding="utf-8") as f:
         return json.load(f)
 
 

@@ -1,4 +1,3 @@
-from typing import List, Tuple
 import itertools
 
 from spacy import displacy
@@ -7,7 +6,6 @@ from spacy.tokens import Doc
 from ...definitions import Entity
 from ...utils.colors import get_label_color
 from ..helpers import merge_entities
-
 from .interface import ExtractorInterface
 
 # ===============================================
@@ -41,7 +39,7 @@ class MultiExtractor:
 
     """
 
-    def __init__(self, extractors: List[ExtractorInterface]):
+    def __init__(self, extractors: list[ExtractorInterface]):
         """Initialize the multi extractor.
 
         Examples:
@@ -65,9 +63,7 @@ class MultiExtractor:
 
         self.extractors = extractors
 
-    def __call__(
-        self, text: str, detect_repeats: bool = False
-    ) -> Tuple[List[Tuple[Doc, List[Entity]]], List[Entity]]:
+    def __call__(self, text: str, detect_repeats: bool = False) -> tuple[list[tuple[Doc, list[Entity]]], list[Entity]]:
         """Extract the entities fron the text using the provided extractors.
 
         Examples:
@@ -107,10 +103,6 @@ class MultiExtractor:
 
         """
 
-        labels = list(
-            itertools.chain.from_iterable([e.labels for e in self.extractors])
-        )
-        options = {"colors": {l["label"]: get_label_color(l["label"]) for l in labels}}
-        return displacy.render(
-            doc, style="ent", options=options, page=page, jupyter=jupyter
-        )
+        labels = list(itertools.chain.from_iterable([e.labels for e in self.extractors]))
+        options = {"colors": {label["label"]: get_label_color(label["label"]) for label in labels}}
+        return displacy.render(doc, style="ent", options=options, page=page, jupyter=jupyter)

@@ -10,11 +10,10 @@ Classes:
 
 import os
 import warnings
-from typing import Union, List
 
+from ..utils.file_system import open_file, write_file
 from .extractors import ExtractorInterface, MultiExtractor
 from .strategies import StrategyInterface
-from ..utils.file_system import open_file, write_file
 
 # =====================================
 # Pipeline class
@@ -43,7 +42,7 @@ class Pipeline:
 
     def __init__(
         self,
-        extractor: Union[ExtractorInterface, MultiExtractor, List[ExtractorInterface]],
+        extractor: ExtractorInterface | MultiExtractor | list[ExtractorInterface],
         strategy: StrategyInterface,
     ):
         """Initialize the pipeline.
@@ -60,16 +59,12 @@ class Pipeline:
 
         """
 
-        if isinstance(extractor, ExtractorInterface) or isinstance(
-            extractor, MultiExtractor
-        ):
+        if isinstance(extractor, ExtractorInterface) or isinstance(extractor, MultiExtractor):
             self.extractor = extractor
         elif isinstance(extractor, list):
             self.extractor = MultiExtractor(extractor)
         else:
-            raise ValueError(
-                "Extractor must be an ExtractorInterface or a list of ExtractorInterface."
-            )
+            raise ValueError("Extractor must be an ExtractorInterface or a list of ExtractorInterface.")
 
         if not isinstance(strategy, StrategyInterface):
             raise ValueError("Strategy must be a StrategyInterface.")
@@ -113,7 +108,7 @@ class Pipeline:
                     if anonymized_text is None:
                         continue
                 except Exception as e:
-                    warnings.warn(f"Problems while processing file {file_path}: {e}")
+                    warnings.warn(f"Problems while processing file {file_path}: {e}", stacklevel=2)
                     continue
 
                 _, ext = os.path.splitext(file_name)
@@ -125,24 +120,18 @@ class Pipeline:
                 if flatten:
                     output_file_path = os.path.join(output_dir, output_file_name)
                 else:
-                    output_file_path = os.path.join(
-                        output_dir, os.path.dirname(relative_path), output_file_name
-                    )
+                    output_file_path = os.path.join(output_dir, os.path.dirname(relative_path), output_file_name)
                     os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
 
                 write_file(anonymized_text, output_file_path)
 
-                file_path_before = os.path.join(
-                    input_dir.split(os.sep)[-1], relative_path
-                )
+                file_path_before = os.path.join(input_dir.split(os.sep)[-1], relative_path)
                 file_path_after = os.path.relpath(output_file_path, output_dir)
-                file_name_mapping[file_path_before] = os.path.join(
-                    output_dir.split(os.sep)[-1], file_path_after
-                )
+                file_name_mapping[file_path_before] = os.path.join(output_dir.split(os.sep)[-1], file_path_after)
 
         return file_name_mapping
 
-    def _anonymize_file(self, file_path: str) -> Union[str, None]:
+    def _anonymize_file(self, file_path: str) -> str | None:
         """Anonymize a single file.
 
         Args:
@@ -155,17 +144,13 @@ class Pipeline:
 
         original_text = open_file(file_path)
         if original_text is None or not original_text.strip():
-            warnings.warn(
-                f"Skipping file {file_path}: Failed to read or file is empty."
-            )
+            warnings.warn(f"Skipping file {file_path}: Failed to read or file is empty.", stacklevel=2)
             return None
 
         _, entities = self.extractor(original_text)
 
         if not entities:
-            warnings.warn(
-                f"Skipping file {file_path}: Entity extraction returned None."
-            )
+            warnings.warn(f"Skipping file {file_path}: Entity extraction returned None.", stacklevel=2)
             return None
 
         anonymized_text, _ = self.strategy.anonymize(original_text, entities)

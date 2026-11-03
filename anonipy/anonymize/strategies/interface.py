@@ -1,4 +1,3 @@
-from typing import List
 from ...definitions import Entity
 
 # =====================================
@@ -20,5 +19,5 @@ class StrategyInterface:
     def __init__(self, *args, **kwargs):
         pass
 
-    def anonymize(self, text: str, entities: List[Entity], *args, **kwargs):
+    def anonymize(self, text: str, entities: list[Entity], *args, **kwargs):
         pass

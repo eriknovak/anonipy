@@ -2,12 +2,12 @@
 
 import pytest
 
-from anonipy.definitions import Entity
 from anonipy.anonymize.strategies import (
-    RedactionStrategy,
     MaskingStrategy,
     PseudonymizationStrategy,
+    RedactionStrategy,
 )
+from anonipy.definitions import Entity
 
 # =====================================
 # Test Data
@@ -131,9 +131,7 @@ def test_redaction_strategy_inputs(substitute_label, expected_label):
         ),
     ],
 )
-def test_redaction_strategy_anonymize(
-    substitute_label, expected_text, expected_replacements
-):
+def test_redaction_strategy_anonymize(substitute_label, expected_text, expected_replacements):
     """Test RedactionStrategy anonymization output."""
     strategy = RedactionStrategy(substitute_label=substitute_label)
     anonymized_text, replacements = strategy.anonymize(TEST_TEXT, TEST_ENTITIES)
@@ -235,9 +233,7 @@ def test_masking_strategy_inputs(substitute_label, expected_label):
         ),
     ],
 )
-def test_masking_strategy_anonymize(
-    substitute_label, expected_text, expected_replacements
-):
+def test_masking_strategy_anonymize(substitute_label, expected_text, expected_replacements):
     """Test MaskingStrategy anonymization output."""
     strategy = MaskingStrategy(substitute_label=substitute_label)
     anonymized_text, replacements = strategy.anonymize(TEST_TEXT, TEST_ENTITIES)
@@ -275,9 +271,7 @@ def test_pseudonymization_strategy_methods(pseudonymization_strategy):
 
 def test_pseudonymization_strategy_anonymize_inputs(pseudonymization_strategy):
     """Test PseudonymizationStrategy anonymization output."""
-    anonymized_text, replacements = pseudonymization_strategy.anonymize(
-        TEST_TEXT, TEST_ENTITIES
-    )
+    anonymized_text, replacements = pseudonymization_strategy.anonymize(TEST_TEXT, TEST_ENTITIES)
     assert anonymized_text == "[TEST] this [TYPE], and this [TEST] too!"
     assert replacements == [
         {
@@ -306,8 +300,6 @@ def test_pseudonymization_strategy_anonymize_inputs(pseudonymization_strategy):
 
 def test_pseudonymization_strategy_empty_entities(pseudonymization_strategy):
     """Test PseudonymizationStrategy with no entities."""
-    anonymized_text, replacements = pseudonymization_strategy.anonymize(
-        TEST_TEXT, []
-    )
+    anonymized_text, replacements = pseudonymization_strategy.anonymize(TEST_TEXT, [])
     assert anonymized_text == TEST_TEXT
     assert replacements == []

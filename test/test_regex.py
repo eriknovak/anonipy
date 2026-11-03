@@ -2,18 +2,18 @@
 
 import pytest
 
+from anonipy.constants import ENTITY_TYPES
 from anonipy.utils.regex import (
-    regex_mapping,
-    RegexMapping,
-    REGEX_STRING,
-    REGEX_INTEGER,
-    REGEX_FLOAT,
     REGEX_DATE,
     REGEX_EMAIL_ADDRESS,
+    REGEX_FLOAT,
+    REGEX_INTEGER,
     REGEX_PHONE_NUMBER,
+    REGEX_STRING,
     REGEX_WEBSITE_URL,
+    RegexMapping,
+    regex_mapping,
 )
-from anonipy.constants import ENTITY_TYPES
 
 # =====================================
 # Test Cases

@@ -6,13 +6,13 @@ import warnings
 import pytest
 from transformers import logging
 
-from anonipy.definitions import Entity
 from anonipy.anonymize.generators import (
+    DateGenerator,
     LLMLabelGenerator,
     MaskLabelGenerator,
-    DateGenerator,
     NumberGenerator,
 )
+from anonipy.definitions import Entity
 
 # disable transformers logging
 logging.set_verbosity_error()
@@ -204,9 +204,7 @@ def test_llm_label_generator_generate_default(llm_label_generator):
 def test_llm_label_generator_generate_custom(llm_label_generator):
     """Test LLM generation with custom entity attributes."""
     entity = TEST_ENTITIES["name"]
-    generated_text = llm_label_generator.generate(
-        entity, add_entity_attrs="Spanish", temperature=0.5
-    )
+    generated_text = llm_label_generator.generate(entity, add_entity_attrs="Spanish", temperature=0.5)
     regex = entity.get_regex_group() or entity.regex
     match = re.match(regex, generated_text)
     assert match is not None
@@ -228,7 +226,10 @@ def test_llm_label_generator_generate_custom_system_prompt(llm_label_generator):
     """Test LLM generation with custom system prompt."""
     entity = TEST_ENTITIES["name"]
     generated_text = llm_label_generator.generate(
-        entity, add_entity_attrs="Spanish", temperature=0.5, system_prompt="You are a helpful AI assistant for replying 'TEST'."
+        entity,
+        add_entity_attrs="Spanish",
+        temperature=0.5,
+        system_prompt="You are a helpful AI assistant for replying 'TEST'.",
     )
     regex = entity.get_regex_group() or entity.regex
     match = re.match(regex, generated_text)
@@ -325,18 +326,14 @@ def test_date_generator_generate_non_matching_date_format():
 def test_date_generator_generate_first_day_of_the_month(date_generator):
     """Test date generation for first day of the month."""
     entity = TEST_ENTITIES["date"][0]
-    generated_text = date_generator.generate(
-        entity, sub_variant="FIRST_DAY_OF_THE_MONTH"
-    )
+    generated_text = date_generator.generate(entity, sub_variant="FIRST_DAY_OF_THE_MONTH")
     assert generated_text == "01-05-2024"
 
 
 def test_date_generator_generate_last_day_of_the_month(date_generator):
     """Test date generation for last day of the month."""
     entity = TEST_ENTITIES["date"][0]
-    generated_text = date_generator.generate(
-        entity, sub_variant="LAST_DAY_OF_THE_MONTH"
-    )
+    generated_text = date_generator.generate(entity, sub_variant="LAST_DAY_OF_THE_MONTH")
     assert generated_text == "31-05-2024"
 
 
@@ -376,9 +373,7 @@ def test_date_generator_process_different_formats(date_generator):
         try:
             date_generator.generate(entity, sub_variant="RANDOM")
         except ValueError:
-            pytest.fail(
-                f"date_generator.generate() raised ValueError unexpectedly for date: {entity.text}"
-            )
+            pytest.fail(f"date_generator.generate() raised ValueError unexpectedly for date: {entity.text}")
 
 
 # =====================================

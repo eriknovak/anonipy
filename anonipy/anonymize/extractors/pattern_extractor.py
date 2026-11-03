@@ -1,23 +1,21 @@
-import re
 import importlib
-from typing import List, Tuple, Optional, Callable
+import re
+from collections.abc import Callable
 
-from spacy import displacy, util
-from spacy.tokens import Doc, Span
+from spacy import displacy
 from spacy.language import Language
 from spacy.matcher import Matcher
+from spacy.tokens import Doc, Span
 
-from ..helpers import (
-    convert_spacy_to_entity,
-    detect_repeated_entities,
-    get_doc_entity_spans,
-    set_doc_entity_spans,
-    create_spacy_entities,
-)
 from ...constants import LANGUAGES
 from ...definitions import Entity
 from ...utils.colors import get_label_color
-
+from ..helpers import (
+    convert_spacy_to_entity,
+    create_spacy_entities,
+    detect_repeated_entities,
+    get_doc_entity_spans,
+)
 from .interface import ExtractorInterface
 
 # ===============================================
@@ -53,7 +51,7 @@ class PatternExtractor(ExtractorInterface):
 
     def __init__(
         self,
-        labels: List[dict],
+        labels: list[dict],
         *args,
         lang: LANGUAGES = LANGUAGES.ENGLISH,
         spacy_style: str = "ent",
@@ -83,9 +81,7 @@ class PatternExtractor(ExtractorInterface):
         self.token_matchers = self._prepare_token_matchers()
         self.global_matchers = self._prepare_global_matchers()
 
-    def __call__(
-        self, text: str, detect_repeats: bool = False, *args, **kwargs
-    ) -> Tuple[Doc, List[Entity]]:
+    def __call__(self, text: str, detect_repeats: bool = False, *args, **kwargs) -> tuple[Doc, list[Entity]]:
         """Extract the entities from the text.
 
         Examples:
@@ -108,9 +104,7 @@ class PatternExtractor(ExtractorInterface):
         anoni_entities, spacy_entities = self._prepare_entities(doc)
 
         if detect_repeats:
-            anoni_entities = detect_repeated_entities(
-                doc, anoni_entities, self.spacy_style
-            )
+            anoni_entities = detect_repeated_entities(doc, anoni_entities, self.spacy_style)
 
         create_spacy_entities(doc, anoni_entities, self.spacy_style)
 
@@ -134,12 +128,8 @@ class PatternExtractor(ExtractorInterface):
 
         """
 
-        options = {
-            "colors": {l["label"]: get_label_color(l["label"]) for l in self.labels}
-        }
-        return displacy.render(
-            doc, style=self.spacy_style, options=options, page=page, jupyter=jupyter
-        )
+        options = {"colors": {label["label"]: get_label_color(label["label"]) for label in self.labels}}
+        return displacy.render(doc, style=self.spacy_style, options=options, page=page, jupyter=jupyter)
 
     # ===========================================
     # Private methods
@@ -165,7 +155,7 @@ class PatternExtractor(ExtractorInterface):
         nlp.add_pipe("sentencizer")
         return nlp
 
-    def _prepare_token_matchers(self) -> Optional[Matcher]:
+    def _prepare_token_matchers(self) -> Matcher | None:
         """Prepare the token pattern matchers.
 
         Prepares the token pattern matchers for the provided labels.
@@ -175,7 +165,7 @@ class PatternExtractor(ExtractorInterface):
 
         """
 
-        relevant_labels = list(filter(lambda l: "pattern" in l, self.labels))
+        relevant_labels = list(filter(lambda label: "pattern" in label, self.labels))
         if len(relevant_labels) == 0:
             return None
 
@@ -186,7 +176,7 @@ class PatternExtractor(ExtractorInterface):
                 matcher.add(label["label"], label["pattern"], on_match=on_match)
         return matcher
 
-    def _prepare_global_matchers(self) -> Optional[Callable]:
+    def _prepare_global_matchers(self) -> Callable | None:
         """Prepares the global pattern matchers.
 
         Prepares the global pattern matchers for the provided labels.
@@ -196,7 +186,7 @@ class PatternExtractor(ExtractorInterface):
 
         """
 
-        relevant_labels = list(filter(lambda l: "regex" in l, self.labels))
+        relevant_labels = list(filter(lambda label: "regex" in label, self.labels))
         if len(relevant_labels) == 0:
             return None
 
@@ -215,7 +205,7 @@ class PatternExtractor(ExtractorInterface):
 
         return global_matchers
 
-    def _prepare_entities(self, doc: Doc) -> Tuple[List[Entity], List[Span]]:
+    def _prepare_entities(self, doc: Doc) -> tuple[list[Entity], list[Span]]:
         """Prepares the anonipy and spacy entities.
 
         Args:
