@@ -1,5 +1,6 @@
 """Tests for anonipy.anonymize.extractors."""
 
+import itertools
 import warnings
 
 import pytest
@@ -9,7 +10,7 @@ from anonipy.anonymize.extractors import MultiExtractor, NERExtractor, PatternEx
 from anonipy.anonymize.helpers import filter_entities
 from anonipy.constants import LANGUAGES
 from anonipy.definitions import Entity
-from test.conftest import HAS_GPU
+from test.conftest import FAKE_GLINER_SCORE, HAS_GPU
 
 # disable transformers logging
 logging.set_verbosity_error()
@@ -417,6 +418,89 @@ def test_ner_extractor_detect_repeats_true(ner_extractor):
 
 
 # =====================================
+# Test NER Extractor With A Fake Model
+# =====================================
+
+
+def make_ner_labels():
+    return [
+        {"label": "name", "type": "string"},
+        {"label": "social security number", "type": "custom", "regex": "[0-9]{3}-[0-9]{2}-[0-9]{4}"},
+        {"label": "date of birth", "type": "date"},
+        {"label": "date", "type": "date"},
+    ]
+
+
+@pytest.fixture
+def fake_ner_extractor(fake_gliner):
+    return NERExtractor(labels=make_ner_labels(), lang=LANGUAGES.ENGLISH)
+
+
+def test_ner_extractor_fake_returns_tagged_entities(fake_ner_extractor):
+    """Test that each tagged phrase becomes an entity typed by its label."""
+    _, entities = fake_ner_extractor(TEST_ORIGINAL_TEXT)
+    found = [(e.text, e.label, e.type, e.start_index, e.score) for e in entities]
+    assert found == [
+        ("John Doe", "name", "string", 30, FAKE_GLINER_SCORE),
+        ("15-01-1985", "date of birth", "date", 54, FAKE_GLINER_SCORE),
+        ("123-45-6789", "social security number", "custom", 121, FAKE_GLINER_SCORE),
+        ("John Doe", "name", "string", 771, FAKE_GLINER_SCORE),
+    ]
+
+
+def test_ner_extractor_fake_maps_chunk_offsets_to_text(fake_ner_extractor):
+    """Test that entities found in later text chunks point at their text."""
+    _, entities = fake_ner_extractor(TEST_ORIGINAL_TEXT)
+    assert entities[-1].start_index > 384
+    for entity in entities:
+        assert TEST_ORIGINAL_TEXT[entity.start_index : entity.end_index] == entity.text
+
+
+def test_ner_extractor_fake_drops_entities_failing_label_regex(fake_ner_extractor):
+    """Test that a tagged phrase not matching its label regex is dropped."""
+    _, entities = fake_ner_extractor(TEST_ORIGINAL_TEXT)
+    assert "Medical Record" not in [e.text for e in entities]
+
+
+def test_ner_extractor_fake_detect_repeats_finds_untagged_occurrences(fake_ner_extractor):
+    """Test that repeat detection adds occurrences the model did not tag."""
+    _, entities = fake_ner_extractor(TEST_ORIGINAL_TEXT, detect_repeats=True)
+    assert [e.start_index for e in entities if e.text == "John Doe"] == [30, 157, 771]
+
+
+def test_ner_extractor_fake_span_style_stores_spans(fake_gliner):
+    """Test that the span style stores the entities in the doc spans."""
+    extractor = NERExtractor(labels=make_ner_labels(), lang=LANGUAGES.ENGLISH, spacy_style="span")
+    doc, entities = extractor(TEST_ORIGINAL_TEXT)
+    span_starts = {span.start_char for span in doc.spans["sc"]}
+    assert {e.start_index for e in entities} <= span_starts
+    assert doc.ents == ()
+
+
+def test_ner_extractor_fake_loads_configured_model_on_cpu(fake_gliner):
+    """Test that the extractor loads the requested GLiNER model on the CPU."""
+    NERExtractor(labels=make_ner_labels(), gliner_model="some/gliner-model")
+    assert fake_gliner == [{"model_name": "some/gliner-model", "map_location": "cpu"}]
+
+
+@pytest.mark.skipif(HAS_GPU, reason="GPU available")
+@pytest.mark.xfail(strict=True, raises=TypeError, reason="_create_gliner_config returns the warning (None)")
+def test_ner_extractor_fake_gpu_without_cuda_falls_back_to_cpu(fake_gliner):
+    """Test that requesting a missing GPU warns and loads the model on the CPU."""
+    with pytest.warns(UserWarning, match="GPU"):
+        NERExtractor(labels=make_ner_labels(), use_gpu=True)
+    assert fake_gliner[0]["map_location"] == "cpu"
+
+
+def test_ner_extractor_fake_display_renders_entities(fake_ner_extractor):
+    """Test that display renders the extracted entities as HTML."""
+    doc, _ = fake_ner_extractor(TEST_ORIGINAL_TEXT)
+    html = fake_ner_extractor.display(doc)
+    assert "John Doe" in html
+    assert "date of birth" in html
+
+
+# =====================================
 # Test Pattern Extractor
 # =====================================
 
@@ -712,11 +796,28 @@ def test_multi_extractor_extract_empty_extractor_list():
         MultiExtractor([])
 
 
-@pytest.mark.slow
-def test_multi_extractor_extract_invalid_extractor_list():
+def test_multi_extractor_extract_invalid_extractor_list(fake_gliner):
     """Test that invalid extractor in list raises ValueError."""
     with pytest.raises(ValueError):
         MultiExtractor([NERExtractor(labels=[], lang=LANGUAGES.ENGLISH), "invalid"])
+
+
+def test_multi_extractor_fake_merges_entities_of_all_extractors(fake_ner_extractor, pattern_extractor):
+    """Test that the joint entities hold both extractors' entities, ordered and without overlap."""
+    extractor = MultiExtractor([fake_ner_extractor, pattern_extractor])
+    outputs, joint_entities = extractor(TEST_ORIGINAL_TEXT)
+    assert len(outputs) == 2
+    assert {"name", "medicine"} <= {e.label for e in joint_entities}
+    for previous, current in itertools.pairwise(joint_entities):
+        assert previous.end_index <= current.start_index
+
+
+def test_multi_extractor_fake_display_renders_entities(fake_ner_extractor, pattern_extractor):
+    """Test that display renders the entities as HTML."""
+    extractor = MultiExtractor([fake_ner_extractor, pattern_extractor])
+    outputs, _ = extractor(TEST_ORIGINAL_TEXT)
+    html = extractor.display(outputs[0][0])
+    assert "John Doe" in html
 
 
 @pytest.mark.slow
