@@ -4,6 +4,7 @@ import itertools
 import warnings
 
 import pytest
+import torch
 from transformers import logging
 
 from anonipy.anonymize.extractors import MultiExtractor, NERExtractor, PatternExtractor
@@ -484,11 +485,50 @@ def test_ner_extractor_fake_loads_configured_model_on_cpu(fake_gliner):
 
 
 @pytest.mark.skipif(HAS_GPU, reason="GPU available")
-@pytest.mark.xfail(strict=True, raises=TypeError, reason="_create_gliner_config returns the warning (None)")
 def test_ner_extractor_fake_gpu_without_cuda_falls_back_to_cpu(fake_gliner):
     """Test that requesting a missing GPU warns and loads the model on the CPU."""
     with pytest.warns(UserWarning, match="GPU"):
         NERExtractor(labels=make_ner_labels(), use_gpu=True)
+    assert fake_gliner[0]["map_location"] == "cpu"
+
+
+@pytest.mark.skipif(HAS_GPU, reason="GPU available")
+def test_ner_extractor_fake_gpu_without_cuda_warns_at_caller(fake_gliner):
+    """Test that the missing-GPU warning points at the line that built the extractor."""
+    with pytest.warns(UserWarning, match="GPU") as record:
+        NERExtractor(labels=make_ner_labels(), use_gpu=True)
+    assert len(record) == 1
+    assert record[0].filename == __file__
+
+
+@pytest.mark.skipif(HAS_GPU, reason="GPU available")
+def test_ner_extractor_fake_gpu_without_cuda_keeps_configured_settings(fake_gliner):
+    """Test that the CPU fallback builds the GLiNER component from the extractor's settings."""
+    with pytest.warns(UserWarning, match="GPU"):
+        extractor = NERExtractor(
+            labels=make_ner_labels(), use_gpu=True, score_th=0.7, gliner_model="some/gliner-model", spacy_style="span"
+        )
+    component = extractor.pipeline.get_pipe("gliner_spacy")
+    assert component.labels == ["name", "social security number", "date of birth", "date"]
+    assert component.threshold == 0.7
+    assert component.style == "span"
+    assert fake_gliner[0]["model_name"] == "some/gliner-model"
+
+
+def test_ner_extractor_fake_gpu_with_cuda_loads_on_cuda(fake_gliner, monkeypatch):
+    """Test that a requested and available GPU loads the model on CUDA without a warning."""
+    monkeypatch.setattr(torch.cuda, "is_available", lambda: True)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", UserWarning)
+        NERExtractor(labels=make_ner_labels(), use_gpu=True)
+    assert fake_gliner[0]["map_location"] == "cuda"
+
+
+def test_ner_extractor_fake_without_gpu_request_loads_on_cpu_silently(fake_gliner):
+    """Test that use_gpu=False loads the model on the CPU without a warning."""
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", UserWarning)
+        NERExtractor(labels=make_ner_labels(), use_gpu=False)
     assert fake_gliner[0]["map_location"] == "cpu"
 
 

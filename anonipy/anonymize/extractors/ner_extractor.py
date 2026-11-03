@@ -175,12 +175,11 @@ class NERExtractor(ExtractorInterface):
         """
 
         map_location = "cpu"
-        if self.use_gpu and not torch.cuda.is_available():
-            return warnings.warn(
-                "The user requested GPU use, but not available GPU was found. Reverting back to CPU use.", stacklevel=2
-            )
         if self.use_gpu and torch.cuda.is_available():
             map_location = "cuda"
+        elif self.use_gpu:
+            # stacklevel 4 points the warning at the caller of NERExtractor(...)
+            warnings.warn("use_gpu=True was requested, but no GPU is available. Using the CPU instead.", stacklevel=4)
 
         return {
             # the model is specialized for extracting PII data
