@@ -5,7 +5,7 @@ import warnings
 import torch
 from spacy import displacy
 from spacy.language import Language
-from spacy.tokens import Doc, Span
+from spacy.tokens import Doc
 
 from ...constants import LANGUAGES
 from ...definitions import Entity
@@ -17,6 +17,7 @@ from ..helpers import (
     create_spacy_entities,
     detect_repeated_entities,
     get_doc_entity_spans,
+    set_doc_entity_spans,
 )
 from .interface import ExtractorInterface
 
@@ -111,11 +112,13 @@ class NERExtractor(ExtractorInterface):
         """
 
         doc = self.pipeline(text)
-        anoni_entities, spacy_entities = self._prepare_entities(doc)
+        anoni_entities = self._prepare_entities(doc)
 
         if detect_repeats:
             anoni_entities = detect_repeated_entities(doc, anoni_entities, self.spacy_style)
 
+        # rebuild the doc spans: pipeline spans include regex-rejected ones
+        set_doc_entity_spans(doc, [], self.spacy_style)
         create_spacy_entities(doc, anoni_entities, self.spacy_style)
 
         return doc, anoni_entities
@@ -213,24 +216,21 @@ class NERExtractor(ExtractorInterface):
         nlp.add_pipe("gliner_spacy", config=gliner_config)
         return nlp
 
-    def _prepare_entities(self, doc: Doc) -> tuple[list[Entity], list[Span]]:
-        """Prepares the anonipy and spacy entities.
+    def _prepare_entities(self, doc: Doc) -> list[Entity]:
+        """Prepares the anonipy entities from the doc spans that pass their label's regex.
 
         Args:
             doc: The spacy doc to prepare.
 
         Returns:
             The list of anonipy entities.
-            The list of spacy entities.
 
         """
 
         # TODO: make this part more generic
         anoni_entities = []
-        spacy_entities = []
         for s in get_doc_entity_spans(doc, self.spacy_style):
             label = list(filter(lambda x: x["label"] == s.label_, self.labels))[0]
             if re.match(label["regex"], s.text):
                 anoni_entities.append(convert_spacy_to_entity(s, **label))
-                spacy_entities.append(s)
-        return anoni_entities, spacy_entities
+        return anoni_entities

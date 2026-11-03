@@ -184,7 +184,7 @@ def create_spacy_entities(doc: Doc, entities: list[Entity], spacy_style: str) ->
 
     """
 
-    updated_spans = get_doc_entity_spans(doc, spacy_style)
+    updated_spans = list(get_doc_entity_spans(doc, spacy_style))
 
     for entity in entities:
         span = doc.char_span(entity.start_index, entity.end_index, label=entity.label)
@@ -192,7 +192,7 @@ def create_spacy_entities(doc: Doc, entities: list[Entity], spacy_style: str) ->
             continue
         span._.score = entity.score
         if spacy_style == "ent":
-            updated_spans = util.filter_spans(updated_spans + (span,))
+            updated_spans = util.filter_spans(updated_spans + [span])
         elif spacy_style == "span":
             updated_spans.append(span)
         else:
