@@ -1,0 +1,2 @@
+# Untracked paths every git worktree shares with the main checkout.
+# None: tests and runs need only tracked files.

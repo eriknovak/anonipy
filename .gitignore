@@ -136,3 +136,6 @@ dmypy.json
 
 notebooks
 !docs/how-to-guides/notebooks
+.claude/worktrees/
+.claude/devflow/
+.claude/labflow/
