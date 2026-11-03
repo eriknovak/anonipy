@@ -43,18 +43,39 @@ To install the requirements run:
 pip install -e .[all]
 ```
 
-**Githooks.** Githooks enable automatic commit and push hooks. The project is configured to run tests on each commit and to run tests and format the code on each push. See the configuration in `.githooks.ini`. To enable git hooks, run:
+**Githooks.** Githooks enable automatic commit and push hooks. The project is configured to check linting and formatting on each commit and to run the fast tests on each push. See the configuration in `.githooks.ini`. To enable git hooks, run:
 
 ```bash
 githooks
 ```
 
+## Linting
+
+The code is linted and formatted with [ruff], configured in `pyproject.toml`. CI fails when either check fails. To fix the code before committing, run:
+
+```bash
+ruff check --fix .
+ruff format .
+```
+
 ## Tests
 
-To run existing tests, simply run:
+To run the fast tests, simply run:
 
 ```bash
 pytest
+```
+
+They replace the GLiNER and Hugging Face models with small fakes, so they run offline in a few seconds. CI runs them on every push and pull request and requires 90% coverage.
+
+Tests marked `slow` or `integration` load the real models, which downloads several GB on the first run. They are skipped by default; CI runs them weekly. To run them, or the whole suite, run:
+
+```bash
+# only the tests with real models
+pytest -m "slow or integration"
+
+# all tests
+pytest -m ""
 ```
 
 ## Documentation
@@ -75,3 +96,4 @@ deploy the documentation to the `gh-pages` branch.
 [python]: https://www.python.org/
 [git]: https://git-scm.com/
 [Material for MkDocs]: https://squidfunk.github.io/mkdocs-material/getting-started/
+[ruff]: https://docs.astral.sh/ruff/
