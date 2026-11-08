@@ -130,13 +130,12 @@ def filter_entities(entities: Iterable[Entity]) -> list[Entity]:
     return result
 
 
-def detect_repeated_entities(doc: Doc, entities: list[Entity], spacy_style: str) -> list[Entity]:
+def detect_repeated_entities(doc: Doc, entities: list[Entity]) -> list[Entity]:
     """Detects repeated entities in the text.
 
     Args:
         doc: The spacy doc to detect entities in.
         entities: The entities to detect.
-        spacy_style: The style the entities should be stored in the spacy doc.
 
     Returns:
         The list of all entities.

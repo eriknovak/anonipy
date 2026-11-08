@@ -115,7 +115,7 @@ class NERExtractor(ExtractorInterface):
         anoni_entities = self._prepare_entities(doc)
 
         if detect_repeats:
-            anoni_entities = detect_repeated_entities(doc, anoni_entities, self.spacy_style)
+            anoni_entities = detect_repeated_entities(doc, anoni_entities)
 
         # rebuild the doc spans: pipeline spans include regex-rejected ones
         set_doc_entity_spans(doc, [], self.spacy_style)
