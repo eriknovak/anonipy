@@ -101,10 +101,10 @@ class PatternExtractor(ExtractorInterface):
         doc = self.pipeline(text)
         self.token_matchers(doc) if self.token_matchers else None
         self.global_matchers(doc) if self.global_matchers else None
-        anoni_entities, spacy_entities = self._prepare_entities(doc)
+        anoni_entities = self._prepare_entities(doc)
 
         if detect_repeats:
-            anoni_entities = detect_repeated_entities(doc, anoni_entities, self.spacy_style)
+            anoni_entities = detect_repeated_entities(doc, anoni_entities)
 
         create_spacy_entities(doc, anoni_entities, self.spacy_style)
 
@@ -205,26 +205,23 @@ class PatternExtractor(ExtractorInterface):
 
         return global_matchers
 
-    def _prepare_entities(self, doc: Doc) -> tuple[list[Entity], list[Span]]:
-        """Prepares the anonipy and spacy entities.
+    def _prepare_entities(self, doc: Doc) -> list[Entity]:
+        """Prepares the anonipy entities.
 
         Args:
             doc: The spacy doc to prepare.
 
         Returns:
             The list of anonipy entities.
-            The list of spacy entities.
 
         """
 
         # TODO: make this part more generic
         anoni_entities = []
-        spacy_entities = []
         for e in get_doc_entity_spans(doc, self.spacy_style):
             label = list(filter(lambda x: x["label"] == e.label_, self.labels))[0]
             anoni_entities.append(convert_spacy_to_entity(e, **label))
-            spacy_entities.append(e)
-        return anoni_entities, spacy_entities
+        return anoni_entities
 
     def _create_add_event_ent(self, label: str) -> Callable:
         """Create the add event entity function
